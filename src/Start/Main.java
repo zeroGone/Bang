@@ -4,11 +4,13 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class Main extends JFrame{
 	
@@ -33,10 +35,14 @@ public class Main extends JFrame{
 			public void mouseClicked(MouseEvent arg0) {//마우스 클릭했을때
 				container.remove(button);//메인컨테이너에 버튼을 삭제
 				
+				JScrollPane userList = new JScrollPane(new Room.UserListPanel());
+				userList.setBounds(1150, 100, 350, 450);
+				
+				JScrollPane roomList = new JScrollPane(new Room.RoomListPanel());
+				roomList.setBounds(100, 100, 1000, 450);
+				
 				JPanel chat = new Room.ChatPanel();
-				JPanel roomList = new Room.RoomListPanel();
-				JPanel userList = new Room.UserListPanel();
-			
+				
 				container.add(chat,new Integer(1));
 				container.add(roomList,new Integer(1));
 				container.add(userList,new Integer(1));
