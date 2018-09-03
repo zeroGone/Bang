@@ -2,13 +2,18 @@ package Start;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -34,6 +39,7 @@ public class Main extends JFrame{
 			@Override
 			public void mouseClicked(MouseEvent arg0) {//마우스 클릭했을때
 				container.remove(button);//메인컨테이너에 버튼을 삭제
+				
 				JScrollPane userList = new JScrollPane(new Room.UserListPanel());
 				userList.setBounds(1150, 100, 350, 450);
 				
@@ -105,4 +111,5 @@ public class Main extends JFrame{
 //		new Main();
 		new Game.GameFrame();
 	}
+	
 }

@@ -5,15 +5,23 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -21,12 +29,11 @@ public class GameFrame extends JFrame{
 	public GameFrame() {
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.weightx=3;
+		c.weightx=1;
 		c.weighty=1;
 		c.fill=GridBagConstraints.BOTH;
 		
 		add(new GamePanel(),c);
-		c.weightx=1;
 		add(new ChatPanel(),c);
 		
 		
@@ -44,6 +51,7 @@ public class GameFrame extends JFrame{
 		
 		public ChatPanel() {
 			this.setLayout(new BorderLayout());
+			this.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 			
 			output = new JTextArea();//텍스트에이리어 객체생성
 			output.setEditable(false);//텍스트에이리어에 입력못하게함
@@ -75,7 +83,96 @@ public class GameFrame extends JFrame{
 	
 	private class GamePanel extends JPanel{
 		public GamePanel() {
+			GridLayout layout = new GridLayout(3,3);//33 GridLayout
+			layout.setHgap(10);//격자  수직 간격
+			layout.setVgap(10);//격자  수평 간격
+			setLayout(layout);
 			
+			add(new UserPanel("김영곤","보안관","윌리더키드"));
+			add(new JPanel());
+			add(new UserPanel("정형일","배신자","엘그링고"));
+			add(new UserPanel("홍준성","무법자","블랙잭"));
+			add(new JPanel());
+			add(new UserPanel("정기혁","무법자","바트캐시디"));
+			add(new UserPanel("오일권","부관","로즈둘란"));
+			add(new UserPanel("허수진","부관","칼라미티자넷"));
+			add(new UserPanel("전승익","무법자","페드로라미네즈"));
+		}
+	}
+	
+	private class UserPanel extends JPanel{
+		private String job;
+		private String character;
+		
+		public UserPanel(String userName, String jobName, String characterName) {
+			this.job=jobName;
+			this.character=characterName;
+			
+			setBorder(new BevelBorder(BevelBorder.RAISED));
+			setLayout(new BorderLayout());
+			JTextPane name = new JTextPane();
+			name.setEditable(false);
+			//가운데정렬
+			SimpleAttributeSet attribs = new SimpleAttributeSet();
+			StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
+			name.setParagraphAttributes(attribs, true);
+			name.setText(userName);
+			
+			setBackground(Color.gray);
+			
+			JPanel buttonPanel = new JPanel();
+			JButton button = new JButton("카드 버튼");
+			button.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					new CardDialog(new JFrame(),false);
+				}
+			});
+			buttonPanel.add(button);
+			
+			add(new CardPanel(),"Center");
+			add(buttonPanel,"South");
+			add(name,"North");
+		}
+		
+		private class CardPanel extends JPanel{
+			
+			public CardPanel() {
+				setBackground(Color.white);
+				setLayout(new GridBagLayout());
+				GridBagConstraints c = new GridBagConstraints();
+				c.weightx=1;
+				c.weighty=1;
+				c.fill=GridBagConstraints.VERTICAL;
+				
+				ImageIcon jobImage;
+				if(!job.equals("보안관")) jobImage =  new ImageIcon("./image/직업카드뒷면.jpg");
+				else jobImage =  new ImageIcon("./image/보안관.png");
+				jobImage= new ImageIcon(jobImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
+				ImageIcon characterImage = new ImageIcon("./image/"+character+".jpg");
+				characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
+				
+				add(new JLabel(jobImage),c);
+				add(new JLabel(characterImage),c);
+			}
+		}
+	}
+	
+	private class CardDialog extends JDialog{
+		public CardDialog(JFrame frame,Boolean my) {
+			super(frame,"카드들");
+			setLayout(new BorderLayout());
+			if(my);
+			else {
+				JLabel label = new JLabel("4장",JLabel.CENTER);
+				label.setFont(new Font(null,Font.BOLD,30));
+				JPanel panel = new JPanel();
+				panel.add(label);
+				add(panel,"Center");
+			}
+			setSize(200,100);
+			setLocation(680,450);
+			setVisible(true);
 		}
 	}
 }
