@@ -3,12 +3,15 @@ package Game;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.text.SimpleAttributeSet;
@@ -57,7 +61,13 @@ public class GameFrame extends JFrame{
 			output.setEditable(false);//텍스트에이리어에 입력못하게함
 			input = new JTextField();//텍스트필드 객체생성
 			JScrollPane scroll = new JScrollPane(output);//텍스트에이리어 스크롤 되기위한 JScrollPane 클래스
-			
+			input.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyTyped(KeyEvent ke) {
+					JTextField src = (JTextField)ke.getSource();
+					if(src.getText().length()>=20) ke.consume();
+				}
+			});
 			input.addActionListener(new ActionListener() {//엔터키 이벤트리스너
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
@@ -92,13 +102,77 @@ public class GameFrame extends JFrame{
 			add(new JPanel());
 			add(new UserPanel("정형일","배신자","엘그링고"));
 			add(new UserPanel("홍준성","무법자","블랙잭"));
-			add(new JPanel());
+			add(new DeckPanel());
 			add(new UserPanel("정기혁","무법자","바트캐시디"));
 			add(new UserPanel("오일권","부관","로즈둘란"));
-			add(new UserPanel("허수진","부관","칼라미티자넷"));
+			add(new UserPanel("허수진","부관","캘러미티자넷"));
 			add(new UserPanel("전승익","무법자","페드로라미네즈"));
 		}
 	}
+	
+	private class DeckPanel extends JPanel{
+		private ImageIcon image;
+		public DeckPanel() {
+			setLayout(null);
+			image = new ImageIcon("./image/deck.jpg");
+			image = new ImageIcon(image.getImage().getScaledInstance(200, 180, Image.SCALE_SMOOTH));
+			JLabel imageLabel = new JLabel(image);
+			imageLabel.setLocation(150,80);
+			imageLabel.setSize(image.getIconWidth(),image.getIconHeight());
+			add(imageLabel);
+			add(new StartAni(1));
+		}
+		
+		private class StartAni extends JPanel implements ActionListener{
+			private Timer timer;
+			private ImageIcon image;
+			private int x;
+			private int y;
+			private int 인원수;
+			private int 자리수;
+			public StartAni(int 인원수) {
+				this.인원수=인원수;
+				x=150;
+				y=100;
+				setBackground(Color.BLACK);
+				setSize(100,100);
+				timer = new Timer(5,this);
+				timer.start();
+			}
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				switch(인원수) {
+					case 4:네명();break;
+					case 5:다섯명();break;
+					case 6:여섯명();break;
+					case 7:일곱명();break;
+				}
+				
+				this.repaint();
+			}
+			
+			public void 네명() {
+				
+			}
+			public void 다섯명() {
+
+			}
+			public void 여섯명() {
+
+			}
+			public void 일곱명() {
+
+			}
+			
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				setLocation(x,y);
+			}
+		}
+	}
+	
 	
 	private class UserPanel extends JPanel{
 		private String job;
@@ -146,10 +220,10 @@ public class GameFrame extends JFrame{
 				c.fill=GridBagConstraints.VERTICAL;
 				
 				ImageIcon jobImage;
-				if(!job.equals("보안관")) jobImage =  new ImageIcon("./image/직업카드뒷면.jpg");
-				else jobImage =  new ImageIcon("./image/보안관.png");
+				if(!job.equals("보안관")) jobImage =  new ImageIcon("./image/job/back.jpg");
+				else jobImage =  new ImageIcon("./image/job/보안관.png");
 				jobImage= new ImageIcon(jobImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
-				ImageIcon characterImage = new ImageIcon("./image/"+character+".jpg");
+				ImageIcon characterImage = new ImageIcon("./image/character/"+character+".jpg");
 				characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
 				
 				add(new JLabel(jobImage),c);
@@ -172,6 +246,7 @@ public class GameFrame extends JFrame{
 			}
 			setSize(200,100);
 			setLocation(680,450);
+			setResizable(false);
 			setVisible(true);
 		}
 	}
