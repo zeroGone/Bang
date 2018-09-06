@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -33,13 +34,13 @@ public class GameFrame extends JFrame{
 	public GameFrame() {
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.weightx=1;
+		c.weightx=3;
 		c.weighty=1;
 		c.fill=GridBagConstraints.BOTH;
 		
 		add(new GamePanel(),c);
+		c.weightx=1;
 		add(new ChatPanel(),c);
-		
 		
 		/**/setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//메인프레임을 닫아서 쓰레드가 실행됨을 방지하기위해 설정해줘야하는 메소드
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -48,6 +49,198 @@ public class GameFrame extends JFrame{
 		setVisible(true);//프레임이 보일수있게
 	}
 	
+	//게임패널
+	private class GamePanel extends JLayeredPane{
+		private boolean ani;
+		public GamePanel() {
+			ani=false;
+			setLayout(null);
+			SeatPanel seat = new SeatPanel();
+			seat.setBounds(0, 0, 1400, 1080);
+			
+			add(seat,new Integer(0));
+			
+//			add(new StartAni(4, new int[]{2,2,2,2,2,2,2}), new Integer(1));
+			
+		}
+		
+		public class StartAni extends JPanel implements ActionListener{
+			private Timer timer;
+			private ImageIcon image;
+			private int x;
+			private int y;
+			private int member;
+			private int seat;
+			private int[] card;
+			private int cardValue;
+			
+			public StartAni(int memberNum, int[] cardNum) {
+				image = new ImageIcon("./image/카드뒷면.jpg");
+				add(new JLabel(image));
+				ani=true;
+				this.member=memberNum;
+				this.card=cardNum;
+				seat=0;
+				
+				x=650;
+				y=450;
+				
+				setSize(image.getIconWidth(),image.getIconHeight());
+				timer = new Timer(2,this);
+				timer.start();
+			}
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(cardValue<card[seat]) {
+					if(seat%2==1) x+=2;
+					if(seat%2==0&&seat<=4) x-=2;
+					if(seat<=1) y-=2;
+					if(seat>=4) y+=2; 
+					
+					if(x<450||y<300||x>850||y>690) {
+						cardValue++;
+						x=650;
+						y=450;
+					}
+				}else {
+					cardValue=0;
+					seat++;
+					if(seat==7) {
+						timer.stop();
+						this.removeAll();
+						this.setOpaque(false);
+					}
+				}
+				
+				this.repaint();
+			}
+			
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				setLocation(x,y);
+			}
+		}
+		
+		
+		private class SeatPanel extends JPanel{
+			public SeatPanel() {
+				GridLayout layout = new GridLayout(3,3);//33 GridLayout
+				layout.setHgap(10);//격자  수직 간격
+				layout.setVgap(10);//격자  수평 간격
+				setLayout(layout);
+				
+				add(new UserPanel("김영곤","보안관","윌리더키드"));
+				add(new JPanel());
+				add(new UserPanel("정형일","배신자","엘그링고"));
+				add(new UserPanel("홍준성","무법자","블랙잭"));
+				add(new DeckPanel());
+				add(new UserPanel("정기혁","무법자","바트캐시디"));
+				add(new UserPanel("오일권","부관","로즈둘란"));
+				add(new UserPanel("허수진","부관","캘러미티자넷"));
+				add(new UserPanel("전승익","무법자","페드로라미네즈"));
+			}
+			
+
+			private class DeckPanel extends JPanel{
+				private ImageIcon image;
+				public DeckPanel() {
+					setLayout(null);
+					image = new ImageIcon("./image/deck.jpg");
+					image = new ImageIcon(image.getImage().getScaledInstance(200, 180, Image.SCALE_SMOOTH));
+					JLabel imageLabel = new JLabel(image);
+					imageLabel.setLocation(130,80);
+					imageLabel.setSize(image.getIconWidth(),image.getIconHeight());
+					add(imageLabel);
+					
+				}
+			}
+		}
+		
+		
+		private class CardDialog extends JDialog{
+			public CardDialog(JFrame frame,Boolean my) {
+				super(frame,"카드들");
+				setLayout(new BorderLayout());
+				if(my);
+				else {
+					JLabel label = new JLabel("4장",JLabel.CENTER);
+					label.setFont(new Font(null,Font.BOLD,30));
+					JPanel panel = new JPanel();
+					panel.add(label);
+					add(panel,"Center");
+				}
+				setSize(200,100);
+				setLocation(680,450);
+				setResizable(false);
+				setVisible(true);
+			}
+		}
+		
+		
+		
+		private class UserPanel extends JPanel{
+			private String job;
+			private String character;
+			
+			public UserPanel(String userName, String jobName, String characterName) {
+				this.job=jobName;
+				this.character=characterName;
+				
+				setBorder(new BevelBorder(BevelBorder.RAISED));
+				setLayout(new BorderLayout());
+				JTextPane name = new JTextPane();
+				name.setEditable(false);
+				//가운데정렬
+				SimpleAttributeSet attribs = new SimpleAttributeSet();
+				StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
+				name.setParagraphAttributes(attribs, true);
+				name.setText(userName);
+				
+				setBackground(Color.gray);
+				
+				JPanel buttonPanel = new JPanel();
+				JButton button = new JButton("카드 버튼");
+				button.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						new CardDialog(new JFrame(),false);
+					}
+				});
+				buttonPanel.add(button);
+				
+				add(new CardPanel(),"Center");
+				add(buttonPanel,"South");
+				add(name,"North");
+			}
+			
+			private class CardPanel extends JPanel{
+				
+				public CardPanel() {
+					setBackground(Color.white);
+					setLayout(new GridBagLayout());
+					GridBagConstraints c = new GridBagConstraints();
+					c.weightx=1;
+					c.weighty=1;
+					c.fill=GridBagConstraints.VERTICAL;
+					
+					ImageIcon jobImage;
+					if(!job.equals("보안관")) jobImage =  new ImageIcon("./image/job/back.jpg");
+					else jobImage =  new ImageIcon("./image/job/보안관.png");
+					jobImage= new ImageIcon(jobImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
+					ImageIcon characterImage = new ImageIcon("./image/character/"+character+".jpg");
+					characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
+					
+					add(new JLabel(jobImage),c);
+					add(new JLabel(characterImage),c);
+				}
+			}
+		}
+	}
+	
+
+	//채팅패널
 	private class ChatPanel extends JPanel{
 		private JTextPane title;
 		private JTextArea output;
@@ -88,166 +281,6 @@ public class GameFrame extends JFrame{
 			this.add(title,"North");
 			this.add(scroll);
 			this.add(input, "South");//입력필드를 남쪽에 추가
-		}
-	}
-	
-	private class GamePanel extends JPanel{
-		public GamePanel() {
-			GridLayout layout = new GridLayout(3,3);//33 GridLayout
-			layout.setHgap(10);//격자  수직 간격
-			layout.setVgap(10);//격자  수평 간격
-			setLayout(layout);
-			
-			add(new UserPanel("김영곤","보안관","윌리더키드"));
-			add(new JPanel());
-			add(new UserPanel("정형일","배신자","엘그링고"));
-			add(new UserPanel("홍준성","무법자","블랙잭"));
-			add(new DeckPanel());
-			add(new UserPanel("정기혁","무법자","바트캐시디"));
-			add(new UserPanel("오일권","부관","로즈둘란"));
-			add(new UserPanel("허수진","부관","캘러미티자넷"));
-			add(new UserPanel("전승익","무법자","페드로라미네즈"));
-		}
-	}
-	
-	private class DeckPanel extends JPanel{
-		private ImageIcon image;
-		public DeckPanel() {
-			setLayout(null);
-			image = new ImageIcon("./image/deck.jpg");
-			image = new ImageIcon(image.getImage().getScaledInstance(200, 180, Image.SCALE_SMOOTH));
-			JLabel imageLabel = new JLabel(image);
-			imageLabel.setLocation(150,80);
-			imageLabel.setSize(image.getIconWidth(),image.getIconHeight());
-			add(imageLabel);
-			add(new StartAni(1));
-		}
-		
-		private class StartAni extends JPanel implements ActionListener{
-			private Timer timer;
-			private ImageIcon image;
-			private int x;
-			private int y;
-			private int 인원수;
-			private int 자리수;
-			public StartAni(int 인원수) {
-				this.인원수=인원수;
-				x=150;
-				y=100;
-				setBackground(Color.BLACK);
-				setSize(100,100);
-				timer = new Timer(5,this);
-				timer.start();
-			}
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				switch(인원수) {
-					case 4:네명();break;
-					case 5:다섯명();break;
-					case 6:여섯명();break;
-					case 7:일곱명();break;
-				}
-				
-				this.repaint();
-			}
-			
-			public void 네명() {
-				
-			}
-			public void 다섯명() {
-
-			}
-			public void 여섯명() {
-
-			}
-			public void 일곱명() {
-
-			}
-			
-			@Override
-			public void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				setLocation(x,y);
-			}
-		}
-	}
-	
-	
-	private class UserPanel extends JPanel{
-		private String job;
-		private String character;
-		
-		public UserPanel(String userName, String jobName, String characterName) {
-			this.job=jobName;
-			this.character=characterName;
-			
-			setBorder(new BevelBorder(BevelBorder.RAISED));
-			setLayout(new BorderLayout());
-			JTextPane name = new JTextPane();
-			name.setEditable(false);
-			//가운데정렬
-			SimpleAttributeSet attribs = new SimpleAttributeSet();
-			StyleConstants.setAlignment(attribs, StyleConstants.ALIGN_CENTER);
-			name.setParagraphAttributes(attribs, true);
-			name.setText(userName);
-			
-			setBackground(Color.gray);
-			
-			JPanel buttonPanel = new JPanel();
-			JButton button = new JButton("카드 버튼");
-			button.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					new CardDialog(new JFrame(),false);
-				}
-			});
-			buttonPanel.add(button);
-			
-			add(new CardPanel(),"Center");
-			add(buttonPanel,"South");
-			add(name,"North");
-		}
-		
-		private class CardPanel extends JPanel{
-			
-			public CardPanel() {
-				setBackground(Color.white);
-				setLayout(new GridBagLayout());
-				GridBagConstraints c = new GridBagConstraints();
-				c.weightx=1;
-				c.weighty=1;
-				c.fill=GridBagConstraints.VERTICAL;
-				
-				ImageIcon jobImage;
-				if(!job.equals("보안관")) jobImage =  new ImageIcon("./image/job/back.jpg");
-				else jobImage =  new ImageIcon("./image/job/보안관.png");
-				jobImage= new ImageIcon(jobImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
-				ImageIcon characterImage = new ImageIcon("./image/character/"+character+".jpg");
-				characterImage = new ImageIcon(characterImage.getImage().getScaledInstance(200, 300, Image.SCALE_SMOOTH));
-				
-				add(new JLabel(jobImage),c);
-				add(new JLabel(characterImage),c);
-			}
-		}
-	}
-	
-	private class CardDialog extends JDialog{
-		public CardDialog(JFrame frame,Boolean my) {
-			super(frame,"카드들");
-			setLayout(new BorderLayout());
-			if(my);
-			else {
-				JLabel label = new JLabel("4장",JLabel.CENTER);
-				label.setFont(new Font(null,Font.BOLD,30));
-				JPanel panel = new JPanel();
-				panel.add(label);
-				add(panel,"Center");
-			}
-			setSize(200,100);
-			setLocation(680,450);
-			setResizable(false);
-			setVisible(true);
 		}
 	}
 }
