@@ -51,76 +51,23 @@ public class GameFrame extends JFrame{
 	
 	//게임패널
 	private class GamePanel extends JLayeredPane{
-		private boolean ani;
+		private Animation animation;
 		public GamePanel() {
-			ani=false;
 			setLayout(null);
 			SeatPanel seat = new SeatPanel();
 			seat.setBounds(0, 0, 1400, 1080);
 			
 			add(seat,new Integer(0));
 			
-//			add(new StartAni(4, new int[]{2,2,2,2,2,2,2}), new Integer(1));
+			animation = new Animation();
 			
-		}
-		
-		public class StartAni extends JPanel implements ActionListener{
-			private Timer timer;
-			private ImageIcon image;
-			private int x;
-			private int y;
-			private int member;
-			private int seat;
-			private int[] card;
-			private int cardValue;
+			Animation ani = new Animation();
+			add(ani, new Integer(1));
 			
-			public StartAni(int memberNum, int[] cardNum) {
-				image = new ImageIcon("./image/카드뒷면.jpg");
-				add(new JLabel(image));
-				ani=true;
-				this.member=memberNum;
-				this.card=cardNum;
-				seat=0;
-				
-				x=650;
-				y=450;
-				
-				setSize(image.getIconWidth(),image.getIconHeight());
-				timer = new Timer(2,this);
-				timer.start();
-			}
+//			ani.gameStart(7, new int[] {4,3,5,3,4,4,4});
 			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if(cardValue<card[seat]) {
-					if(seat%2==1) x+=2;
-					if(seat%2==0&&seat<=4) x-=2;
-					if(seat<=1) y-=2;
-					if(seat>=4) y+=2; 
-					
-					if(x<450||y<300||x>850||y>690) {
-						cardValue++;
-						x=650;
-						y=450;
-					}
-				}else {
-					cardValue=0;
-					seat++;
-					if(seat==7) {
-						timer.stop();
-						this.removeAll();
-						this.setOpaque(false);
-					}
-				}
-				
-				this.repaint();
-			}
-			
-			@Override
-			public void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				setLocation(x,y);
-			}
+//			ani.beer(7);
+			ani.bang(1, 4);
 		}
 		
 		
