@@ -65,9 +65,8 @@ public class GameFrame extends JFrame{
 			add(ani, new Integer(1));
 			
 //			ani.gameStart(7, new int[] {4,3,5,3,4,4,4});
-			
 //			ani.beer(7);
-			ani.bang(1, 4);
+			ani.bang(2, 7, false);
 		}
 		
 		

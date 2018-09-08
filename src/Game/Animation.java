@@ -3,6 +3,13 @@ package Game;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,13 +26,15 @@ public class Animation extends JPanel implements ActionListener {
 	private int cardValue;
 	private String action;
 	private int beerValue;
+	private Clip audioClip;
+	private File audio;
 	
 	public Animation() {
 		this.setOpaque(false);
 	}
 	
 	protected void gameStart(int member, int[] card) {
-		timer = new Timer(1,this);
+		timer = new Timer(10,this);
 		this.member=member;
 		this.card=card;
 		
@@ -37,18 +46,33 @@ public class Animation extends JPanel implements ActionListener {
 		add(new JLabel(image));
 		setSize(image.getIconWidth(),image.getIconHeight());
 		
+		audio = new File("./audio/cardShuffle.wav");
+		try {
+			AudioInputStream stream = AudioSystem.getAudioInputStream(audio);
+			audioClip = AudioSystem.getClip();
+			audioClip.open(stream);
+		} catch (Exception e) {
+			System.out.println("½ÇÆÐ");
+		}
+		
+//		int sum=0;
+//		for(int i:card) sum+=i;
+//		audioClip.loop(sum);
+		
 		action="start";
 		timer.start();
 	}
 	
+	
 	private void startAnimation() {
+		audioClip.loop(1);
 		if(cardValue<card[seat]) {
 			if(seat%2==1) x+=8;
 			if(seat%2==0&&seat<=4) x-=8;
 			if(seat<=1) y-=8;
 			if(seat>=4) y+=8; 
 			
-			if(x<450||y<300||x>850||y>690) {
+			if(x<450||y<250||x>850||y>690) {
 				cardValue++;
 				x=650;
 				y=450;
@@ -57,10 +81,23 @@ public class Animation extends JPanel implements ActionListener {
 			cardValue=0;
 			seat++;
 			if(seat==7) {
+				audioClip.stop();
 				timer.stop();
 				this.removeAll();
 			}
 		}
+	}
+	
+	private void audioStart(String name) {
+		audio = new File("./audio/"+name+".wav");
+		try {
+			AudioInputStream stream = AudioSystem.getAudioInputStream(audio);
+			audioClip = AudioSystem.getClip();
+			audioClip.open(stream);
+		} catch (Exception e) {
+			System.out.println("½ÇÆÐ");
+		}
+		audioClip.start();
 	}
 	
 	protected void beer(int seat) {
@@ -77,26 +114,32 @@ public class Animation extends JPanel implements ActionListener {
 		else if(seat==6) { x=1050; y=780; }
 		else if(seat==7) { x=600; y=780; } 
 		
+		this.audioStart("Äµµû±â");
+		
 		beerValue=1;
 		action="beer";
 		timer.start();
 	}
-	
 	private void beerAnimation() {
 		removeAll();
-		if(beerValue==1||beerValue==4) {
+		if(beerValue==1||beerValue==4||beerValue==7) {
 			image = new ImageIcon("./image/beer/beer2.jpg");
-			add(new JLabel(image));
-			beerValue++;
-		}else if(beerValue==2||beerValue==5) {
+			if(beerValue==4) this.audioStart("¸¶½Ã±â");
+			else if(beerValue==7) this.audioStart("Æ®¸§");
+		}
+		else if(beerValue==2||beerValue==5) {
+			if(beerValue==2) this.audioStart("¾²À¸À¾");
 			image = new ImageIcon("./image/beer/beer3.jpg");
-			add(new JLabel(image));
-			beerValue++;
-		}else if(beerValue==3||beerValue==6){
-			image = new ImageIcon("./image/beer/beer1.jpg");
-			add(new JLabel(image));
-			beerValue++;
-		}else timer.stop();
+		}
+		else if(beerValue==3||beerValue==6) image = new ImageIcon("./image/beer/beer1.jpg");
+		else if(beerValue==5) image = new ImageIcon("./image/beer/beer3.jpg");
+		
+		if(beerValue==8) {
+			audioClip.stop();
+			timer.stop();
+		}else add(new JLabel(image));
+		
+		beerValue++;
 		this.revalidate();
 	}
 	
@@ -106,11 +149,14 @@ public class Animation extends JPanel implements ActionListener {
 	private int goalY;
 	private JLabel caster;
 	private JLabel goal;
+	private boolean evasion;
 	
-	protected void bang(int seat, int goal) {
+	protected void bang(int seat, int goal, boolean evasion) {
 		timer = new Timer(50,this);
 		setLayout(null);
 		setSize(1400,1080);
+		
+		this.evasion=evasion;
 		
 		image = new ImageIcon("./image/¹ð.jpg");
 		caster = new JLabel(image);
@@ -126,7 +172,9 @@ public class Animation extends JPanel implements ActionListener {
 		caster.setBounds(casterX, casterY, image.getIconWidth(), image.getIconHeight());
 		add(caster);
 		
-		image = new ImageIcon("./image/»§¾ß.jpg");
+		if(evasion) image = new ImageIcon("./image/È¸ÇÇ1.jpg");
+		else image = new ImageIcon("./image/»§¾ß.jpg");
+		
 		this.goal = new JLabel(image);
 		
 		if(goal==1) { goalX=150; goalY=40; }
@@ -138,8 +186,10 @@ public class Animation extends JPanel implements ActionListener {
 		else if(goal==7) { goalX=600; goalY=780; } 
 		
 		this.goal.setBounds(goalX,goalY,image.getIconWidth(),image.getIconHeight());
+		this.goal.setVisible(false);
 		add(this.goal);
 		
+		this.audioStart("¹ð¿ôÀ½");
 		action="bang";
 		timer.start();
 		
@@ -150,7 +200,7 @@ public class Animation extends JPanel implements ActionListener {
 	private boolean bangCheck;
 	
 	private void bangAnimation() {
-		if(bangCount<25) {
+		if(bangCount<60) {
 			if(bangCheck) {
 				casterY+=10;
 				bangCheck=false;
@@ -161,11 +211,23 @@ public class Animation extends JPanel implements ActionListener {
 			}
 			bangCount++;
 			caster.setLocation(casterX,casterY);
-		}else if(bangCount<40){
-			goalX+=((int)(Math.random()*50)-(int)(Math.random()*50));
-			goalY+=((int)(Math.random()*50)-(int)(Math.random()*50));
+		}else if(bangCount<70){
+			this.goal.setVisible(true);
+			if(evasion) {
+				remove(this.goal);
+				this.audioStart("È¸ÇÇ");
+				if(bangCount%2==1) image = new ImageIcon("./image/È¸ÇÇ1.jpg");
+				else  image = new ImageIcon("./image/È¸ÇÇ2.jpg");
+				goal=new JLabel(image);
+				goal.setBounds(goalX,goalY,image.getIconWidth(),image.getIconHeight());
+				add(this.goal);
+			}else {
+				this.audioStart("¹ð");
+				goalX+=((int)(Math.random()*50)-(int)(Math.random()*50));
+				goalY+=((int)(Math.random()*50)-(int)(Math.random()*50));
+				goal.setLocation(goalX, goalY);
+			}
 			bangCount++;
-			goal.setLocation(goalX, goalY);
 		}else {
 			this.removeAll();
 			timer.stop();
