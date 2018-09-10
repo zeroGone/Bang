@@ -1,6 +1,6 @@
 package Game;
 
-public abstract class Character {
+public class Character {
 	private static boolean[] check = new boolean[16];
 	private static String[] characters = {
 		"럭키듀크","로즈둘란","바트캐시디","벌쳐샘","블랙잭","수지라파예트","슬랩더킬러","시드케첨",
@@ -9,13 +9,8 @@ public abstract class Character {
 	
 	public static String character() {
 		int index = (int)(Math.random()*16);
-		while(true) {
-			if(!check[index]) {
-				check[index]=true;
-				break;
-			}
-			index=(int)(Math.random()*16);
-		}
+		if(check[index]) return character();
+		check[index]=true;
 		return characters[index];
 	}
 }
