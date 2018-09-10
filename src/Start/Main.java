@@ -2,29 +2,24 @@ package Start;
 
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.TextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
-public class Main extends JFrame{
+public class Main extends JFrame implements MouseListener{
 	private JLayeredPane container;//패널들을 쌓아서 넣을 수 있게 기본 패널이될 JLayeredPane
 	private JButton button;//시작화면의 버튼
 	private JPanel background;//배경 패널
-	
+	private ImageIcon image;
 	public Main() {
 		/* 메인프레임 
-		 * layout이 default로 설정되있어서 패널들의 크기와 위치를 설정해주는게 바`람직함
+		 * layout이 default로 설정되있어서 패널들의 크기와 위치를 설정해주는게 바람직함
 		 */
 		
 		ImageIcon buttonImage = new ImageIcon("./image/button1.png");//ImageIcon객체로 버튼 이미지 받아옴
@@ -33,56 +28,7 @@ public class Main extends JFrame{
 		button.setBorderPainted(false);//버튼 배경선 없음
 		button.setBounds(650, 600, buttonImage.getIconWidth(), buttonImage.getIconHeight());//버튼 이미지 크기만큼 650,600 위치에 셋팅
 		
-		button.addMouseListener(new MouseListener() {//마우스 이벤트 생성
-			ImageIcon image;
-			@Override
-			public void mouseClicked(MouseEvent arg0) {//마우스 클릭했을때
-				container.remove(button);//메인컨테이너에 버튼을 삭제
-				
-				String nick = "";
-				while(nick.length()==0) {
-					nick = (String) JOptionPane.showInputDialog(null,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE, null,null,null);//닉네임 설정 다이얼로그 
-					if(nick==null) System.exit(0);//닉네임 입력 취소할 경우 시스템 종료
-				}
-				
-				JScrollPane userList = new JScrollPane(new Room.UserListPanel());
-				userList.setBounds(1150, 100, 350, 450);
-				
-				JScrollPane roomList = new JScrollPane(new Room.RoomListPanel());
-				roomList.setBounds(100, 100, 1000, 450);
-				
-				JPanel chat = new Room.ChatPanel();
-				
-				container.add(chat,new Integer(1));
-				container.add(roomList,new Integer(1));
-				container.add(userList,new Integer(1));
-					
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {//마우스가 버튼영역에 들어왔을때
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {//마우스가 버튼영역에 나갔을때
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {//마우스가 버튼을 눌렀을때
-				image = new ImageIcon("./image/button2.png");//이미지를 다른이미지로불러와서
-				button.setIcon(image);//이미지 설정
-				button.setBounds(650, 610, image.getIconWidth(), image.getIconHeight());//위치 크기설정
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {//마우스가 버튼을 땠을때
-				image = new ImageIcon("./image/button1.png");//처음 이미지로 다시불러오고
-				button.setIcon(image);//이미지 설정
-				button.setBounds(650, 600, image.getIconWidth(), image.getIconHeight());//위치 크기설정
-			}
-		});
+		button.addMouseListener(this);
 		
 		background = new JPanel() {//배경이 될 패널을 생성한다
 			@Override
@@ -94,7 +40,6 @@ public class Main extends JFrame{
 			}
 		};
 		background.setBounds(0, 0, 1600, 1000);//패널 크기 위치 설정
-		
 		
 		container= new JLayeredPane();//메인 컨테이너 생성
 
@@ -114,6 +59,38 @@ public class Main extends JFrame{
 	public static void main(String[] args) {
 		new Main();
 //		new Game.GameFrame();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		String input = (String)JOptionPane.showInputDialog(this,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
+		
+		if(input==null);//NullPointException 잡아줌
+		else if(input.length()==0) JOptionPane.showMessageDialog(this, "닉네임을 입력하세요", "경고", JOptionPane.WARNING_MESSAGE);
+		else System.out.println(input);
+	}
+
+	//버튼 영역 들어갈시
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+	//버튼 영역 나갈시
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {//마우스가 버튼을 눌렀을때
+		image = new ImageIcon("./image/button2.png");//이미지를 다른이미지로불러와서
+		button.setIcon(image);//이미지 설정
+		button.setBounds(650, 610, image.getIconWidth(), image.getIconHeight());//위치 크기설정
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {//마우스가 버튼을 땠을때
+		image = new ImageIcon("./image/button1.png");//처음 이미지로 다시불러오고
+		button.setIcon(image);//이미지 설정
+		button.setBounds(650, 600, image.getIconWidth(), image.getIconHeight());//위치 크기설정
 	}
 	
 }
