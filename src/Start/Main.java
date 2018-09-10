@@ -18,14 +18,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class Main extends JFrame{
-	
 	private JLayeredPane container;//패널들을 쌓아서 넣을 수 있게 기본 패널이될 JLayeredPane
 	private JButton button;//시작화면의 버튼
 	private JPanel background;//배경 패널
 	
 	public Main() {
 		/* 메인프레임 
-		 * layout이 default로 설정되있어서 패널들의 크기와 위치를 설정해주는게 바람직함
+		 * layout이 default로 설정되있어서 패널들의 크기와 위치를 설정해주는게 바`람직함
 		 */
 		
 		ImageIcon buttonImage = new ImageIcon("./image/button1.png");//ImageIcon객체로 버튼 이미지 받아옴
@@ -40,6 +39,12 @@ public class Main extends JFrame{
 			public void mouseClicked(MouseEvent arg0) {//마우스 클릭했을때
 				container.remove(button);//메인컨테이너에 버튼을 삭제
 				
+				String nick = "";
+				while(nick.length()==0) {
+					nick = (String) JOptionPane.showInputDialog(null,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE, null,null,null);//닉네임 설정 다이얼로그 
+					if(nick==null) System.exit(0);//닉네임 입력 취소할 경우 시스템 종료
+				}
+				
 				JScrollPane userList = new JScrollPane(new Room.UserListPanel());
 				userList.setBounds(1150, 100, 350, 450);
 				
@@ -51,7 +56,7 @@ public class Main extends JFrame{
 				container.add(chat,new Integer(1));
 				container.add(roomList,new Integer(1));
 				container.add(userList,new Integer(1));
-
+					
 			}
 
 			@Override
@@ -78,7 +83,6 @@ public class Main extends JFrame{
 				button.setBounds(650, 600, image.getIconWidth(), image.getIconHeight());//위치 크기설정
 			}
 		});
-		
 		
 		background = new JPanel() {//배경이 될 패널을 생성한다
 			@Override
@@ -108,8 +112,8 @@ public class Main extends JFrame{
 	}
 	
 	public static void main(String[] args) {
-//		new Main();
-		new Game.GameFrame();
+		new Main();
+//		new Game.GameFrame();
 	}
 	
 }

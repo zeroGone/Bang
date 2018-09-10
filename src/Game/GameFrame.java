@@ -77,15 +77,15 @@ public class GameFrame extends JFrame{
 				layout.setVgap(10);//격자  수평 간격
 				setLayout(layout);
 				
-				add(new UserPanel("김영곤","보안관",Character.character()));
-				add(new JPanel());
-				add(new UserPanel("정형일","배신자",Character.character()));
-				add(new UserPanel("홍준성","무법자",Character.character()));
-				add(new DeckPanel());
-				add(new UserPanel("정기혁","무법자",Character.character()));
-				add(new UserPanel("오일권","부관",Character.character()));
-				add(new UserPanel("허수진","부관",Character.character()));
-				add(new UserPanel("전승익","무법자",Character.character()));
+//				add(new UserPanel("김영곤","보안관",Character.character()));
+//				add(new JPanel());
+//				add(new UserPanel("정형일","배신자",Character.character()));
+//				add(new UserPanel("홍준성","무법자",Character.character()));
+//				add(new DeckPanel());
+//				add(new UserPanel("정기혁","무법자",Character.character()));
+//				add(new UserPanel("오일권","부관",Character.character()));
+//				add(new UserPanel("허수진","부관",Character.character()));
+//				add(new UserPanel("전승익","무법자",Character.character()));
 			}
 			
 
