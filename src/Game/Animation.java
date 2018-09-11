@@ -4,27 +4,22 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Animation extends JPanel implements ActionListener {
-	private Timer timer;
+	private Timer timer;//타이머
 	private ImageIcon image;
-	private int x;
-	private int y;
-	private int member;
-	private int seat;
-	private int[] card;
+	private int x;//x좌표
+	private int y;//y좌표
+	private String action;//애니메이션 행동 구분을 위한 멤버변수
 	private int cardValue;
-	private String action;
 	private int beerValue;
 	private Clip audioClip;
 	private File audio;
@@ -33,27 +28,24 @@ public class Animation extends JPanel implements ActionListener {
 		this.setOpaque(false);
 	}
 	
+	private int member;
+	private int seat;
+	private int[] card;
 	protected void gameStart(int member, int[] card) {
 		timer = new Timer(10,this);
-		this.member=member;
-		this.card=card;
+		this.member=member;//멤버수 
+		this.card=card;//시작할때 멤버마다 가지고 있는 카드 개수;
 		
+		//가운데
 		x=650;
 		y=450;
-		seat=0;
+		seat=0;//자리 초기화
 		
-		image = new ImageIcon("./image/카드뒷면.jpg");
-		add(new JLabel(image));
-		setSize(image.getIconWidth(),image.getIconHeight());
+		image = new ImageIcon("./image/카드뒷면.jpg");//이미지 불러오기
+		add(new JLabel(image));//이미지 추가
+		setSize(image.getIconWidth(),image.getIconHeight());//크기 설정
 		
-		audio = new File("./audio/cardShuffle.wav");
-		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(audio);
-			audioClip = AudioSystem.getClip();
-			audioClip.open(stream);
-		} catch (Exception e) {
-			System.out.println("실패");
-		}
+		audioStart("cardShuffle");
 		
 //		int sum=0;
 //		for(int i:card) sum+=i;

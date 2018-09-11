@@ -57,8 +57,8 @@ public class Main extends JFrame implements MouseListener{
 	}
 	
 	public static void main(String[] args) {
-		new Main();
-//		new Game.GameFrame();
+//		new Main();
+		new Game.GameFrame();
 	}
 
 	@Override
