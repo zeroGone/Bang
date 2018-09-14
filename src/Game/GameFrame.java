@@ -127,27 +127,6 @@ public class GameFrame extends JFrame{
 			}
 		}
 		
-//		
-//		private class CardDialog extends JDialog{
-//			public CardDialog(JFrame frame,Boolean my) {
-//				super(frame,"카드들");
-//				setLayout(new BorderLayout());
-//				if(my);
-//				else {
-//					JLabel label = new JLabel("4장",JLabel.CENTER);
-//					label.setFont(new Font(null,Font.BOLD,30));
-//					JPanel panel = new JPanel();
-//					panel.add(label);
-//					add(panel,"Center");
-//				}
-//				setSize(200,100);
-//				setLocation(680,450);
-//				setResizable(false);
-//				setVisible(true);
-//			}
-//		}
-//		
-//		
 	}
 	
 }

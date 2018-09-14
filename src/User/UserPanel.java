@@ -3,8 +3,11 @@ package User;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -14,7 +17,7 @@ import Character.CharacterPanel;
 public class UserPanel extends JPanel{
 	private JLabel[] life;
 	private JPanel lifePanel;
-	
+	private MountingPanel mountingPanel;
 	public UserPanel(Dimension screen) {
 		setSize(400,300);
 		setLayout(null);
@@ -30,17 +33,34 @@ public class UserPanel extends JPanel{
 		ImageIcon image = new ImageIcon("./image/life_void.png");
 		image=new ImageIcon(image.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
-		life=new JLabel[5];
-		for(int i=0; i<5; i++) {
+		life=new JLabel[5];//생명숫자
+		for(int i=0; i<5; i++) {//생명숫자 셋팅
 			life[i]=new JLabel(image);
 			lifePanel.add(life[i]);
 		}
 		
-		add(lifePanel,"North");
+		add(lifePanel,"North");//생명패널 추가
 		
+		//캐릭터패널
 		CharacterPanel characterPanel = new CharacterPanel();
 		characterPanel.setBounds(this.getWidth()/3, 70, this.getWidth()/3, 200);
+		characterPanel.set보안관(false);//보안관이면 true로
 		add(characterPanel);
+		
+		
+		
+		//장착카드패널
+		mountingPanel = new MountingPanel();
+		mountingPanel.setBounds(this.getWidth()/3*2, 70, this.getWidth()/3, 200);
+		add( mountingPanel);
+		
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				new CardDialog();
+			}
+		});
+			
 	}
 	
 	//생명 회복시
@@ -53,4 +73,14 @@ public class UserPanel extends JPanel{
 		
 	}
 	
+	private class CardDialog extends JDialog{
+		public CardDialog() {
+			setIconImage(new ImageIcon("./image/카드뒷면.jpg").getImage());
+			setSize(1000,500);
+			setTitle("카드목록");
+			setVisible(true);
+			setLocationRelativeTo(null);//화면 중앙에 배치
+			setResizable(false);
+		}
+	}
 }
