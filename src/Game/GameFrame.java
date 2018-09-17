@@ -71,62 +71,14 @@ public class GameFrame extends JFrame{
 			container.add(panel);
 		}
 		
+		Animation ani = new Animation(screen,7);
+		container.add(ani,new Integer(1));
+		
 		add(container);
 		setVisible(true);//프레임이 보일수있게
-	}
-	
-	//게임패널
-	private class GamePanel extends JLayeredPane{
-		private Animation animation;
-		public GamePanel() {
-			setLayout(null);
-			SeatPanel seat = new SeatPanel();
-			seat.setBounds(0, 0, 1400, 1080);
-			
-			add(seat,new Integer(0));
-			
-			animation = new Animation();
-			
-			Animation ani = new Animation();
-			add(ani, new Integer(1));
-			
-		}
 		
-		
-		private class SeatPanel extends JPanel{
-			public SeatPanel() {
-				GridLayout layout = new GridLayout(3,3);//33 GridLayout
-				layout.setHgap(10);//격자  수직 간격
-				layout.setVgap(10);//격자  수평 간격
-				setLayout(layout);
-				
-//				add(new UserPanel("김영곤","보안관",CharacterSetting.character()));
-//				add(new JPanel());
-//				add(new UserPanel("정형일","배신자",CharacterSetting.character()));
-//				add(new UserPanel("홍준성","무법자",CharacterSetting.character()));
-//				add(new DeckPanel());
-//				add(new UserPanel("정기혁","무법자",CharacterSetting.character()));
-//				add(new UserPanel("오일권","부관",CharacterSetting.character()));
-//				add(new UserPanel("허수진","부관",CharacterSetting.character()));
-//				add(new UserPanel("전승익","무법자",CharacterSetting.character()));
-			}
-			
-
-			private class DeckPanel extends JPanel{
-				private ImageIcon image;
-				public DeckPanel() {
-					setLayout(null);
-					image = new ImageIcon("./image/deck.jpg");
-					image = new ImageIcon(image.getImage().getScaledInstance(200, 180, Image.SCALE_SMOOTH));
-					JLabel imageLabel = new JLabel(image);
-					imageLabel.setLocation(130,80);
-					imageLabel.setSize(image.getIconWidth(),image.getIconHeight());
-					add(imageLabel);
-					
-				}
-			}
-		}
-		
+		ani.gameStart(7, 4,4,4,4,4,4,4);
+//		ani.bang(1, 7, true);
 	}
 	
 }

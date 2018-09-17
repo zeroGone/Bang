@@ -52,7 +52,7 @@ public class UserPanel extends JPanel{
 		//장착카드패널
 		mountingPanel = new MountingPanel();
 		mountingPanel.setBounds(this.getWidth()/3*2, 70, this.getWidth()/3, 200);
-		add( mountingPanel);
+		add(mountingPanel);
 		
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -61,6 +61,10 @@ public class UserPanel extends JPanel{
 			}
 		});
 			
+		JPanel consumePanel = new JPanel();
+		consumePanel.setBounds(0, 70, this.getWidth()/3, 200);
+		consumePanel.setBackground(Color.black);
+		add(consumePanel);
 	}
 	
 	//생명 회복시

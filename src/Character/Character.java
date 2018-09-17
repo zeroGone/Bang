@@ -1,7 +1,5 @@
 package Character;
 
-import Card.*;
-
 public class Character {
 	private String name;
 	private int life;
