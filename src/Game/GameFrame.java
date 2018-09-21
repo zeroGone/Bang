@@ -71,15 +71,13 @@ public class GameFrame extends JFrame{
 			container.add(panel);
 		}
 		
-		Animation ani = new Animation(screen,7);
+		Ani.AniPanel ani = new Ani.AniPanel();
+		ani.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
+//		Animation ani = new Animation(screen,7);
 		container.add(ani,new Integer(1));
 		
 		add(container);
 		setVisible(true);//프레임이 보일수있게
-		
-		ani.gameStart(7, 4,4,4,4,4,4,4);
-//		ani.bang(1, 7, true);
 	}
-	
 }
 	

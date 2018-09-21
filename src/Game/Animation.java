@@ -41,7 +41,7 @@ public class Animation extends JPanel implements ActionListener {
 		
 		cardsNum=card;//시작할때 멤버마다 가지고 있는 카드 개수;
 		
-		image = new ImageIcon("./image/카드뒷면.jpg");//이미지 불러오기
+		image = new ImageIcon("./image/Ani/back.jpg");//이미지 불러오기
 		
 //		cards = new JLabel[cardsNum.length];
 		
@@ -54,12 +54,12 @@ public class Animation extends JPanel implements ActionListener {
 //		}
 		
 		action="start";
-//		timer.start();
+		timer.start();
 	}
 	
 	static int count = 0;
 	private void startAnimation() {
-//		System.out.println(++count);
+		System.out.println(++count);
 //		for(JLabel card:cards) {
 //			card.setLocation(card.getX()-10, card.getY()-10);
 //		}
