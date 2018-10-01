@@ -1,31 +1,11 @@
 package Game;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.border.BevelBorder;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-
-import Character.CharacterSetting;
 
 public class GameFrame extends JFrame{
 	private Dimension screen;
@@ -37,19 +17,33 @@ public class GameFrame extends JFrame{
 		setExtendedState(JFrame.MAXIMIZED_BOTH);//전체화면
 		setUndecorated(true);//상태표시줄 지우기
 		setResizable(false);//화면 사이즈 변경 불가
-		
-		container = new JLayeredPane() {
-			@Override
-			public void paintComponent(Graphics g) {//패널을 기본적으로 그리는 메소드를 오버라이드
-				super.paintComponent(g);
-				ImageIcon image = new ImageIcon("./image/배경.jpg");//배경이미지 불러와서
-				image = new ImageIcon(image.getImage().getScaledInstance((int)screen.getWidth(), (int)screen.getHeight(), Image.SCALE_SMOOTH));//크기 다시설정해주고
-				g.drawImage(image.getImage(), 0, 0, null);//받아온 ImageIcon의 getImage로 받아서 이미지를 0,0 위치에 그린다
-			}
-		};//전체패널
-		container.setLayout(null);
-		
 		screen = Toolkit.getDefaultToolkit().getScreenSize();//내 노트북 : 1920X1080
+
+		container = new JLayeredPane();
+//			@Override
+//			public void paintComponent(Graphics g) {//패널을 기본적으로 그리는 메소드를 오버라이드
+//				super.paintComponent(g);
+//				g.setColor(new Color(0x964B00));
+//				int radius = 10;
+//				int step = 4;
+//				int forLen = (radius / step);
+//				for (int i = 0; i < forLen; i++)
+//				    g.fillOval(radius - i * step, radius - i * step, i * step * 2, i * step * 2);
+//				try {
+//					BufferedImage image = ImageIO.read(new File("./image/배경.jpg"));
+//					g.drawImage(image, 0, 0, null);//받아온 ImageIcon의 getImage로 받아서 이미지를 0,0 위치에 그린다
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				setOpaque(false);
+//				ImageIcon image = new ImageIcon("./image/배경.jpg");//배경이미지 불러와서
+//				image = new ImageIcon(image.getImage().getScaledInstance((int)screen.getWidth(), (int)screen.getHeight(), Image.SCALE_SMOOTH));//크기 다시설정해주고
+//			}
+//		};//전체패널
+		container.setOpaque(true);
+		container.setBackground(Color.white);
+		container.setLayout(null);
 		
 		//채팅패널 추가
 		Chat.ChatPanel chatPanel = new Chat.ChatPanel();
@@ -71,13 +65,13 @@ public class GameFrame extends JFrame{
 			container.add(panel);
 		}
 		
-		Ani.AniPanel ani = new Ani.AniPanel();
-		ani.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
+		Ani.AniPanel ani = new Ani.AniPanel(screen);
 		container.add(ani,new Integer(1));
+		
 		add(container);
 		setVisible(true);//프레임이 보일수있게
 		
-		ani.startAnimation(4,4,4,4,4);
+		ani.startAnimation(3,5,3,4,4,4,4);
 	}
 }
 	

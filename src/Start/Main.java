@@ -42,7 +42,6 @@ public class Main extends JFrame implements MouseListener{
 		background.setBounds(0, 0, 1600, 1000);//패널 크기 위치 설정
 		
 		container= new JLayeredPane();//메인 컨테이너 생성
-
 		container.add(button,1);//button 추가 뒤에 인덱스 파라미터가 클수록 위에 쌓임
 		container.add(background);//배경 패널 추가 인덱스를 설정안해주면 default로  0, 제일 밑에 쌓임
 
