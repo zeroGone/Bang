@@ -10,8 +10,9 @@ import javax.swing.JLayeredPane;
 public class GameFrame extends JFrame{
 	private Dimension screen;
 	private JLayeredPane container;
-	private final int MAXIMUM_NUM_OF_PEOPLE=7;
-	
+	private static final int MAXIMUM_NUM_OF_PEOPLE=7;
+	public static final int[][] 유저좌표 = {{760,750},{40,20},{520,20},{1000,20},{1480,20},{40,360},{2440,360}};
+
 	public GameFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//메인프레임을 닫아서 쓰레드가 실행됨을 방지하기위해 설정해줘야하는 메소드
 		setExtendedState(JFrame.MAXIMIZED_BOTH);//전체화면
@@ -72,6 +73,7 @@ public class GameFrame extends JFrame{
 		setVisible(true);//프레임이 보일수있게
 		
 		ani.startAnimation(3,5,3,4,4,4,4);
+//		ani.bangAnimation(1, 5, true);
 	}
 }
 	
