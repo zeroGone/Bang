@@ -3,9 +3,13 @@ package Game;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
 public class GameFrame extends JFrame{
 	private Dimension screen;
@@ -69,11 +73,48 @@ public class GameFrame extends JFrame{
 		Ani.AniPanel ani = new Ani.AniPanel(screen);
 		container.add(ani,new Integer(1));
 		
+		JPanel panel = new JPanel();
+		panel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
+		panel.setOpaque(false);
+		JButton button1 = new JButton("시작");
+		button1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ani.startAnimation(5,3,3,4,4,4,4);
+			}
+		});
+		
+		JButton button2 = new JButton("뱅");
+		button2.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ani.bangAnimation(1, 2, false);
+			}
+		});
+		
+		JButton button3 = new JButton("맥주");
+		button3.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ani.beerAnimation(1);
+			}
+		});
+		
+		JButton button4 = new JButton("강탈");
+		button4.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ani.takeAnimation(1, 2);
+			}
+		});
+		panel.add(button1);
+		panel.add(button2);
+		panel.add(button3);
+		panel.add(button4);
+		container.add(panel, new Integer(2));
 		add(container);
 		setVisible(true);//프레임이 보일수있게
 		
-		ani.startAnimation(3,5,3,4,4,4,4);
-//		ani.bangAnimation(1, 5, true);
 	}
 }
 	
