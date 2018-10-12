@@ -5,59 +5,72 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.File;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import Game.GameFrame;
 
 public class AniPanel extends JPanel{
-	public Thread È­°¡;
-	public Thread ¿¬ÁÖ°¡;
+	public Thread í™”ê°€;
 	private Dimension screen;
-	private ImageIcon Ä«µåµŞ¸é;
-	private ImageIcon ¹ğ;
-	private ImageIcon °­Å»;
-	private ImageIcon Æø¹ß;
-	private ImageIcon[] È¸ÇÇ;
-	private ImageIcon[] ¸ÆÁÖ;
+	public final Point[] ìœ ì €ìë¦¬ì¢Œí‘œ = {
+			new Point(760,750),
+			new Point(40,360),
+			new Point(40,20),
+			new Point(520,20),
+			new Point(1000,20),
+			new Point(1480,20),
+			new Point(2440,360)};
 	
+	private ImageIcon ë±;
+	private Clip clip;
+	private ImageIcon ì¹´ë“œë’·ë©´;
+	private ImageIcon ë±…;
+	private ImageIcon ê°•íƒˆ;
+	private ImageIcon í­ë°œ;
+	private ImageIcon[] íšŒí”¼;
+	private ImageIcon[] ë§¥ì£¼;
 	private String action;
 	private int x;
 	private int y;
 	
-	
-	//»ı¼ºÀÚ  È­¸é Å©±â ¹Ş°í, ÀÌ¹ÌÁö¸¦ ¼ÂÆÃÇØÁÜ
+	//ìƒì„±ì  í™”ë©´ í¬ê¸° ë°›ê³ , ì´ë¯¸ì§€ë¥¼ ì…‹íŒ…í•´ì¤Œ
 	public AniPanel(Dimension screen) {
 		setOpaque(false);
 		this.screen = screen;
 		this.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 
-		Ä«µåµŞ¸é=new ImageIcon("./image/Ani/back.jpg");
-		Ä«µåµŞ¸é=new ImageIcon(Ä«µåµŞ¸é.getImage().getScaledInstance(133, 200, Image.SCALE_SMOOTH));
+		ë± = new ImageIcon("./image/deck.jpg");
+		ë± = new ImageIcon(ë±.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
 		
-		¹ğ = new ImageIcon("./image/Ani/¹ğ.jpg");
+		ì¹´ë“œë’·ë©´=new ImageIcon("./image/Ani/back.jpg");
+		ì¹´ë“œë’·ë©´=new ImageIcon(ì¹´ë“œë’·ë©´.getImage().getScaledInstance(133, 200, Image.SCALE_SMOOTH));
 		
-		°­Å»=new ImageIcon("./image/Ani/°­Å».jpg");
-		Æø¹ß=new ImageIcon("./image/Ani/Æø¹ß.jpg");
-		È¸ÇÇ=new ImageIcon[]{
-				new ImageIcon("./image/Ani/È¸ÇÇ1.jpg"),
-				new ImageIcon("./image/Ani/È¸ÇÇ2.jpg")};
-		¸ÆÁÖ=new ImageIcon[]{
+		ë±… = new ImageIcon("./image/Ani/ë±….jpg");
+		
+		ê°•íƒˆ=new ImageIcon("./image/Ani/ê°•íƒˆ.jpg");
+		í­ë°œ=new ImageIcon("./image/Ani/í­ë°œ.jpg");
+		íšŒí”¼=new ImageIcon[]{
+				new ImageIcon("./image/Ani/íšŒí”¼1.jpg"),
+				new ImageIcon("./image/Ani/íšŒí”¼2.jpg")};
+		ë§¥ì£¼=new ImageIcon[]{
 				new ImageIcon("./image/Ani/beer1.jpg"),
 				new ImageIcon("./image/Ani/beer2.jpg"),
 				new ImageIcon("./image/Ani/beer3.jpg")};
 		
-		È­°¡ = new Thread() {
+		í™”ê°€ = new Thread() {
 			@Override
 			public void run() {
 				while(true) {
 					if(action.equals("start")) {
-						if(max<Ä«µåµ¹¸°È½¼ö) break;
-						Ä«µåµ¹¸®±â();
+						if(max<ì¹´ë“œëŒë¦°íšŸìˆ˜) break;
+						ì¹´ë“œëŒë¦¬ê¸°();
 						try {
 							Thread.sleep(1);
 						} catch (InterruptedException e) {
@@ -82,7 +95,7 @@ public class AniPanel extends JPanel{
 							File file = null;
 							if(evasion) {
 								try {
-									file = new File("./audio/È¸ÇÇ.wav");
+									file = new File("./audio/íšŒí”¼.wav");
 									AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 									clip = AudioSystem.getClip();
 									clip.open(stream);
@@ -93,7 +106,7 @@ public class AniPanel extends JPanel{
 								}
 							}else {
 								try {
-									file = new File("./audio/¹ğ.wav");
+									file = new File("./audio/ë±….wav");
 									AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 									clip = AudioSystem.getClip();
 									clip.open(stream);
@@ -138,7 +151,7 @@ public class AniPanel extends JPanel{
 							e.printStackTrace();
 						}
 						if(x==2) {
-							file = new File("./audio/¾²À¸À¾.wav");
+							file = new File("./audio/ì“°ìœ¼ì.wav");
 							try {
 								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 								clip = AudioSystem.getClip();
@@ -148,7 +161,7 @@ public class AniPanel extends JPanel{
 								e.printStackTrace();
 							}
 						}else if(x==4) {
-							file = new File("./audio/¸¶½Ã±â.wav");
+							file = new File("./audio/ë§ˆì‹œê¸°.wav");
 							try {
 								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 								clip = AudioSystem.getClip();
@@ -158,7 +171,7 @@ public class AniPanel extends JPanel{
 								e.printStackTrace();
 							}
 						}else if(x==9) {
-							file = new File("./audio/Æ®¸§.wav");
+							file = new File("./audio/íŠ¸ë¦„.wav");
 							try {
 								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 								clip = AudioSystem.getClip();
@@ -185,7 +198,7 @@ public class AniPanel extends JPanel{
 						}
 						if(x==10) {
 							try {
-								file = new File("./audio/°­Å»1.wav");
+								file = new File("./audio/ê°•íƒˆ1.wav");
 								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 								clip = AudioSystem.getClip();
 								clip.open(stream);
@@ -195,7 +208,7 @@ public class AniPanel extends JPanel{
 							}
 						}else if(x==50) {
 							try {
-								file = new File("./audio/°­Å»2.wav");
+								file = new File("./audio/ê°•íƒˆ2.wav");
 								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 								clip = AudioSystem.getClip();
 								clip.open(stream);
@@ -210,33 +223,16 @@ public class AniPanel extends JPanel{
 							break;
 						}
 						System.out.println(x);
-						x++;
 					}else if(action.equals("bang")) {
 						
 					}else if(action.equals("bang")) {
 						
 					}
 					repaint();
-					
+					x++;
 				}
-				System.out.println("³¡");
-				È­°¡.interrupt();
-			}
-		};
-		
-		¿¬ÁÖ°¡ = new Thread() {
-			@Override
-			public void run() {
-				clip.start();
-				while(true) {
-					try {
-						if(max==Ä«µåµ¹¸°È½¼ö) break;
-						Thread.sleep(540);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					clip.loop(1);
-				}
+				System.out.println("ë");
+				í™”ê°€.interrupt();
 			}
 		};
 		
@@ -244,91 +240,78 @@ public class AniPanel extends JPanel{
 		action = "";
 	}
 	
-	private int[] Ä«µåµé;
-	private Point[] Ä«µåÁÂÇ¥;
-	private int Ä«µåµ¹¸°È½¼ö;
-	private int max;
-	private Clip clip;
-	public void startAnimation(int... cards) {//½ÃÀÛ ¾Ö´Ï¸ŞÀÌ¼Ç
+	private int[] ì¹´ë“œê°œìˆ˜;
+	private Point[] ì¹´ë“œí˜„ì¬ì¢Œí‘œ;
+	private int max;//ì¹´ë“œë¥¼ ì œì¼ ë§ì´ ê°€ì§€ê³  ìˆëŠ” ê°œìˆ˜
+	private int ì¹´ë“œëŒë¦°íšŸìˆ˜;
+	
+	//ì‹œì‘ ì• ë‹ˆë©”ì´ì…˜, íŒŒë¼ë¯¸í„°ì¸ ë°°ì—´ì˜ ê°’ìœ¼ë¡œ ì¸ì›ìˆ˜ êµ¬ë¶„
+	//ìµœì†Œì¸ì› 4ëª…: 3,5,6 ë²ˆì§¸ ì›ì†Œ 0
+	//5ëª…: 3,6 ë²ˆì§¸ ì›ì†Œ 0
+	//6ëª…: 6ë²ˆì§¸ ì›ì†Œ 0
+	//7ëª…: ë°°ì—´ì˜ ëª¨ë“  ì›ì†Œë“¤ì´ 3ì´ìƒ
+	public void startAnimation(int... cards) throws Exception {
 		action="start";
 		
-		max = 0 ;
+		max = 0;
+		ì¹´ë“œëŒë¦°íšŸìˆ˜ = 0;
+		ì¹´ë“œê°œìˆ˜ = cards;//ì¹´ë“œ ê°œìˆ˜ë¥¼ ì €ì¥í•˜ê³ 
+		ì¹´ë“œí˜„ì¬ì¢Œí‘œ = new Point[cards.length];//ì¹´ë“œí˜„ì¬ì¢Œí‘œë“¤ì„ í¬ì¸íŠ¸ ë°°ì—´ë¡œë§Œë“ ë‹¤
+		
+		//ì¹´ë“œë¥¼ ê·¸ë¦¬ê¸°ìœ„í•œ ì¢Œí‘œì´ˆê¸°í™”
+		//ì¹´ë“œ ê°œìˆ˜ê°€ ì œì¼ ë§ì€ ìˆ˜ë¥¼ ì €ì¥
 		for(int i=0; i<cards.length; i++) {
-			if(max<cards[i]) max = i;
+			if(max<cards[i]) max = cards[i];
+			ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i] = new Point((int)screen.getWidth()/2-ì¹´ë“œë’·ë©´.getIconWidth()/2,(int)screen.getHeight()/2-ì¹´ë“œë’·ë©´.getIconHeight()/2);
 		}
 		
-		Ä«µåµé = cards;
+		//ì†Œë¦¬ ì„¸íŒ…í•˜ê³  loopë¡œ ëŒë¦°ë‹¤
+		File file = new File("./audio/ì¹´ë“œëŒë¦¬ê¸°.wav");
+		AudioInputStream stream = AudioSystem.getAudioInputStream(file);
+		clip = AudioSystem.getClip();
+		clip.open(stream);
+		clip.loop(max-1);
 		
-		Ä«µåÁÂÇ¥ = new Point[cards.length];
-		
-		for(int i=0; i<Ä«µåÁÂÇ¥.length; i++) {
-			Ä«µåÁÂÇ¥[i] = new Point((int)screen.getWidth()/2-Ä«µåµŞ¸é.getIconWidth()/2,(int)screen.getHeight()/2-Ä«µåµŞ¸é.getIconHeight()/2);
-		}
-		Ä«µåµ¹¸°È½¼ö = 0;
-		File file = new File("./audio/Ä«µåµ¹¸®±â.wav");
-		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-			clip = AudioSystem.getClip();
-			clip.open(stream);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		È­°¡.start();
-		¿¬ÁÖ°¡.start();
-		
+		//ê·¸ë¦¬ê¸° ì‹œì‘
+		í™”ê°€.start();
 	}
 	
 	private boolean[] check;
-	private void Ä«µåµ¹¸®±â() {
-		for(int i=0; i<Ä«µåµé.length; i++) {
-			if(Ä«µåµ¹¸°È½¼ö<Ä«µåµé[i]) {
-				if(i==0) {//¾Æ·¡
-					Ä«µåÁÂÇ¥[i].y++;
-				}else if(i==1) {//¸Ç¿ŞÂÊ
-					Ä«µåÁÂÇ¥[i].x-=2;
-				}else if(i==2) {//»ó´Ü¿ŞÂÊ±âÁØ 2¹øÂ°
-					if(check[0]) {
-						Ä«µåÁÂÇ¥[i].x--;
-						check[0]=false;
-					}else check[0]=true;
-					Ä«µåÁÂÇ¥[i].y--;
-				}else if(i==3) {//¸Ç¿À¸¥ÂÊ
-					Ä«µåÁÂÇ¥[i].x+=2;
-				}else if(i==4) {//»ó´Ü¿ŞÂÊ±âÁØ 3¹øÂ°
-					if(check[1]) {
-						Ä«µåÁÂÇ¥[i].x++;
-						check[1]=false;
-					}else check[1]=true;
-					Ä«µåÁÂÇ¥[i].y--;
-				}else if(i==5) {//»ó´Ü¿ŞÂÊ±âÁØ 1¹ø¤Š
-					Ä«µåÁÂÇ¥[i].x-=2;
-					Ä«µåÁÂÇ¥[i].y--;
-				}else if(i==6) {//»ó´Ü¿ŞÂÊ±âÁØ 4¹ø¤Š
-					Ä«µåÁÂÇ¥[i].x+=2;
-					Ä«µåÁÂÇ¥[i].y--;
-				}
-			}
+	private void ì¹´ë“œëŒë¦¬ê¸°() {
+		for(int i=0; i<ì¹´ë“œê°œìˆ˜.length; i++) {
+			if(i==0) ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].y+=2;//ë§¨ ì•„ë˜
+			else if(i==1) ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].x-=4;//ë§¨ ì™¼ìª½
+			else if(i==2) {//ìƒë‹¨ 1ë²ˆì§¸
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].x-=4;
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].y-=2;
+			}else if(i==3) {//ìƒë‹¨ 2ë²ˆì§¸
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].x--;
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].y-=2;
+			}else if(i==4) {//ìƒë‹¨ 3ë²ˆì§¸
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].x++;
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].y-=2;
+			}else if(i==5) {//ìƒë‹¨ 4ë²ˆì§¸
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].x+=4;
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].y-=2;
+			}else if(i==6) ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].x+=4;//ë§¨ ì˜¤ë¥¸ìª½
 		}
-
-		if(Ä«µåÁÂÇ¥[0].getY()==790||Ä«µåÁÂÇ¥[2].getY()==110||Ä«µåÁÂÇ¥[4].getY()==110||Ä«µåÁÂÇ¥[5].getY()==110||Ä«µåÁÂÇ¥[6].getY()==110||Ä«µåÁÂÇ¥[1].getX()==234||Ä«µåÁÂÇ¥[3].getX()==1554) {
-			for(int i=0; i<Ä«µåÁÂÇ¥.length; i++) {
-				Ä«µåÁÂÇ¥[i] = new Point((int)screen.getWidth()/2-Ä«µåµŞ¸é.getIconWidth()/2,(int)screen.getHeight()/2-Ä«µåµŞ¸é.getIconHeight()/2);
-			}
-			Ä«µåµ¹¸°È½¼ö++;
+		
+		if(ì¹´ë“œí˜„ì¬ì¢Œí‘œ[0].getY()==790) {
+			for(int i=0; i<ì¹´ë“œí˜„ì¬ì¢Œí‘œ.length; i++) 
+				ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].setLocation((int)screen.getWidth()/2-ì¹´ë“œë’·ë©´.getIconWidth()/2,(int)screen.getHeight()/2-ì¹´ë“œë’·ë©´.getIconHeight()/2);
+			ì¹´ë“œëŒë¦°íšŸìˆ˜++;
 		}
-
 	}
 	
 	private int[] caster;
 	private int[] goal;
 	private boolean evasion;
-	public void bangAnimation(int caster, int goal, boolean evasion) {//¹ğ ¾Ö´Ï¸ŞÀÌ¼Ç
+	public void bangAnimation(int caster, int goal, boolean evasion) {//ë±… ì• ë‹ˆë©”ì´ì…˜
 		action="bang";
-		this.caster=GameFrame.À¯ÀúÁÂÇ¥[caster-1];
-		this.goal=GameFrame.À¯ÀúÁÂÇ¥[goal-1];
+		this.caster=GameFrame.ìœ ì €ì¢Œí‘œ[caster-1];
+		this.goal=GameFrame.ìœ ì €ì¢Œí‘œ[goal-1];
 		this.evasion=evasion;
-		File file = new File("./audio/¹ğ¿ôÀ½.wav");
+		File file = new File("./audio/ë±…ì›ƒìŒ.wav");
 		try {
 			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 			clip = AudioSystem.getClip();
@@ -337,61 +320,66 @@ public class AniPanel extends JPanel{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		È­°¡.start();
+		í™”ê°€.start();
 	}
 	
-	public void beerAnimation(int caster) {//¸ÆÁÖ ¾Ö´Ï¸ŞÀÌ¼Ç
+	public void beerAnimation(int caster) {//ë§¥ì£¼ ì• ë‹ˆë©”ì´ì…˜
 		action="beer";
-		this.caster=GameFrame.À¯ÀúÁÂÇ¥[caster-1];
-		File file = new File("./audio/Äµµû±â.wav");
+		this.caster=GameFrame.ìœ ì €ì¢Œí‘œ[caster-1];
+		File file = new File("./audio/ìº”ë”°ê¸°.wav");
 		try {
 			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 			clip = AudioSystem.getClip();
 			clip.open(stream);
+			clip.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		È­°¡.start();
-		¿¬ÁÖ°¡.start();
+		í™”ê°€.start();
+//		ì—°ì£¼ê°€.start();
 	}
 
-	public void takeAnimation(int caster, int goal) {//°­Å» ¾Ö´Ï¸ŞÀÌ¼Ç
+	public void takeAnimation(int caster, int goal) {//ê°•íƒˆ ì• ë‹ˆë©”ì´ì…˜
 		action="take";
-		this.caster=GameFrame.À¯ÀúÁÂÇ¥[caster-1];
-		this.goal=GameFrame.À¯ÀúÁÂÇ¥[goal-1];
-		È­°¡.start();
+		this.caster=GameFrame.ìœ ì €ì¢Œí‘œ[caster-1];
+		this.goal=GameFrame.ìœ ì €ì¢Œí‘œ[goal-1];
+		í™”ê°€.start();
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Ä«µåµŞ¸é.paintIcon(this, g, (int)screen.getWidth()/2-Ä«µåµŞ¸é.getIconWidth()/2,(int)screen.getHeight()/2-Ä«µåµŞ¸é.getIconHeight()/2);
-
+		//ë±ì„ ì–¸ì œë‚˜ ê°€ìš´ë°ì— ê·¸ë¦¼
+		ë±.paintIcon(this, g, (int)screen.getWidth()/2-ë±.getIconWidth()/2, (int)screen.getHeight()/2-ë±.getIconHeight()/2);
+		
 		switch(action) {
-		case("start"): 
-			for(int i=0; i<Ä«µåµé.length; i++) Ä«µåµŞ¸é.paintIcon(this, g, (int)Ä«µåÁÂÇ¥[i].getX(), (int)Ä«µåÁÂÇ¥[i].getY()); 
+		case("start"):
+			for(int i=0; i<ì¹´ë“œê°œìˆ˜.length; i++) {
+				//ì¹´ë“œëŒë¦°íšŒìˆ˜ë³´ë‹¤ ì¹´ë“œê°œìˆ˜ê°€ í¬ë©´ ì•”ê²ƒë„ ì•ˆí•¨
+				if(ì¹´ë“œëŒë¦°íšŸìˆ˜<ì¹´ë“œê°œìˆ˜[i]) ì¹´ë“œë’·ë©´.paintIcon(this, g, (int)ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].getX(), (int)ì¹´ë“œí˜„ì¬ì¢Œí‘œ[i].getY()); 
+			}
 			break;
 		case("bang"):
-			if(x<2000) 	¹ğ.paintIcon(this, g, caster[0], caster[1]);
+			if(x<2000) 	ë±….paintIcon(this, g, caster[0], caster[1]);
 			else if(evasion) {
 				if(x<2007){
 					if(check[0]) {
-						È¸ÇÇ[0].paintIcon(this, g, goal[0], goal[1]);
+						íšŒí”¼[0].paintIcon(this, g, goal[0], goal[1]);
 						check[0]=false;
 					}else {
-						È¸ÇÇ[1].paintIcon(this, g, goal[0], goal[1]);
+						íšŒí”¼[1].paintIcon(this, g, goal[0], goal[1]);
 						check[0]=true;
 					}
 				}
 			}else if(x<3000){
-				Æø¹ß.paintIcon(this, g, goal[0], goal[1]);
+				í­ë°œ.paintIcon(this, g, goal[0], goal[1]);
 			}
 			break;
 		case("beer"): 
-			if(x<12) ¸ÆÁÖ[x%3].paintIcon(this, g, caster[0], caster[1]);
+			if(x<12) ë§¥ì£¼[x%3].paintIcon(this, g, caster[0], caster[1]);
 			break;
 		case("take"):
-			if(x<80) °­Å».paintIcon(this, g, caster[0], caster[1]);
+			if(x<80) ê°•íƒˆ.paintIcon(this, g, caster[0], caster[1]);
 			break;
 		}
 	}
