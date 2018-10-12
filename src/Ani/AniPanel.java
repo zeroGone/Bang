@@ -5,18 +5,13 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.File;
-import java.io.IOException;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import Game.GameFrame;
-
-public class AniPanel extends JPanel{
+public class AniPanel extends JPanel implements Runnable{
 	public Thread 화가;
 	private Dimension screen;
 	public final Point[] 유저자리좌표 = {
@@ -29,7 +24,6 @@ public class AniPanel extends JPanel{
 			new Point(2440,360)};
 	
 	private ImageIcon 덱;
-	private Clip clip;
 	private ImageIcon 카드뒷면;
 	private ImageIcon 뱅;
 	private ImageIcon 강탈;
@@ -37,8 +31,8 @@ public class AniPanel extends JPanel{
 	private ImageIcon[] 회피;
 	private ImageIcon[] 맥주;
 	private String action;
-	private int x;
-	private int y;
+	private Clip clip;
+	private int timer;
 	
 	//생성자  화면 크기 받고, 이미지를 셋팅해줌
 	public AniPanel(Dimension screen) {
@@ -46,6 +40,7 @@ public class AniPanel extends JPanel{
 		this.screen = screen;
 		this.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 
+		action = "";
 		덱 = new ImageIcon("./image/deck.jpg");
 		덱 = new ImageIcon(덱.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
 		
@@ -64,180 +59,18 @@ public class AniPanel extends JPanel{
 				new ImageIcon("./image/Ani/beer2.jpg"),
 				new ImageIcon("./image/Ani/beer3.jpg")};
 		
-		화가 = new Thread() {
-			@Override
-			public void run() {
-				while(true) {
-					if(action.equals("start")) {
-						if(max<카드돌린횟수) break;
-						카드돌리기();
-						try {
-							Thread.sleep(1);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}else if(action.equals("bang")) {
-						if(x<2000) {
-							if(check[0]) {
-								caster[1]+=30;
-								check[0]=false;
-							}else {
-								caster[1]-=30;
-								check[0]=true;
-								
-							}
-							try {
-								Thread.sleep(1);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-						}else if(x==2000) {
-							File file = null;
-							if(evasion) {
-								try {
-									file = new File("./audio/회피.wav");
-									AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-									clip = AudioSystem.getClip();
-									clip.open(stream);
-									clip.loop(5);
-									
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}else {
-								try {
-									file = new File("./audio/뱅.wav");
-									AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-									clip = AudioSystem.getClip();
-									clip.open(stream);
-									clip.start();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						}else {
-							if(evasion) {
-								try {
-									Thread.sleep(500);
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								if(x>2010) break;
-							}else {
-								if(check[0]) {
-									goal[0]+=(int)(Math.random()*10);
-									goal[1]+=(int)(Math.random()*10);
-									check[0]=false;
-								}else {
-									goal[0]-=(int)(Math.random()*10);
-									goal[1]-=(int)(Math.random()*10);
-									check[0]=true;
-								}
-								try {
-									Thread.sleep(1);
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-								if(x>3000) break;
-							}
-						}
-					}else if(action.equals("beer")) {
-						File file = null;
-						try {
-							Thread.sleep(500);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						if(x==2) {
-							file = new File("./audio/쓰으읍.wav");
-							try {
-								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-								clip = AudioSystem.getClip();
-								clip.open(stream);
-								clip.start();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}else if(x==4) {
-							file = new File("./audio/마시기.wav");
-							try {
-								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-								clip = AudioSystem.getClip();
-								clip.open(stream);
-								clip.start();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}else if(x==9) {
-							file = new File("./audio/트름.wav");
-							try {
-								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-								clip = AudioSystem.getClip();
-								clip.open(stream);
-								clip.start();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}else if(x==12) break;
-					}else if(action.equals("take")) {
-						if(check[0]) {
-							caster[1]+=10;
-							check[0]=false;
-						}else {
-							caster[1]-=10;
-							check[0]=true;
-							
-						}
-						File file = null;
-						try {
-							Thread.sleep(50);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						if(x==10) {
-							try {
-								file = new File("./audio/강탈1.wav");
-								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-								clip = AudioSystem.getClip();
-								clip.open(stream);
-								clip.start();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}else if(x==50) {
-							try {
-								file = new File("./audio/강탈2.wav");
-								AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-								clip = AudioSystem.getClip();
-								clip.open(stream);
-								clip.start();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}else if(x==55) {
-							caster[0]=goal[0];
-							caster[1]=goal[1];
-						}else if(x==80) {
-							break;
-						}
-						System.out.println(x);
-					}else if(action.equals("bang")) {
-						
-					}else if(action.equals("bang")) {
-						
-					}
-					repaint();
-					x++;
-				}
-				System.out.println("끝");
-				화가.interrupt();
-			}
-		};
-		
-		check = new boolean[2];
-		action = "";
+		화가 = new Thread(this);
+	}
+	
+	private void clipSet(String fileName) {
+		File file = new File("./audio/"+fileName+".wav");
+		try {
+			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
+			clip = AudioSystem.getClip();
+			clip.open(stream);
+		} catch (Exception e) {
+			System.out.println("오디어파일없음");
+		}
 	}
 	
 	private int[] 카드개수;
@@ -250,7 +83,7 @@ public class AniPanel extends JPanel{
 	//5명: 3,6 번째 원소 0
 	//6명: 6번째 원소 0
 	//7명: 배열의 모든 원소들이 3이상
-	public void startAnimation(int... cards) throws Exception {
+	public void startAnimation(int... cards){
 		action="start";
 		
 		max = 0;
@@ -266,17 +99,13 @@ public class AniPanel extends JPanel{
 		}
 		
 		//소리 세팅하고 loop로 돌린다
-		File file = new File("./audio/카드돌리기.wav");
-		AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-		clip = AudioSystem.getClip();
-		clip.open(stream);
+		clipSet("카드돌리기");
 		clip.loop(max-1);
-		
 		//그리기 시작
 		화가.start();
 	}
 	
-	private boolean[] check;
+	private boolean check;
 	private void 카드돌리기() {
 		for(int i=0; i<카드개수.length; i++) {
 			if(i==0) 카드현재좌표[i].y+=2;//맨 아래
@@ -303,13 +132,15 @@ public class AniPanel extends JPanel{
 		}
 	}
 	
-	private int[] caster;
-	private int[] goal;
+	private int caster;
+	private int goal;
 	private boolean evasion;
-	public void bangAnimation(int caster, int goal, boolean evasion) {//뱅 애니메이션
+	
+	//뱅 애니메이션 : 시전자, 목표, 회피여부
+	public void bangAnimation(int caster, int goal, boolean evasion) {
 		action="bang";
-		this.caster=GameFrame.유저좌표[caster-1];
-		this.goal=GameFrame.유저좌표[goal-1];
+		this.caster=caster;
+		this.goal=goal;
 		this.evasion=evasion;
 		File file = new File("./audio/뱅웃음.wav");
 		try {
@@ -320,29 +151,24 @@ public class AniPanel extends JPanel{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		timer=0;
 		화가.start();
 	}
 	
 	public void beerAnimation(int caster) {//맥주 애니메이션
 		action="beer";
-		this.caster=GameFrame.유저좌표[caster-1];
-		File file = new File("./audio/캔따기.wav");
-		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-			clip = AudioSystem.getClip();
-			clip.open(stream);
-			clip.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.caster=caster;
+		clipSet("캔따기");
+		clip.start();
+		timer = 0;
 		화가.start();
-//		연주가.start();
 	}
 
 	public void takeAnimation(int caster, int goal) {//강탈 애니메이션
 		action="take";
-		this.caster=GameFrame.유저좌표[caster-1];
-		this.goal=GameFrame.유저좌표[goal-1];
+		this.caster=caster;
+		this.goal=goal;
+		timer = 0;
 		화가.start();
 	}
 
@@ -356,31 +182,142 @@ public class AniPanel extends JPanel{
 		case("start"):
 			for(int i=0; i<카드개수.length; i++) {
 				//카드돌린회수보다 카드개수가 크면 암것도 안함
-				if(카드돌린횟수<카드개수[i]) 카드뒷면.paintIcon(this, g, (int)카드현재좌표[i].getX(), (int)카드현재좌표[i].getY()); 
+				if(카드돌린횟수<카드개수[i]) 카드뒷면.paintIcon(this, g, 카드현재좌표[i].x, 카드현재좌표[i].y); 
 			}
 			break;
 		case("bang"):
-			if(x<2000) 	뱅.paintIcon(this, g, caster[0], caster[1]);
+			if(timer<2000) 	뱅.paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
 			else if(evasion) {
-				if(x<2007){
-					if(check[0]) {
-						회피[0].paintIcon(this, g, goal[0], goal[1]);
-						check[0]=false;
+				if(timer<2007){
+					if(check) {
+						회피[0].paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
+						check=false;
 					}else {
-						회피[1].paintIcon(this, g, goal[0], goal[1]);
-						check[0]=true;
+						회피[1].paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
+						check=true;
 					}
 				}
-			}else if(x<3000){
-				폭발.paintIcon(this, g, goal[0], goal[1]);
+			}else if(timer<3000){
+				폭발.paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
 			}
 			break;
 		case("beer"): 
-			if(x<12) 맥주[x%3].paintIcon(this, g, caster[0], caster[1]);
+			if(timer<12) 맥주[timer%3].paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
 			break;
 		case("take"):
-			if(x<80) 강탈.paintIcon(this, g, caster[0], caster[1]);
+			if(timer<50) 강탈.paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
+			else if(timer<80) 강탈.paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
 			break;
+		}
+	}
+
+	@Override
+	public void run() {
+		while(!Thread.interrupted()) {
+			if(action.equals("start")) {
+				if(max<카드돌린횟수) break;
+				카드돌리기();
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}else if(action.equals("bang")) {
+				if(timer<2000) {
+					if(check) {
+						유저자리좌표[caster].y+=30;
+						check=false;
+					}else {
+						유저자리좌표[caster].y-=30;
+						check=true;
+					}
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}else if(timer==2000) {
+					if(evasion) {
+						clipSet("회피");
+						clip.loop(5);
+					}else {
+						clipSet("뱅");
+						clip.start();
+					}
+				}else {
+					if(evasion) {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						if(timer>2010) break;
+					}else {
+						if(check) {
+							유저자리좌표[goal].x+=(int)(Math.random()*10);
+							유저자리좌표[goal].y+=(int)(Math.random()*10);
+							check=false;
+						}else {
+							유저자리좌표[goal].x-=(int)(Math.random()*10);
+							유저자리좌표[goal].y-=(int)(Math.random()*10);
+							check=true;
+						}
+						try {
+							Thread.sleep(1);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if(timer>3000) break;
+					}
+				}
+			}else if(action.equals("beer")) {
+				try {
+					Thread.sleep(500);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if(timer==2) {
+					clipSet("쓰으읍");
+					clip.start();
+				}else if(timer==4) {
+					clipSet("마시기");
+					clip.start();
+				}else if(timer==9) {
+					clipSet("트름");
+					clip.start();
+				}
+				else if(timer==12) break;
+			}else if(action.equals("take")) {
+				try {
+					Thread.sleep(50);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if(check) {
+					if(timer<50) 유저자리좌표[caster].y+=10;
+					else 유저자리좌표[goal].y+=10;
+					check=false;
+				}else {
+					if(timer<50) 유저자리좌표[caster].y-=10;
+					else 유저자리좌표[goal].y-=10;
+					check=true;
+				}
+				if(timer==10) {
+					clipSet("강탈1");
+					clip.start();
+				}else if(timer==50) {
+					clipSet("강탈2");
+					clip.start();
+				}else if(timer==80) break;
+			}else if(action.equals("bang")) {
+				
+			}else if(action.equals("bang")) {
+				
+			}
+			System.out.println(timer);
+			repaint();
+			timer++;
 		}
 	}
 }

@@ -79,11 +79,7 @@ public class GameFrame extends JFrame{
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					ani.startAnimation(5,3,0,4,4,0,4);
-				} catch (Exception e) {
-					System.out.println("음악파일없음");
-				}
+				ani.startAnimation(5,3,0,4,4,0,4);
 			}
 		});
 		
@@ -91,7 +87,7 @@ public class GameFrame extends JFrame{
 		button2.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				ani.bangAnimation(1, 2, false);
+				ani.bangAnimation(1, 2, true);
 			}
 		});
 		
