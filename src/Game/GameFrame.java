@@ -24,27 +24,6 @@ public class GameFrame extends JFrame{
 		screen = Toolkit.getDefaultToolkit().getScreenSize();//내 노트북 : 1920X1080
 
 		container = new JLayeredPane();
-//			@Override
-//			public void paintComponent(Graphics g) {//패널을 기본적으로 그리는 메소드를 오버라이드
-//				super.paintComponent(g);
-//				g.setColor(new Color(0x964B00));
-//				int radius = 10;
-//				int step = 4;
-//				int forLen = (radius / step);
-//				for (int i = 0; i < forLen; i++)
-//				    g.fillOval(radius - i * step, radius - i * step, i * step * 2, i * step * 2);
-//				try {
-//					BufferedImage image = ImageIO.read(new File("./image/배경.jpg"));
-//					g.drawImage(image, 0, 0, null);//받아온 ImageIcon의 getImage로 받아서 이미지를 0,0 위치에 그린다
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				setOpaque(false);
-//				ImageIcon image = new ImageIcon("./image/배경.jpg");//배경이미지 불러와서
-//				image = new ImageIcon(image.getImage().getScaledInstance((int)screen.getWidth(), (int)screen.getHeight(), Image.SCALE_SMOOTH));//크기 다시설정해주고
-//			}
-//		};//전체패널
 		container.setOpaque(true);
 		container.setBackground(Color.white);
 		container.setLayout(null);
@@ -76,12 +55,16 @@ public class GameFrame extends JFrame{
 		panel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 		panel.setOpaque(false);
 		JButton button1 = new JButton("시작");
-		button1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				ani.startAnimation(5,3,0,4,4,0,4);
-			}
-		});
+		
+//		button1.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent arg0) {
+//				ani.startAnimation(5,3,0,4,4,0,4);
+//			}
+//		});
+//		
+		//람다식 
+		button1.addActionListener(e -> ani.startAnimation(5,3,0,4,4,0,4));
 		
 		JButton button2 = new JButton("뱅");
 		button2.addActionListener(new ActionListener(){
@@ -106,10 +89,24 @@ public class GameFrame extends JFrame{
 				ani.takeAnimation(1, 2);
 			}
 		});
+		
+		JButton button5 = new JButton("기관총");
+		button5.addActionListener(e->ani.machineGunAnimation());
+		
+		JButton button6 = new JButton("역마차");
+		button6.addActionListener(e->ani.stageCoachAnimation());
+		
+		JButton button7 = new JButton("웰스파고은행");
+		button7.addActionListener(e->ani.bankAnimation());
+		
 		panel.add(button1);
 		panel.add(button2);
 		panel.add(button3);
 		panel.add(button4);
+		panel.add(button5);
+		panel.add(button6);
+		panel.add(button7);
+
 		container.add(panel, new Integer(2));
 		add(container);
 		setVisible(true);//프레임이 보일수있게

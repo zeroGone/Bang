@@ -30,9 +30,13 @@ public class AniPanel extends JPanel implements Runnable{
 	private ImageIcon 폭발;
 	private ImageIcon[] 회피;
 	private ImageIcon[] 맥주;
+	private ImageIcon 역마차;
+	private ImageIcon[] 웰스파고은행;
+	
 	private String action;
 	private Clip clip;
 	private int timer;
+	private Point point;
 	
 	//생성자  화면 크기 받고, 이미지를 셋팅해줌
 	public AniPanel(Dimension screen) {
@@ -59,7 +63,16 @@ public class AniPanel extends JPanel implements Runnable{
 				new ImageIcon("./image/Ani/beer2.jpg"),
 				new ImageIcon("./image/Ani/beer3.jpg")};
 		
-		화가 = new Thread(this);
+		역마차 = new ImageIcon("./image/Ani/역마차.jpg");
+		역마차 = new ImageIcon(역마차.getImage().getScaledInstance(600, 400, Image.SCALE_SMOOTH));
+		
+		웰스파고은행 = new ImageIcon[] {
+				new ImageIcon("./image/Ani/웰스파고은행1.png"),
+				new ImageIcon("./image/Ani/웰스파고은행2.png"),
+				new ImageIcon("./image/Ani/웰스파고은행3.png"),
+				new ImageIcon("./image/Ani/웰스파고은행4.png"),
+				new ImageIcon("./image/Ani/웰스파고은행5.png")};
+		
 	}
 	
 	private void clipSet(String fileName) {
@@ -102,6 +115,7 @@ public class AniPanel extends JPanel implements Runnable{
 		clipSet("카드돌리기");
 		clip.loop(max-1);
 		//그리기 시작
+		화가 = new Thread(this);
 		화가.start();
 	}
 	
@@ -152,6 +166,8 @@ public class AniPanel extends JPanel implements Runnable{
 			e.printStackTrace();
 		}
 		timer=0;
+		화가 = new Thread(this);
+
 		화가.start();
 	}
 	
@@ -161,6 +177,8 @@ public class AniPanel extends JPanel implements Runnable{
 		clipSet("캔따기");
 		clip.start();
 		timer = 0;
+		화가 = new Thread(this);
+
 		화가.start();
 	}
 
@@ -169,6 +187,35 @@ public class AniPanel extends JPanel implements Runnable{
 		this.caster=caster;
 		this.goal=goal;
 		timer = 0;
+		화가 = new Thread(this);
+		화가.start();
+	}
+
+	public void machineGunAnimation() {
+		action = "machineGun";
+		timer = 0;
+		clipSet("기관총");
+		clip.start();
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
+	public void stageCoachAnimation() {
+		action = "stageCoach";
+		timer = 0;
+		clipSet("역마차");
+		clip.start();
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
+	public void bankAnimation() {
+		action = "bank";
+		timer = 0;
+		point = new Point((int)screen.getWidth()/2-웰스파고은행[2].getIconWidth()/2, (int)screen.getHeight()/2-웰스파고은행[2].getIconHeight()/2);
+		clipSet("웰스파고은행");
+		clip.loop(3);
+		화가 = new Thread(this);
 		화가.start();
 	}
 
@@ -208,12 +255,21 @@ public class AniPanel extends JPanel implements Runnable{
 			if(timer<50) 강탈.paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
 			else if(timer<80) 강탈.paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
 			break;
+		case("machineGun"):
+			if(timer<48) for(int i=0; i<10; i++) 폭발.paintIcon(this, g, (int)(Math.random()*1920), (int)(Math.random()*1020));
+			break;
+		case("stageCoach"):
+			if(timer<1100) 역마차.paintIcon(this, g, 유저자리좌표[1].x, 유저자리좌표[1].y);
+			break;
+		case("bank"):
+			if(timer<95) 웰스파고은행[timer%5].paintIcon(this, g, point.x, point.y);
+			break;
 		}
 	}
 
 	@Override
 	public void run() {
-		while(!Thread.interrupted()) {
+		while(true) {
 			if(action.equals("start")) {
 				if(max<카드돌린횟수) break;
 				카드돌리기();
@@ -310,10 +366,28 @@ public class AniPanel extends JPanel implements Runnable{
 					clipSet("강탈2");
 					clip.start();
 				}else if(timer==80) break;
-			}else if(action.equals("bang")) {
-				
-			}else if(action.equals("bang")) {
-				
+			}else if(action.equals("machineGun")) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(timer==48) break;
+			}else if(action.equals("stageCoach")) {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				유저자리좌표[1].x++;
+				if(timer==1100) break;
+			}else if(action.equals("bank")) {
+				try {
+					Thread.sleep(30);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(timer==95) break;
 			}
 			System.out.println(timer);
 			repaint();
