@@ -99,6 +99,24 @@ public class GameFrame extends JFrame{
 		JButton button7 = new JButton("웰스파고은행");
 		button7.addActionListener(e->ani.bankAnimation());
 		
+		JButton button8 = new JButton("인디언");
+		button8.addActionListener(e->ani.indianAnimation());
+
+		JButton button9 = new JButton("다이너마이트");
+		button9.addActionListener(e->ani.dynamiteAnimation(0,false));
+		
+		JButton button10 = new JButton("감옥");
+		button10.addActionListener(e->ani.prisonAnimation(0));
+		
+		JButton button11 = new JButton("결투");
+		button11.addActionListener(e->ani.fightAnimation());
+		
+		JButton button12 = new JButton("히트");
+		button12.addActionListener(e->ani.hitAnimation(0));
+		
+		JButton button13 = new JButton("죽음");
+		button13.addActionListener(e->ani.dieAnimation(0));
+		
 		panel.add(button1);
 		panel.add(button2);
 		panel.add(button3);
@@ -106,6 +124,12 @@ public class GameFrame extends JFrame{
 		panel.add(button5);
 		panel.add(button6);
 		panel.add(button7);
+		panel.add(button8);
+		panel.add(button9);
+		panel.add(button10);
+		panel.add(button11);
+		panel.add(button12);
+		panel.add(button13);
 
 		container.add(panel, new Integer(2));
 		add(container);

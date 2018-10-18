@@ -2,9 +2,11 @@ package Ani;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.File;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -32,12 +34,30 @@ public class AniPanel extends JPanel implements Runnable{
 	private ImageIcon[] 맥주;
 	private ImageIcon 역마차;
 	private ImageIcon[] 웰스파고은행;
+	private ImageIcon 인디언;
+	private ImageIcon 다이너마이트;
+	private ImageIcon 핵폭발;
+	private ImageIcon 감옥;
+	private ImageIcon 결투;
+	private ImageIcon 해골;
 	
 	private String action;
 	private Clip clip;
 	private int timer;
 	private Point point;
 	
+	//오디오 파일 셋팅 메소드
+	private void clipSet(String fileName) {
+		File file = new File("./audio/"+fileName+".wav");
+		try {
+			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
+			clip = AudioSystem.getClip();
+			clip.open(stream);
+		} catch (Exception e) {
+			System.out.println("오디어파일없음");
+		}
+	}
+
 	//생성자  화면 크기 받고, 이미지를 셋팅해줌
 	public AniPanel(Dimension screen) {
 		setOpaque(false);
@@ -45,7 +65,7 @@ public class AniPanel extends JPanel implements Runnable{
 		this.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 
 		action = "";
-		덱 = new ImageIcon("./image/deck.jpg");
+		덱 = new ImageIcon("./image/Ani/deck.jpg");
 		덱 = new ImageIcon(덱.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
 		
 		카드뒷면=new ImageIcon("./image/Ani/back.jpg");
@@ -73,17 +93,20 @@ public class AniPanel extends JPanel implements Runnable{
 				new ImageIcon("./image/Ani/웰스파고은행4.png"),
 				new ImageIcon("./image/Ani/웰스파고은행5.png")};
 		
-	}
-	
-	private void clipSet(String fileName) {
-		File file = new File("./audio/"+fileName+".wav");
-		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-			clip = AudioSystem.getClip();
-			clip.open(stream);
-		} catch (Exception e) {
-			System.out.println("오디어파일없음");
-		}
+		인디언=new ImageIcon("./image/Ani/인디언.jpg");
+		인디언=new ImageIcon(인디언.getImage().getScaledInstance(600, 400, Image.SCALE_SMOOTH));
+		
+		다이너마이트=new ImageIcon("./image/Ani/다이너마이트.jpg");
+		핵폭발 =new ImageIcon("./image/Ani/핵폭발.jpg");
+		핵폭발 =new ImageIcon(핵폭발.getImage().getScaledInstance(400, 300, Image.SCALE_SMOOTH));
+		
+		감옥 = new ImageIcon("./image/Ani/감옥.jpg");
+		감옥 =new ImageIcon(감옥.getImage().getScaledInstance(400, 300, Image.SCALE_SMOOTH));
+		
+		결투=new ImageIcon("./image/Ani/결투.png");
+		결투=new ImageIcon(결투.getImage().getScaledInstance(600, 400, Image.SCALE_SMOOTH));
+		
+		해골=new ImageIcon("./image/Ani/해골.jpg");
 	}
 	
 	private int[] 카드개수;
@@ -156,18 +179,10 @@ public class AniPanel extends JPanel implements Runnable{
 		this.caster=caster;
 		this.goal=goal;
 		this.evasion=evasion;
-		File file = new File("./audio/뱅웃음.wav");
-		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-			clip = AudioSystem.getClip();
-			clip.open(stream);
-			clip.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		clipSet("뱅웃음");
+		clip.start();
 		timer=0;
 		화가 = new Thread(this);
-
 		화가.start();
 	}
 	
@@ -178,7 +193,6 @@ public class AniPanel extends JPanel implements Runnable{
 		clip.start();
 		timer = 0;
 		화가 = new Thread(this);
-
 		화가.start();
 	}
 
@@ -203,6 +217,7 @@ public class AniPanel extends JPanel implements Runnable{
 	public void stageCoachAnimation() {
 		action = "stageCoach";
 		timer = 0;
+		point = new Point(유저자리좌표[1].x, 유저자리좌표[1].y);
 		clipSet("역마차");
 		clip.start();
 		화가 = new Thread(this);
@@ -219,12 +234,74 @@ public class AniPanel extends JPanel implements Runnable{
 		화가.start();
 	}
 
+	public void indianAnimation() {
+		action = "indian";
+		timer = 0;
+		point = new Point(유저자리좌표[1].x, 유저자리좌표[1].y);
+		clipSet("인디언");
+		clip.start();
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
+	public void dynamiteAnimation(int caster, boolean check) {
+		action="dynamite";
+		this.caster=caster;
+		this.check=check;
+		point = new Point(0,0);
+		clipSet("퓨즈");
+		clip.start();
+		timer = 0;
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
+	public void prisonAnimation(int goal) {
+		action="prison";
+		this.goal=goal;
+		clipSet("감옥");
+		clip.start();
+		timer = 0;
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
+	public void fightAnimation() {
+		action="fight";
+		clipSet("결투");
+		clip.start();
+		point= new Point((int)screen.getWidth()/2-결투.getIconWidth()/2,100);
+		timer = 0;
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
+	public void hitAnimation(int goal) {
+		action="hit";
+		this.goal=goal;
+		timer = 0;
+		clipSet("뱅");
+		clip.start();
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
+	public void dieAnimation(int caster) {
+		action="die";
+		this.caster=caster;
+		timer = 0;
+		clipSet("죽음");
+		clip.start();
+		화가 = new Thread(this);
+		화가.start();
+	}
+	
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		//덱을 언제나 가운데에 그림
 		덱.paintIcon(this, g, (int)screen.getWidth()/2-덱.getIconWidth()/2, (int)screen.getHeight()/2-덱.getIconHeight()/2);
-		
+		repaint();
 		switch(action) {
 		case("start"):
 			for(int i=0; i<카드개수.length; i++) {
@@ -233,36 +310,55 @@ public class AniPanel extends JPanel implements Runnable{
 			}
 			break;
 		case("bang"):
-			if(timer<2000) 	뱅.paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
+			if(timer<2000) 	뱅.paintIcon(this, g, 유저자리좌표[caster].x+뱅.getIconWidth()/3, 유저자리좌표[caster].y+뱅.getIconHeight()/3);
 			else if(evasion) {
 				if(timer<2007){
 					if(check) {
-						회피[0].paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
+						회피[0].paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y+20);
 						check=false;
 					}else {
-						회피[1].paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
+						회피[1].paintIcon(this, g, 유저자리좌표[goal].x+회피[0].getIconWidth()/2, 유저자리좌표[goal].y+20);
 						check=true;
 					}
 				}
 			}else if(timer<3000){
-				폭발.paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
+				폭발.paintIcon(this, g, 유저자리좌표[goal].x+폭발.getIconWidth()/3, 유저자리좌표[goal].y+폭발.getIconWidth()/3);
 			}
 			break;
 		case("beer"): 
-			if(timer<12) 맥주[timer%3].paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
+			if(timer<12) 맥주[timer%3].paintIcon(this, g, 유저자리좌표[caster].x+맥주[0].getIconWidth()/2, 유저자리좌표[caster].y+20);
 			break;
 		case("take"):
-			if(timer<50) 강탈.paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
-			else if(timer<80) 강탈.paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
+			if(timer<50) 강탈.paintIcon(this, g, 유저자리좌표[caster].x+강탈.getIconWidth()/2, 유저자리좌표[caster].y+강탈.getIconHeight()/3);
+			else if(timer<80) 강탈.paintIcon(this, g, 유저자리좌표[goal].x+강탈.getIconWidth()/2, 유저자리좌표[goal].y+강탈.getIconHeight()/3);
 			break;
 		case("machineGun"):
 			if(timer<48) for(int i=0; i<10; i++) 폭발.paintIcon(this, g, (int)(Math.random()*1920), (int)(Math.random()*1020));
 			break;
 		case("stageCoach"):
-			if(timer<1100) 역마차.paintIcon(this, g, 유저자리좌표[1].x, 유저자리좌표[1].y);
+			if(timer<1100) 역마차.paintIcon(this, g, point.x, point.y);
 			break;
 		case("bank"):
 			if(timer<95) 웰스파고은행[timer%5].paintIcon(this, g, point.x, point.y);
+			break;
+		case("indian"):
+			if(timer<1150) 인디언.paintIcon(this, g, point.x, point.y);
+			break;
+		case("dynamite"):
+			if(timer<3) 다이너마이트.paintIcon(this, g, 유저자리좌표[caster].x+150, 유저자리좌표[caster].y);
+			else if(check&&timer<25) 핵폭발.paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
+			break;
+		case("prison"):
+			if(timer<5) 감옥.paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
+			break;
+		case("fight"):
+			if(timer<250) 결투.paintIcon(this, g, point.x, point.y);
+			break;
+		case("hit"):
+			if(timer<1000) 폭발.paintIcon(this, g, 유저자리좌표[caster].x+폭발.getIconWidth()/3, 유저자리좌표[caster].y+폭발.getIconWidth()/3);
+			break;
+		case("die"):
+			if(timer<4) 해골.paintIcon(this, g, 유저자리좌표[caster].x+해골.getIconWidth()/3, 유저자리좌표[caster].y+20);
 			break;
 		}
 	}
@@ -379,7 +475,7 @@ public class AniPanel extends JPanel implements Runnable{
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				유저자리좌표[1].x++;
+				point.x++;
 				if(timer==1100) break;
 			}else if(action.equals("bank")) {
 				try {
@@ -388,9 +484,66 @@ public class AniPanel extends JPanel implements Runnable{
 					e.printStackTrace();
 				}
 				if(timer==95) break;
+			}else if(action.equals("indian")) {
+				try {
+					Thread.sleep(9);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				point.x++;
+				if(timer==1150) break;
+			}else if(action.equals("dynamite")) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(timer==3) {
+					if(check) {
+						clipSet("다이너마이트");
+						clip.start();
+					}else break;
+				}else if(timer==25) break;
+			}else if(action.equals("prison")) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(timer==5) break;
+			}else if(action.equals("fight")) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				point.y++;
+				if(timer==250) break;
+			}else if(action.equals("hit")) {
+				if(check) {
+					유저자리좌표[goal].x+=(int)(Math.random()*10);
+					유저자리좌표[goal].y+=(int)(Math.random()*10);
+					check=false;
+				}else {
+					유저자리좌표[goal].x-=(int)(Math.random()*10);
+					유저자리좌표[goal].y-=(int)(Math.random()*10);
+					check=true;
+				}
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(timer==1000) break;
+			}else if(action.equals("die")) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if(timer==4) break;
 			}
 			System.out.println(timer);
-			repaint();
 			timer++;
 		}
 	}
