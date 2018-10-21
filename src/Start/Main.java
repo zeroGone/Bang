@@ -1,19 +1,37 @@
 package Start;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
 
 public class Main extends JFrame implements MouseListener{
 	private JLayeredPane container;//패널들을 쌓아서 넣을 수 있게 기본 패널이될 JLayeredPane
+	private JPanel chat;//대기방 채팅패널
+	private JPanel roomList;//대기방 리스트패널
+	private JPanel userList;//대기방 유저리스트패널
 	private JButton button;//시작화면의 버튼
 	private JPanel background;//배경 패널
 	private ImageIcon image;
@@ -56,17 +74,84 @@ public class Main extends JFrame implements MouseListener{
 	}
 	
 	public static void main(String[] args) {
-//		new Main();
-		new Game.GameFrame();
+		new Main();
+//		new Game.GameFrame();
 	}
 
+	public void userAdd(String name) {
+		JPanel user = new JPanel();
+		user.setLayout(new BorderLayout());
+		user.setBorder(new BevelBorder(BevelBorder.RAISED));
+		
+		ImageIcon userImage=new ImageIcon("./image/user.png");
+		userImage=new ImageIcon(userImage.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+		
+		JTextArea userName= new JTextArea(name);
+		userName.setFont(new Font(null,0,25));
+		userName.setEditable(false);
+		
+		user.add(new JLabel(userImage),"West");
+		user.add(userName);
+		
+		userList.add(user);
+		this.revalidate();
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		String input = (String)JOptionPane.showInputDialog(this,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
-		
-		if(input==null);//NullPointException 잡아줌
-		else if(input.length()==0) JOptionPane.showMessageDialog(this, "닉네임을 입력하세요", "경고", JOptionPane.WARNING_MESSAGE);
-		else System.out.println(input);
+		try {
+			String nick = (String)JOptionPane.showInputDialog(this,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
+			if(nick!=null) {
+				if(nick.length()==0) nick = "Unknown";
+				User.SocketReceiver user = new User.SocketReceiver(this);
+				user.setNick(nick);
+				
+				container.removeAll();
+
+				//대기방 리스트 패널 설정
+				roomList = new JPanel();
+				roomList.setBackground(Color.white);
+				roomList.setBorder(BorderFactory.createTitledBorder("방목록"));
+				roomList.setBounds(100,100,1000,450);
+				roomList.setLayout(new BoxLayout(roomList,BoxLayout.Y_AXIS));
+				
+				//대기방 유저리스트 패널 설정
+				JPanel userListPanel = new JPanel();
+				userListPanel.setBorder(BorderFactory.createTitledBorder("유저목록"));
+				userListPanel.setBackground(Color.WHITE);
+				userListPanel.setBounds(1150, 100, 350, 450);
+				userList = new JPanel();
+				userListPanel.add(userList);
+				userList.setLayout(new BoxLayout(userList,BoxLayout.Y_AXIS));
+
+				//대기방 채팅패널 설정
+				chat = new JPanel();
+				chat.setLayout(new BorderLayout());//레이아웃 BorderLayout으로 지정
+				chat.setBounds(100, 600, 1400, 300);//크기 위치 지정
+				chat.setBackground(Color.WHITE);//배경색 지정
+				chat.setOpaque(false);
+				JTextArea output = new JTextArea();//텍스트에이리어 객체생성
+				output.setEditable(false);//텍스트에이리어에 입력못하게함
+				JTextField input = new JTextField();//텍스트필드 객체생성
+				JScrollPane scroll = new JScrollPane(output);//텍스트에이리어 스크롤 되기위한 JScrollPane 클래스
+				input.addActionListener(new ActionListener() {//엔터키 이벤트리스너
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						output.append(input.getText()+"\n");//내용을 출력해주고
+						input.setText("");//입력을 초기화해줌
+					}
+				});
+				chat.add(scroll);
+				chat.add(input, "South");//입력필드를 남쪽에 추가
+
+				container.add(roomList,1);
+				container.add(userListPanel,1);
+				container.add(chat,1);
+				this.revalidate();
+			}
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(this, " 서버가 열려있지 않았습니다.", "에러", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	//버튼 영역 들어갈시

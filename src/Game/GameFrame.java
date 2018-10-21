@@ -103,7 +103,7 @@ public class GameFrame extends JFrame{
 		button8.addActionListener(e->ani.indianAnimation());
 
 		JButton button9 = new JButton("다이너마이트");
-		button9.addActionListener(e->ani.dynamiteAnimation(0,false));
+		button9.addActionListener(e->ani.dynamiteAnimation(0,true));
 		
 		JButton button10 = new JButton("감옥");
 		button10.addActionListener(e->ani.prisonAnimation(0));

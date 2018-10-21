@@ -18,17 +18,19 @@ public class RoomListPanel extends JPanel {
 	private JPanel container;
 	
 	public RoomListPanel() {
-		setBackground(Color.WHITE);
-		setBorder(BorderFactory.createTitledBorder("방목록"));
+		this.setBackground(Color.WHITE);
+		this.setBorder(BorderFactory.createTitledBorder("방목록"));
+		this.setBounds(100,100,1000,450);
+		
 		container = new JPanel();
 		container.setLayout(new BoxLayout(container,BoxLayout.Y_AXIS));
-		container.add(new RoomPanel(1,"첫번째 방",0));
-		container.add(new RoomPanel(2,"두번째 방",0));
-		container.add(new RoomPanel(3,"세번째 방",0));
-		container.add(new RoomPanel(4,"허리존나아프네",0));
-		container.add(new RoomPanel(5,"글짜가늘면 동시에커지냐?",5));
+//		container.add(new RoomPanel(1,"첫번째 방",0));
+//		container.add(new RoomPanel(2,"두번째 방",0));
+//		container.add(new RoomPanel(3,"세번째 방",0));
+//		container.add(new RoomPanel(4,"허리존나아프네",0));
+//		container.add(new RoomPanel(5,"글짜가늘면 동시에커지냐?",5));
 		
-		add(container);
+		this.add(container);
 	}
 	
 	private class RoomPanel extends JPanel{
