@@ -16,7 +16,7 @@ public class SocketReceiver implements Runnable{
 	
 	public SocketReceiver(Main main) throws IOException {
 		this.main=main;
-		Socket socket = new Socket("172.20.10.2",2018);
+		Socket socket = new Socket("172.30.1.56",2018);
 		writer = new PrintWriter(socket.getOutputStream(),true);
 		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		new Thread(this).start();
