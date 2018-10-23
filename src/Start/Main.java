@@ -7,12 +7,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -125,31 +127,34 @@ public class Main extends JFrame implements MouseListener{
 	}
 	//대기방에서 방리스트에 방들을 추가하는 메소드
 	public void roomAdd(String[] roomData) {//서버로부터 받아온 룸리스트 데이터를 받아옴
+		roomList.removeAll();
 		for(int i=0; i<roomData.length; i++) {
-			roomData= roomData[i].split("/");//방:제목/이름 을 /로 나눈다
-			JPanel room = new JPanel();//방패널
+			String[] room = roomData[i].split("/");//방:제목/사람수 을 /로 나눈다
+			System.out.println(Arrays.toString(room));
+			JPanel roomPanel = new JPanel();//방패널
 			//방패널 셋팅
-			room.setPreferredSize(new Dimension(900,50));
-			room.setLayout(new BorderLayout());
-			room.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+			roomPanel.setPreferredSize(new Dimension(900,50));
+			roomPanel.setLayout(new BorderLayout());
+			roomPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 			//방번호
 			JTextArea roomNum = new JTextArea(Integer.toString(i+1)+". ");
 			roomNum.setFont(new Font(null,0,20));
 			roomNum.setEditable(false);
 			//방이름 ex)인원수/7 방이름 
-			final JTextArea roomName = new JTextArea(" ("+roomData[1]+"/7)  "+roomData[0]);
+			final JTextArea roomName = new JTextArea(" ("+room[1]+"/7)  "+room[0]);
 			roomName.setFont(new Font(null,0,20));
 			roomName.setEditable(false);
 			//방입장 버튼
 			JButton enter = new JButton("입장");
 			enter.addActionListener(e->socket.roomEnter(roomName.getText().split("  ")[1]));
 			
-			room.add(roomName,"Center");
-			room.add(enter,"East");
-			room.add(roomNum,"West");
-			roomList.add(room);
+			roomPanel.add(roomName,"Center");
+			roomPanel.add(enter,"East");
+			roomPanel.add(roomNum,"West");
+			roomList.add(roomPanel);
 		}
 		JButton create = new JButton("방생성");
+		create.addActionListener(e->socket.roomCreate());
 		roomList.add(create);
 		this.revalidate();
 	}
@@ -183,8 +188,8 @@ public class Main extends JFrame implements MouseListener{
 
 				//유저 닉넴 설정
 				if(nick.length()==0) nick = "Unknown";
-				User.SocketReceiver user = new User.SocketReceiver(this);
-				user.setNick(nick);
+				socket = new User.SocketReceiver(this);
+				socket.setNick(nick);
 				container.remove(button);
 
 				//대기방 채팅패널 설정
@@ -200,7 +205,7 @@ public class Main extends JFrame implements MouseListener{
 				input.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						user.chatting(input.getText().toString());
+						socket.chatting(input.getText().toString());
 						input.setText("");
 					}
 				});
