@@ -21,7 +21,7 @@ public class SocketReceiver implements Runnable{
 	
 	public SocketReceiver(Main main) throws IOException {
 		this.main=main;
-		Socket socket = new Socket("172.30.1.15",2018);
+		Socket socket = new Socket("172.30.1.34",2018);
 		writer = new PrintWriter(socket.getOutputStream(),true);
 		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		new Thread(this).start();
@@ -65,8 +65,10 @@ public class SocketReceiver implements Runnable{
 						main.userAdd(data);
 						break;
 					case "방":
-						if(data.length==1) main.roomAdd(new String[0]);
-						else main.roomAdd(data[1].split(","));
+						data[1]=data[1].substring(1, data[1].length()-1);
+						if(data[1].equals("")) data = new String[0];
+						else data = data[1].split(",");
+						main.roomAdd(data);
 						break;
 					case "방채팅":
 						data = data[1].split(",");
