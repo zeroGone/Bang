@@ -53,12 +53,12 @@ public class RoomListPanel extends JPanel {
 			roomName.setEditable(false);
 			
 			this.enter = new JButton("¿‘¿Â");
-			this.enter.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					new Game.GameFrame();
-				}
-			});
+//			this.enter.addActionListener(new ActionListener() {
+//				@Override
+//				public void actionPerformed(ActionEvent arg0) {
+//					new Game.GameFrame();
+//				}
+//			});
 			
 			add(this.roomName,"Center");
 			add(this.enter,"East");

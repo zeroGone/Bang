@@ -27,12 +27,10 @@ public class GameFrame extends JFrame{
 	private static final int MAXIMUM_NUM_OF_PEOPLE=7;
 
 	public GameFrame() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//메인프레임을 닫아서 쓰레드가 실행됨을 방지하기위해 설정해줘야하는 메소드
 		setExtendedState(JFrame.MAXIMIZED_BOTH);//전체화면
 		setUndecorated(true);//상태표시줄 지우기
 		setResizable(false);//화면 사이즈 변경 불가
 		screen = Toolkit.getDefaultToolkit().getScreenSize();//내 노트북 : 1920X1080
-
 		container = new JLayeredPane();
 		container.setOpaque(true);
 		container.setBackground(Color.white);
@@ -111,6 +109,7 @@ public class GameFrame extends JFrame{
 		add(container);
 		setVisible(true);//프레임이 보일수있게
 	}
+	
 }
 
 /*

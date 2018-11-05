@@ -127,27 +127,25 @@ public class Main extends JFrame implements MouseListener{
 	}
 	//대기방에서 방리스트에 방들을 추가하는 메소드
 	public void roomAdd(String[] roomData) {//서버로부터 받아온 룸리스트 데이터를 받아옴
-		System.out.println(Arrays.toString(roomData)+" "+roomData.length);
 		roomList.removeAll();
 		for(int i=0; i<roomData.length; i++) {
 			String[] room = roomData[i].split("/");//방:제목/사람수 을 /로 나눈다
-//			System.out.println(Arrays.toString(room));
 			JPanel roomPanel = new JPanel();//방패널
 			//방패널 셋팅
 			roomPanel.setPreferredSize(new Dimension(900,50));
 			roomPanel.setLayout(new BorderLayout());
 			roomPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 			//방번호
-			JTextArea roomNum = new JTextArea(Integer.toString(i+1)+". ");
+			JTextArea roomNum = new JTextArea(room[0]+". ");
 			roomNum.setFont(new Font(null,0,20));
 			roomNum.setEditable(false);
 			//방이름 ex)인원수/7 방이름 
-			final JTextArea roomName = new JTextArea(" ("+room[1]+"/7)  "+room[0]);
+			final JTextArea roomName = new JTextArea(" ("+room[2]+"/7)  "+room[1]);
 			roomName.setFont(new Font(null,0,20));
 			roomName.setEditable(false);
 			//방입장 버튼
 			JButton enter = new JButton("입장");
-			enter.addActionListener(e->socket.roomEnter(roomName.getText().split("  ")[1]));
+			enter.addActionListener(e->socket.roomEnter(Integer.parseInt(room[0])));
 			
 			roomPanel.add(roomName,"Center");
 			roomPanel.add(enter,"East");
