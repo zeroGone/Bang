@@ -1,20 +1,16 @@
 package Start;
 
-import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -46,16 +42,14 @@ public class Main extends JFrame implements MouseListener{
 	private JTextArea output;//채팅패널 출력창
 	private ImageIcon image;
 	private SocketReceiver socket;
-	
 	public Main() {
 		/* 메인프레임 
 		 * layout이 default로 설정되있어서 패널들의 크기와 위치를 설정해주는게 바람직함
 		 */
 		
 		//bgm 셋팅
-		File bgm = new File("./audio/bgm.wav");
 		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(bgm);
+			AudioInputStream stream = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResource("audio/bgm.wav").openStream());
 			Clip clip = AudioSystem.getClip();
 			clip.open(stream);
 			clip.start();
@@ -63,7 +57,7 @@ public class Main extends JFrame implements MouseListener{
 			System.out.println("오디어파일없음");
 		}
 		
-		ImageIcon buttonImage = new ImageIcon("./image/button1.png");//ImageIcon객체로 버튼 이미지 받아옴
+		ImageIcon buttonImage = new ImageIcon(getClass().getClassLoader().getResource("image/button1.png"));//ImageIcon객체로 버튼 이미지 받아옴
 		button = new JButton(buttonImage);//버튼 객체 생성
 		button.setContentAreaFilled(false);//버튼 내용 채우기 없음
 		button.setBorderPainted(false);//버튼 배경선 없음
@@ -75,7 +69,7 @@ public class Main extends JFrame implements MouseListener{
 			@Override
 			public void paintComponent(Graphics g) {//패널을 기본적으로 그리는 메소드를 오버라이드
 				super.paintComponent(g);
-				ImageIcon image = new ImageIcon("./image/illust.png");//배경이미지 불러와서
+				ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/illust.png"));//배경이미지 불러와서
 				image = new ImageIcon(image.getImage().getScaledInstance(1600, 1000, Image.SCALE_SMOOTH));//크기 다시설정해주고
 				g.drawImage(image.getImage(), 0, 0, null);//받아온 ImageIcon의 getImage로 받아서 이미지를 0,0 위치에 그린다
 			}
@@ -111,7 +105,7 @@ public class Main extends JFrame implements MouseListener{
 			user.setLayout(new BorderLayout());
 			user.setBorder(new BevelBorder(BevelBorder.RAISED));
 			//유저 이미지
-			ImageIcon userImage=new ImageIcon("./image/user.png");
+			ImageIcon userImage=new ImageIcon(getClass().getClassLoader().getResource("image/user.png"));
 			userImage=new ImageIcon(userImage.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
 			//유저 이름은 서버로 부터 받아온 name으로 설정
 			JTextArea userName= new JTextArea(nameData[i]);
@@ -234,14 +228,14 @@ public class Main extends JFrame implements MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {//마우스가 버튼을 눌렀을때
-		image = new ImageIcon("./image/button2.png");//이미지를 다른이미지로불러와서
+		image = new ImageIcon(getClass().getClassLoader().getResource("image/button2.png"));//이미지를 다른이미지로불러와서
 		button.setIcon(image);//이미지 설정
 		button.setBounds(650, 610, image.getIconWidth(), image.getIconHeight());//위치 크기설정
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {//마우스가 버튼을 땠을때
-		image = new ImageIcon("./image/button1.png");//처음 이미지로 다시불러오고
+		image = new ImageIcon(getClass().getClassLoader().getResource("image/button1.png"));//처음 이미지로 다시불러오고
 		button.setIcon(image);//이미지 설정
 		button.setBounds(650, 600, image.getIconWidth(), image.getIconHeight());//위치 크기설정
 	}

@@ -18,14 +18,16 @@ public class SocketReceiver implements Runnable{
 	private BufferedReader reader;
 	private PrintWriter writer;
 	private String nick;
+	private int myRoomId;
 	private GameFrame gameFrame;
 	
 	public SocketReceiver(Main main) throws IOException {
 		this.main=main;
-		Socket socket = new Socket("1.1.1.150",2018);
+		Socket socket = new Socket("192.168.0.42",2018);
 		writer = new PrintWriter(socket.getOutputStream(),true);
 		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		new Thread(this).start();
+		myRoomId=-1;
 	}
 	
 	public void setNick(String nick) {
@@ -34,17 +36,21 @@ public class SocketReceiver implements Runnable{
 	}
 	
 	public void roomCreate() {
-		String title = (String)JOptionPane.showInputDialog(main,null,"방제목 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
-		if(title!=null) {
-			if(title.length()==0) title="이름없는방";
-			writer.println("방생성:"+title+","+nick);
+		if(myRoomId==-1) {
+			String title = (String)JOptionPane.showInputDialog(main,null,"방제목 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
+			if(title!=null) {
+				if(title.length()==0) title="이름없는방";
+				writer.println("방생성:"+title+","+nick);
+			}
 		}
+		else JOptionPane.showMessageDialog(null, "하나의 방만 접속 허용", "Warning!", JOptionPane.WARNING_MESSAGE);
 	}
-	
+
 	public void roomEnter(int id) {
-		writer.println("방입장:"+id+","+nick);
+		if(myRoomId==-1) writer.println("방입장:"+id+","+nick);
+		else JOptionPane.showMessageDialog(null, "하나의 방만 접속 허용", "Warning!", JOptionPane.WARNING_MESSAGE);
 	}
-	
+
 	public void chatting(String 내용) {
 		writer.println("방채팅:"+nick+","+내용);
 	}
@@ -75,13 +81,14 @@ public class SocketReceiver implements Runnable{
 						break;
 					case "방생성":
 						int id = Integer.parseInt(data[1]);
+						myRoomId = id;
 						gameFrame = new Game.GameFrame();
 						gameFrame.addWindowListener(new WindowListener() {
 
 							@Override
 							public void windowActivated(WindowEvent arg0) {
 								// TODO Auto-generated method stub
-								
+
 							}
 
 							@Override
@@ -90,34 +97,42 @@ public class SocketReceiver implements Runnable{
 
 							@Override
 							public void windowClosing(WindowEvent e) {
-								writer.println("방나감:"+id);
+								writer.println("방나감:"+myRoomId);
+								myRoomId = -1;
 							}
 
 							@Override
 							public void windowDeactivated(WindowEvent e) {
 								// TODO Auto-generated method stub
-								
+
 							}
 
 							@Override
 							public void windowDeiconified(WindowEvent e) {
 								// TODO Auto-generated method stub
-								
+
 							}
 
 							@Override
 							public void windowIconified(WindowEvent e) {
 								// TODO Auto-generated method stub
-								
+
 							}
 
 							@Override
 							public void windowOpened(WindowEvent e) {
 								// TODO Auto-generated method stub
-								
+
 							}
-							
+
 						});
+						break;
+					case "마이룸":
+						myRoomId=Integer.parseInt(data[1]);
+						break;
+					case "게임":
+						data = data[2].split("/");
+						gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2].substring(1,data[2].length()-1));
 						break;
 					case "서버":
 						if(data[1].equals("close")) {

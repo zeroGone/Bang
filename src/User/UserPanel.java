@@ -18,12 +18,12 @@ public class UserPanel extends JPanel{
 	private JLabel[] life;
 	private JPanel lifePanel;
 	private MountingPanel mountingPanel;
-	public UserPanel(Dimension screen) {
+	public UserPanel(Dimension screen, String name) {
 		setSize(400,300);
 		setLayout(null);
 		setBackground(Color.WHITE);
 		
-		TitledBorder nick = new TitledBorder("테스트");//테두리 titledBorder로 설정해서 닉네임을 타이틀로
+		TitledBorder nick = new TitledBorder(name);//테두리 titledBorder로 설정해서 닉네임을 타이틀로
 		setBorder(nick);//테두리 위에서부터 20 양쪽 10 빼야됨 
 		
 		lifePanel = new JPanel();//생명을 표시할 패널

@@ -93,15 +93,7 @@ public class GameFrame extends JFrame{
 		log.add(logScroll);
 		container.add(log);
 		
-		//유저패널 자리 세팅
-		for(int i=0; i<MAXIMUM_NUM_OF_PEOPLE; i++) {
-			User.UserPanel panel = new User.UserPanel(screen);
-			if(i==0) panel.setLocation(760, 750);
-			else if(i<5) panel.setLocation((int)screen.getWidth()/4*(i-1)+40, 20);
-			else if(i==5) panel.setLocation(40,360);
-			else panel.setLocation((int)screen.getWidth()/4*3+40 ,360);
-			container.add(panel);
-		}
+		
 		
 		Ani.AniPanel ani = new Ani.AniPanel(screen);
 		container.add(ani,new Integer(1));
@@ -110,6 +102,23 @@ public class GameFrame extends JFrame{
 		setVisible(true);//프레임이 보일수있게
 	}
 	
+	public void userSet(int member, int startIndex, String nicks) {
+		System.out.println(member+" "+startIndex+" "+nicks);
+		String[] nick = nicks.split(",");
+		int index = startIndex;
+		//유저패널 자리 세팅
+		for(int i=0; i<member; i++) {
+			User.UserPanel panel = new User.UserPanel(screen, nick[index]);
+			if(i==0) panel.setLocation(760, 750);
+			else if(i<5) panel.setLocation((int)screen.getWidth()/4*(i-1)+40, 20);
+			else if(i==5) panel.setLocation(40,360);
+			else panel.setLocation((int)screen.getWidth()/4*3+40 ,360);
+			container.add(panel);
+			index = (index+1)%member;
+		}
+		
+		this.revalidate();
+	}
 }
 
 /*
