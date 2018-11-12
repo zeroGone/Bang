@@ -78,7 +78,11 @@ public class UserPanel extends JPanel{
 	
 	private class CardDialog extends JDialog{
 		public CardDialog() {
+<<<<<<< HEAD
 			setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/카드뒷면.jpg")).getImage());
+=======
+			setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/ani/back.jpg")).getImage());
+>>>>>>> 37226f6626322411b3e3fbaed26914d1c48a63ef
 			setSize(1000,500);
 			setTitle("카드목록");
 			setVisible(true);

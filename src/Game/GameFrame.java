@@ -8,7 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -24,6 +27,12 @@ import javax.swing.text.StyleConstants;
 public class GameFrame extends JFrame{
 	private Dimension screen;
 	private JLayeredPane container;
+<<<<<<< HEAD
+=======
+	
+	//유저의 선택을 다룰 패널
+	private JPanel controller;
+>>>>>>> 37226f6626322411b3e3fbaed26914d1c48a63ef
 
 	public GameFrame() {
 		setExtendedState(JFrame.MAXIMIZED_BOTH);//전체화면
@@ -92,11 +101,15 @@ public class GameFrame extends JFrame{
 		log.add(logScroll);
 		container.add(log);
 		
-		
-		
 		Ani.AniPanel ani = new Ani.AniPanel(screen);
 		container.add(ani,new Integer(1));
 		
+		controller = new JPanel();
+		controller.setBackground(Color.white);
+		controller.setOpaque(false);
+		controller.setBounds(520, 360, 880, 300);
+		controller.setLayout(null);
+		container.add(controller, new Integer(2));
 		add(container);
 		setVisible(true);//프레임이 보일수있게
 	}
@@ -115,7 +128,43 @@ public class GameFrame extends JFrame{
 			container.add(panel);
 			index = (index+1)%member;
 		}
+		this.revalidate();
+	}
+	
+	public void gameReady() {
+		ImageIcon buttonImage = new ImageIcon(getClass().getClassLoader().getResource("image/button1.png"));//ImageIcon객체로 버튼 이미지 받아옴
+		JButton button = new JButton(buttonImage); 
+		button.setContentAreaFilled(false);//버튼 내용 채우기 없음
+		button.setBorderPainted(false);//버튼 배경선 없음
+		button.setBounds(controller.getWidth()/2-buttonImage.getIconWidth()/2, controller.getHeight()/2-buttonImage.getIconHeight()/2, buttonImage.getIconWidth(), buttonImage.getIconHeight());//버튼 이미지 크기만큼 650,600 위치에 셋팅
+		button.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				ImageIcon buttonImage = new ImageIcon(getClass().getClassLoader().getResource("image/button2.png"));//이미지를 다른이미지로불러와서
+				button.setIcon(buttonImage);//이미지 설정
+				button.setBounds(controller.getWidth()/2-buttonImage.getIconWidth()/2, controller.getHeight()/2-buttonImage.getIconHeight()/2, buttonImage.getIconWidth(), buttonImage.getIconHeight());//버튼 이미지 크기만큼 650,600 위치에 셋팅
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				ImageIcon buttonImage = new ImageIcon(getClass().getClassLoader().getResource("image/button1.png"));//이미지를 다른이미지로불러와서
+				button.setIcon(buttonImage);//이미지 설정
+				button.setBounds(controller.getWidth()/2-buttonImage.getIconWidth()/2, controller.getHeight()/2-buttonImage.getIconHeight()/2, buttonImage.getIconWidth(), buttonImage.getIconHeight());//버튼 이미지 크기만큼 650,600 위치에 셋팅
+			}
+		});
 		
+		controller.add(button);
 		this.revalidate();
 	}
 }
