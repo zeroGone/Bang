@@ -46,10 +46,9 @@ public class Main extends JFrame implements MouseListener{
 		/* 메인프레임 
 		 * layout이 default로 설정되있어서 패널들의 크기와 위치를 설정해주는게 바람직함
 		 */
-		
 		//bgm 셋팅
 		try {
-			AudioInputStream stream = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResource("audio/bgm.wav").openStream());
+			AudioInputStream stream = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResource("audio/bgm.wav"));
 			Clip clip = AudioSystem.getClip();
 			clip.open(stream);
 			clip.start();
@@ -69,7 +68,7 @@ public class Main extends JFrame implements MouseListener{
 			@Override
 			public void paintComponent(Graphics g) {//패널을 기본적으로 그리는 메소드를 오버라이드
 				super.paintComponent(g);
-				ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/illust.png"));//배경이미지 불러와서
+				ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/illust.png").getPath());//배경이미지 불러와서
 				image = new ImageIcon(image.getImage().getScaledInstance(1600, 1000, Image.SCALE_SMOOTH));//크기 다시설정해주고
 				g.drawImage(image.getImage(), 0, 0, null);//받아온 ImageIcon의 getImage로 받아서 이미지를 0,0 위치에 그린다
 			}

@@ -24,7 +24,6 @@ import javax.swing.text.StyleConstants;
 public class GameFrame extends JFrame{
 	private Dimension screen;
 	private JLayeredPane container;
-	private static final int MAXIMUM_NUM_OF_PEOPLE=7;
 
 	public GameFrame() {
 		setExtendedState(JFrame.MAXIMIZED_BOTH);//전체화면
