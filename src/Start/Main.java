@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -41,7 +43,7 @@ public class Main extends JFrame implements MouseListener{
 	private JPanel background;//배경 패널
 	private JTextArea output;//채팅패널 출력창
 	private ImageIcon image;
-	private SocketReceiver socket;
+	private SocketReceiver mySocket;
 	public Main() {
 		/* 메인프레임 
 		 * layout이 default로 설정되있어서 패널들의 크기와 위치를 설정해주는게 바람직함
@@ -93,7 +95,9 @@ public class Main extends JFrame implements MouseListener{
 	
 	public static void main(String[] args) {
 		new Main();
-//		new Game.GameFrame();
+//		Game.GameFrame gameFrame = new Game.GameFrame();
+//		gameFrame.userSet(7, 0, "시발, 1,2,3,4,5,6");
+//		gameFrame.gameReady();
 	}
 
 	//대기방에서 유저리스트에 유저를 추가하는 메소드
@@ -139,7 +143,7 @@ public class Main extends JFrame implements MouseListener{
 			roomName.setEditable(false);
 			//방입장 버튼
 			JButton enter = new JButton("입장");
-			enter.addActionListener(e->socket.roomEnter(Integer.parseInt(room[0])));
+			enter.addActionListener(e->mySocket.roomEnter(Integer.parseInt(room[0])));
 			
 			roomPanel.add(roomName,"Center");
 			roomPanel.add(enter,"East");
@@ -147,7 +151,7 @@ public class Main extends JFrame implements MouseListener{
 			roomList.add(roomPanel);
 		}
 		JButton create = new JButton("방생성");
-		create.addActionListener(e->socket.roomCreate());
+		create.addActionListener(e->mySocket.roomCreate());
 		roomList.add(create);
 		this.revalidate();
 	}
@@ -158,62 +162,72 @@ public class Main extends JFrame implements MouseListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		try {
-			String nick = (String)JOptionPane.showInputDialog(this,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
-			if(nick!=null) {
-				//대기방 리스트 패널 설정
-				JPanel roomListPanel = new JPanel();
-				roomListPanel.setBackground(Color.white);
-				roomListPanel.setBorder(BorderFactory.createTitledBorder("방목록"));
-				roomListPanel.setBounds(100,100,1000,450);
-				roomList = new JPanel();
-				roomList.setLayout(new BoxLayout(roomList,BoxLayout.Y_AXIS));
-				roomListPanel.add(roomList);
+		String ip = (String)JOptionPane.showInputDialog(this,null,"아이피 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
+		if(ip!=null) {
+			try {
+				Socket socket = new Socket(ip, 2018);
+				if(socket.isConnected()) {
+					String nick = (String)JOptionPane.showInputDialog(this,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
+					if(nick!=null) {
+						//대기방 리스트 패널 설정
+						JPanel roomListPanel = new JPanel();
+						roomListPanel.setBackground(Color.white);
+						roomListPanel.setBorder(BorderFactory.createTitledBorder("방목록"));
+						roomListPanel.setBounds(100,100,1000,450);
+						roomList = new JPanel();
+						roomList.setLayout(new BoxLayout(roomList,BoxLayout.Y_AXIS));
+						roomListPanel.add(roomList);
 
-				//대기방 유저리스트 패널 설정
-				JPanel userListPanel = new JPanel();
-				userListPanel.setBorder(BorderFactory.createTitledBorder("유저목록"));
-				userListPanel.setBackground(Color.WHITE);
-				userListPanel.setBounds(1150, 100, 350, 450);
-				userList = new JPanel();
-				userListPanel.add(userList);
-				userList.setLayout(new BoxLayout(userList,BoxLayout.Y_AXIS));
+						//대기방 유저리스트 패널 설정
+						JPanel userListPanel = new JPanel();
+						userListPanel.setBorder(BorderFactory.createTitledBorder("유저목록"));
+						userListPanel.setBackground(Color.WHITE);
+						userListPanel.setBounds(1150, 100, 350, 450);
+						userList = new JPanel();
+						userListPanel.add(userList);
+						userList.setLayout(new BoxLayout(userList,BoxLayout.Y_AXIS));
 
-				//유저 닉넴 설정
-				if(nick.length()==0) nick = "Unknown";
-				socket = new User.SocketReceiver(this);
-				socket.setNick(nick);
-				container.remove(button);
+						//유저 닉넴 설정
+						if(nick.length()==0) nick = "Unknown";
+						try {
+							mySocket = new User.SocketReceiver(this, socket);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						mySocket.setNick(nick);
+						container.remove(button);
 
-				//대기방 채팅패널 설정
-				chat = new JPanel();
-				chat.setLayout(new BorderLayout());//레이아웃 BorderLayout으로 지정
-				chat.setBounds(100, 600, 1400, 300);//크기 위치 지정
-				chat.setBackground(Color.WHITE);//배경색 지정
-				chat.setOpaque(false);
-				output = new JTextArea();//텍스트에이리어 객체생성
-				output.setEditable(false);//텍스트에이리어에 입력못하게함
-				JTextField input = new JTextField();//텍스트필드 객체생성
-				JScrollPane scroll = new JScrollPane(output);//텍스트에이리어 스크롤 되기위한 JScrollPane 클래스
-				input.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						socket.chatting(input.getText().toString());
-						input.setText("");
+						//대기방 채팅패널 설정
+						chat = new JPanel();
+						chat.setLayout(new BorderLayout());//레이아웃 BorderLayout으로 지정
+						chat.setBounds(100, 600, 1400, 300);//크기 위치 지정
+						chat.setBackground(Color.WHITE);//배경색 지정
+						chat.setOpaque(false);
+						output = new JTextArea();//텍스트에이리어 객체생성
+						output.setEditable(false);//텍스트에이리어에 입력못하게함
+						JTextField input = new JTextField();//텍스트필드 객체생성
+						JScrollPane scroll = new JScrollPane(output);//텍스트에이리어 스크롤 되기위한 JScrollPane 클래스
+						input.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent arg0) {
+								mySocket.chatting(input.getText().toString());
+								input.setText("");
+							}
+						});
+
+						chat.add(scroll);
+						chat.add(input, "South");//입력필드를 남쪽에 추가
+
+						container.add(roomListPanel,new Integer(1));
+						container.add(userListPanel,new Integer(1));
+						container.add(chat,new Integer(1));
+
+						this.revalidate();
 					}
-				});
-				
-				chat.add(scroll);
-				chat.add(input, "South");//입력필드를 남쪽에 추가
-
-				container.add(roomListPanel,new Integer(1));
-				container.add(userListPanel,new Integer(1));
-				container.add(chat,new Integer(1));
-				
-				this.revalidate();
+				}
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(this, " 서버가 열려있지 않았습니다.", "에러", JOptionPane.ERROR_MESSAGE);
 			}
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(this, " 서버가 열려있지 않았습니다.", "에러", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

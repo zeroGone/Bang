@@ -30,7 +30,7 @@ public class UserPanel extends JPanel{
 		lifePanel.setBackground(Color.WHITE);
 		lifePanel.setBounds(10, 20, 380, 40);
 		
-		ImageIcon image = new ImageIcon("./image/life_void.png");
+		ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/life_void.png"));
 		image=new ImageIcon(image.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
 		life=new JLabel[5];//생명숫자
@@ -79,7 +79,7 @@ public class UserPanel extends JPanel{
 	
 	private class CardDialog extends JDialog{
 		public CardDialog() {
-			setIconImage(new ImageIcon("./image/카드뒷면.jpg").getImage());
+			setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/ani/back.jpg")).getImage());
 			setSize(1000,500);
 			setTitle("카드목록");
 			setVisible(true);

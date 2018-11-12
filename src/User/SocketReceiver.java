@@ -21,9 +21,8 @@ public class SocketReceiver implements Runnable{
 	private int myRoomId;
 	private GameFrame gameFrame;
 	
-	public SocketReceiver(Main main) throws IOException {
+	public SocketReceiver(Main main, Socket socket) throws IOException {
 		this.main=main;
-		Socket socket = new Socket("192.168.0.42",2018);
 		writer = new PrintWriter(socket.getOutputStream(),true);
 		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		new Thread(this).start();
@@ -131,8 +130,14 @@ public class SocketReceiver implements Runnable{
 						myRoomId=Integer.parseInt(data[1]);
 						break;
 					case "게임":
-						data = data[2].split("/");
-						gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2].substring(1,data[2].length()-1));
+						switch(data[1]) {
+						case "방장준비":
+							gameFrame.gameReady();
+						case "유저추가":
+							data = data[2].split("/");
+							gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2].substring(1,data[2].length()-1));
+							break;
+						}
 						break;
 					case "서버":
 						if(data[1].equals("close")) {
