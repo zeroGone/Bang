@@ -23,10 +23,6 @@ public class SocketReceiver implements Runnable{
 	
 	public SocketReceiver(Main main, Socket socket) throws IOException {
 		this.main=main;
-<<<<<<< HEAD
-		Socket socket = new Socket("172.20.10.3",2018);
-=======
->>>>>>> 37226f6626322411b3e3fbaed26914d1c48a63ef
 		writer = new PrintWriter(socket.getOutputStream(),true);
 		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		new Thread(this).start();
@@ -136,10 +132,12 @@ public class SocketReceiver implements Runnable{
 					case "게임":
 						switch(data[1]) {
 						case "방장준비":
+							System.out.println("준비");
 							gameFrame.gameReady();
+							break;
 						case "유저추가":
 							data = data[2].split("/");
-							gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2].substring(1,data[2].length()-1));
+							gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2]);
 							break;
 						}
 						break;

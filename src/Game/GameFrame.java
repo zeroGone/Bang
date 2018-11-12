@@ -3,6 +3,7 @@ package Game;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Panel;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -27,12 +29,10 @@ import javax.swing.text.StyleConstants;
 public class GameFrame extends JFrame{
 	private Dimension screen;
 	private JLayeredPane container;
-<<<<<<< HEAD
-=======
 	
+	private JPanel userPanel;
 	//유저의 선택을 다룰 패널
 	private JPanel controller;
->>>>>>> 37226f6626322411b3e3fbaed26914d1c48a63ef
 
 	public GameFrame() {
 		setExtendedState(JFrame.MAXIMIZED_BOTH);//전체화면
@@ -106,10 +106,15 @@ public class GameFrame extends JFrame{
 		
 		controller = new JPanel();
 		controller.setBackground(Color.white);
-		controller.setOpaque(false);
 		controller.setBounds(520, 360, 880, 300);
 		controller.setLayout(null);
-		container.add(controller, new Integer(2));
+		container.add(controller);
+		
+		userPanel = new JPanel();
+		userPanel.setLayout(null);
+		userPanel.setOpaque(false);
+		userPanel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
+		container.add(userPanel, new Integer(2));
 		add(container);
 		setVisible(true);//프레임이 보일수있게
 	}
@@ -117,6 +122,7 @@ public class GameFrame extends JFrame{
 	public void userSet(int member, int startIndex, String nicks) {
 		System.out.println(member+" "+startIndex+" "+nicks);
 		String[] nick = nicks.split(",");
+		userPanel.removeAll();
 		int index = startIndex;
 		//유저패널 자리 세팅
 		for(int i=0; i<member; i++) {
@@ -125,7 +131,7 @@ public class GameFrame extends JFrame{
 			else if(i<5) panel.setLocation((int)screen.getWidth()/4*(i-1)+40, 20);
 			else if(i==5) panel.setLocation(40,360);
 			else panel.setLocation((int)screen.getWidth()/4*3+40 ,360);
-			container.add(panel);
+			userPanel.add(panel);
 			index = (index+1)%member;
 		}
 		this.revalidate();

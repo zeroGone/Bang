@@ -89,9 +89,9 @@ public class Main extends JFrame implements MouseListener{
 		setResizable(false);//화면 사이즈 변경 불가
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//메인프레임을 닫아서 쓰레드가 실행됨을 방지하기위해 설정해줘야하는 메소드
 		setVisible(true);//프레임이 보일수있게
-		
 	}
 	
+	//시작
 	public static void main(String[] args) {
 		new Main();
 //		Game.GameFrame gameFrame = new Game.GameFrame();
