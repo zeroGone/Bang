@@ -119,22 +119,24 @@ public class GameFrame extends JFrame{
 		setVisible(true);//프레임이 보일수있게
 	}
 	
+	//유저 패널 셋팅
 	public void userSet(int member, int startIndex, String nicks) {
-		System.out.println(member+" "+startIndex+" "+nicks);
-		String[] nick = nicks.split(",");
 		userPanel.removeAll();
-		int index = startIndex;
-		//유저패널 자리 세팅
-		for(int i=0; i<member; i++) {
-			User.UserPanel panel = new User.UserPanel(screen, nick[index]);
-			if(i==0) panel.setLocation(760, 750);
-			else if(i<5) panel.setLocation((int)screen.getWidth()/4*(i-1)+40, 20);
-			else if(i==5) panel.setLocation(40,360);
-			else panel.setLocation((int)screen.getWidth()/4*3+40 ,360);
-			userPanel.add(panel);
-			index = (index+1)%member;
-		}
+		userPanelSet(member, 0, startIndex, nicks.split(","));
 		this.revalidate();
+	}
+	
+	//유저 패널 셋팅 재귀로 구현
+	private void userPanelSet(int member, int count, int index, String[] nick) {
+		if(count>=member) return;
+		User.UserPanel panel = new User.UserPanel(screen, nick[index]);
+		if(count==0) panel.setLocation(760, 750);
+		else if(member<=5) panel.setLocation((int)screen.getWidth()/4*(count-1)+40, 20);
+		else if(count==1) panel.setLocation(40, 360);
+		else if(count==6) panel.setLocation((int)screen.getWidth()/4*3+40 ,360);
+		else panel.setLocation((int)screen.getWidth()/4*(count-2)+40, 20);
+		userPanel.add(panel);
+		userPanelSet(member, ++count, (index+1)%member, nick);
 	}
 	
 	public void gameReady() {

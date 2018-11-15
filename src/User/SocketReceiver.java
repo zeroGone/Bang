@@ -21,12 +21,17 @@ public class SocketReceiver implements Runnable{
 	private int myRoomId;
 	private GameFrame gameFrame;
 	
-	public SocketReceiver(Main main, Socket socket) throws IOException {
+	public SocketReceiver(Main main, Socket socket) {
 		this.main=main;
-		writer = new PrintWriter(socket.getOutputStream(),true);
-		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		new Thread(this).start();
-		myRoomId=-1;
+		try {
+			writer = new PrintWriter(socket.getOutputStream(),true);
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			new Thread(this).start();
+			myRoomId=-1;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setNick(String nick) {
@@ -135,7 +140,7 @@ public class SocketReceiver implements Runnable{
 							System.out.println("준비");
 							gameFrame.gameReady();
 							break;
-						case "유저추가":
+						case "유저":
 							data = data[2].split("/");
 							gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2]);
 							break;
