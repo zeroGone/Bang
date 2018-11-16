@@ -131,6 +131,9 @@ public class SocketReceiver implements Runnable{
 
 						});
 						break;
+					case "풀방":
+						JOptionPane.showMessageDialog(null, "풀방인거임~", "Warning!", JOptionPane.WARNING_MESSAGE);
+						break;
 					case "마이룸":
 						myRoomId=Integer.parseInt(data[1]);
 						break;

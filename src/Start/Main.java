@@ -3,6 +3,7 @@ package Start;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -10,14 +11,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -120,6 +120,8 @@ public class Main extends JFrame implements MouseListener{
 			
 			userList.add(user);
 		}
+		userList.add(Box.createVerticalStrut(400));
+
 		this.revalidate();
 	}
 	//대기방에서 방리스트에 방들을 추가하는 메소드
@@ -149,9 +151,11 @@ public class Main extends JFrame implements MouseListener{
 			roomPanel.add(roomNum,"West");
 			roomList.add(roomPanel);
 		}
-		JButton create = new JButton("방생성");
+		JButton create = new JButton("방  생  성");
+		create.setSize(500,100);
 		create.addActionListener(e->mySocket.roomCreate());
 		roomList.add(create);
+		roomList.add(Box.createVerticalStrut(400));
 		this.revalidate();
 	}
 
@@ -168,21 +172,21 @@ public class Main extends JFrame implements MouseListener{
 				String nick = (String)JOptionPane.showInputDialog(this,null,"닉네임 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
 				if(nick!=null) {
 					//대기방 리스트 패널 설정
-					JPanel roomListPanel = new JPanel();
+					roomList = new JPanel();
+					roomList.setBackground(Color.white);
+					roomList.setLayout(new BoxLayout(roomList,BoxLayout.Y_AXIS));
+					JScrollPane roomListPanel = new JScrollPane(roomList);
 					roomListPanel.setBackground(Color.white);
 					roomListPanel.setBorder(BorderFactory.createTitledBorder("방목록"));
 					roomListPanel.setBounds(100,100,1000,450);
-					roomList = new JPanel();
-					roomList.setLayout(new BoxLayout(roomList,BoxLayout.Y_AXIS));
-					roomListPanel.add(roomList);
 
 					//대기방 유저리스트 패널 설정
-					JPanel userListPanel = new JPanel();
+					userList = new JPanel();
+					userList.setBackground(Color.white);
+					JScrollPane userListPanel = new JScrollPane(userList);
 					userListPanel.setBorder(BorderFactory.createTitledBorder("유저목록"));
 					userListPanel.setBackground(Color.WHITE);
 					userListPanel.setBounds(1150, 100, 350, 450);
-					userList = new JPanel();
-					userListPanel.add(userList);
 					userList.setLayout(new BoxLayout(userList,BoxLayout.Y_AXIS));
 
 					//유저 닉넴 설정
