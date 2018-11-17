@@ -2,7 +2,6 @@ package Ani;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.File;
@@ -48,7 +47,11 @@ public class AniPanel extends JPanel implements Runnable{
 	
 	//오디오 파일 셋팅 메소드
 	private void clipSet(String fileName) {
-		File file = new File("./audio/"+fileName+".wav");
+		StringBuilder builder = new StringBuilder();
+		builder.append("audio/");
+		builder.append(fileName);
+		builder.append(".wav");
+		File file = new File(getClass().getClassLoader().getResource(builder.toString()).getPath());
 		try {
 			AudioInputStream stream = AudioSystem.getAudioInputStream(file);
 			clip = AudioSystem.getClip();
@@ -65,10 +68,10 @@ public class AniPanel extends JPanel implements Runnable{
 		this.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 
 		action = "";
-		덱 = new ImageIcon("./image/Ani/deck.jpg");
+		덱 = new ImageIcon(getClass().getClassLoader().getResource("image/Ani/deck.jpg"));
 		덱 = new ImageIcon(덱.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
 		
-		카드뒷면=new ImageIcon("./image/Ani/back.jpg");
+		카드뒷면=new ImageIcon(getClass().getClassLoader().getResource("image/Ani/back.jpg"));
 		카드뒷면=new ImageIcon(카드뒷면.getImage().getScaledInstance(133, 200, Image.SCALE_SMOOTH));
 		
 		뱅 = new ImageIcon("./image/Ani/뱅.jpg");
@@ -135,7 +138,7 @@ public class AniPanel extends JPanel implements Runnable{
 		}
 		
 		//소리 세팅하고 loop로 돌린다
-		clipSet("카드돌리기");
+		clipSet("start");
 		clip.loop(max-1);
 		//그리기 시작
 		화가 = new Thread(this);
@@ -543,7 +546,6 @@ public class AniPanel extends JPanel implements Runnable{
 				}
 				if(timer==4) break;
 			}
-			System.out.println(timer);
 			timer++;
 		}
 	}

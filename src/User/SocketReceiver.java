@@ -16,11 +16,10 @@ import Start.Main;
 public class SocketReceiver implements Runnable{
 	private Main main;
 	private BufferedReader reader;
-	private PrintWriter writer;
+	public static PrintWriter writer;
 	private String nick;
-	private int myRoomId;
+	public static int myRoomId;
 	private GameFrame gameFrame;
-	
 	public SocketReceiver(Main main, Socket socket) {
 		this.main=main;
 		try {

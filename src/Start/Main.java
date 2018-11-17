@@ -3,7 +3,6 @@ package Start;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -93,10 +92,10 @@ public class Main extends JFrame implements MouseListener{
 	
 	//시작
 	public static void main(String[] args) {
-		new Main();
-//		Game.GameFrame gameFrame = new Game.GameFrame();
-//		gameFrame.userSet(7, 0, "시발, 1,2,3,4,5,6");
-//		gameFrame.gameReady();
+//		new Main();
+		Game.GameFrame gameFrame = new Game.GameFrame();
+		gameFrame.userSet(7, 0, "시발, 1,2,3,4,5,6");
+		gameFrame.gameReady();
 	}
 
 	//대기방에서 유저리스트에 유저를 추가하는 메소드

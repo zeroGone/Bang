@@ -3,15 +3,11 @@ package Game;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Panel;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,15 +22,19 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import Ani.AniPanel;
+import User.SocketReceiver;
+
 public class GameFrame extends JFrame{
 	private Dimension screen;
 	private JLayeredPane container;
-	
+	private AniPanel ani;
 	private JPanel userPanel;
 	//유저의 선택을 다룰 패널
 	private JPanel controller;
 
 	public GameFrame() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);//전체화면
 		setUndecorated(true);//상태표시줄 지우기
 		setResizable(false);//화면 사이즈 변경 불가
@@ -80,7 +80,7 @@ public class GameFrame extends JFrame{
 		chat.add(chatTitle,"North");
 		chat.add(chatScroll);
 		chat.add(input, "South");//입력필드를 남쪽에 추가
-		container.add(chat);
+		container.add(chat, new Integer(5));
 		
 		//로그패널 추가
 		JPanel log = new JPanel();
@@ -99,22 +99,19 @@ public class GameFrame extends JFrame{
 		
 		log.add(logTitle,"North");
 		log.add(logScroll);
-		container.add(log);
-		
-		Ani.AniPanel ani = new Ani.AniPanel(screen);
-		container.add(ani,new Integer(1));
+		container.add(log, new Integer(5));
 		
 		controller = new JPanel();
 		controller.setBackground(Color.white);
 		controller.setBounds(520, 360, 880, 300);
 		controller.setLayout(null);
-		container.add(controller);
+		container.add(controller, new Integer(2));
 		
 		userPanel = new JPanel();
 		userPanel.setLayout(null);
 		userPanel.setOpaque(false);
 		userPanel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
-		container.add(userPanel, new Integer(2));
+		container.add(userPanel, new Integer(1));
 		add(container);
 		setVisible(true);//프레임이 보일수있게
 	}
@@ -123,6 +120,7 @@ public class GameFrame extends JFrame{
 	public void userSet(int member, int startIndex, String nicks) {
 		userPanel.removeAll();
 		userPanelSet(member, 0, startIndex, nicks.split(","));
+		userPanel.repaint();
 		this.revalidate();
 	}
 	
@@ -139,6 +137,7 @@ public class GameFrame extends JFrame{
 		userPanelSet(member, ++count, (index+1)%member, nick);
 	}
 	
+	//방장 게임시작버튼
 	public void gameReady() {
 		ImageIcon buttonImage = new ImageIcon(getClass().getClassLoader().getResource("image/button1.png"));//ImageIcon객체로 버튼 이미지 받아옴
 		JButton button = new JButton(buttonImage); 
@@ -148,7 +147,13 @@ public class GameFrame extends JFrame{
 		button.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
+				//게임시작
+				//애니메이션 패널추가하고
+				//서버로 자기방 시작한다고 보냄
+				controller.remove(button);
+				ani = new Ani.AniPanel(screen);
+				container.add(ani,new Integer(5));
+				SocketReceiver.writer.println("게임시작:"+SocketReceiver.myRoomId);
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -173,6 +178,7 @@ public class GameFrame extends JFrame{
 		});
 		
 		controller.add(button);
+		controller.repaint();
 		this.revalidate();
 	}
 }
