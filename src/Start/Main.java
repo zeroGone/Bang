@@ -94,7 +94,7 @@ public class Main extends JFrame implements MouseListener{
 	public static void main(String[] args) {
 //		new Main();
 		Game.GameFrame gameFrame = new Game.GameFrame();
-		gameFrame.userSet(7, 0, "시발, 1,2,3,4,5,6");
+		gameFrame.userSet(4, 0, "시발, 1,2,3");
 		gameFrame.gameReady();
 	}
 

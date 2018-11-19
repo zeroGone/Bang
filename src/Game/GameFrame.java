@@ -6,8 +6,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,14 +24,20 @@ import javax.swing.text.StyleConstants;
 
 import Ani.AniPanel;
 import User.SocketReceiver;
+import User.UserPanel;
 
 public class GameFrame extends JFrame{
-	private Dimension screen;
+	public static Dimension screen;
 	private JLayeredPane container;
+	
 	private AniPanel ani;
+	
 	private JPanel userPanel;
-	//유저의 선택을 다룰 패널
-	private JPanel controller;
+	public UserPanel[] users;//각 유저들의 패널
+	
+	private JPanel controller;//유저의 선택을 다룰 패널
+	
+	public static JTextArea chatOutput;//게임 채팅패널
 
 	public GameFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,7 +56,7 @@ public class GameFrame extends JFrame{
 		chat.setLayout(new BorderLayout());
 		chat.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 		
-		JTextArea chatOutput = new JTextArea();//텍스트에이리어 객체생성
+		chatOutput = new JTextArea();//텍스트에이리어 객체생성
 		chatOutput.setEditable(false);//텍스트에이리어에 입력못하게함
 		JScrollPane chatScroll = new JScrollPane(chatOutput);//텍스트에이리어 스크롤 되기위한 JScrollPane 클래스
 		
@@ -64,7 +70,7 @@ public class GameFrame extends JFrame{
 		});
 		
 		input.addActionListener(e->{
-			chatOutput.append(input.getText()+"\n");//내용을 출력해주고
+			SocketReceiver.writer.println(String.format("게임:채팅:%d:%s", SocketReceiver.myRoomId, input.getText()));
 			input.setText("");//입력을 초기화해줌
 		});
 
@@ -119,6 +125,7 @@ public class GameFrame extends JFrame{
 	//유저 패널 셋팅
 	public void userSet(int member, int startIndex, String nicks) {
 		userPanel.removeAll();
+		users = new UserPanel[member];
 		userPanelSet(member, 0, startIndex, nicks.split(","));
 		userPanel.repaint();
 		this.revalidate();
@@ -133,8 +140,30 @@ public class GameFrame extends JFrame{
 		else if(count==1) panel.setLocation(40, 360);
 		else if(count==6) panel.setLocation((int)screen.getWidth()/4*3+40 ,360);
 		else panel.setLocation((int)screen.getWidth()/4*(count-2)+40, 20);
+		users[count] = panel;
 		userPanel.add(panel);
 		userPanelSet(member, ++count, (index+1)%member, nick);
+	}
+	
+	//유저 패널 생명 셋팅
+	public void userLifeSet(int member, int startIndex, int... life) {
+		int index = startIndex;
+		for(int i=0; i<life.length; i++) {
+			users[i].lifeSet(life[index]);
+			index = (index+1)%member;
+		}
+	}
+	
+	public void userCharacterSet(int member, int startIndex, String... character) {
+		int index = startIndex;
+		for(int i=0; i<character.length; i++) {
+			users[i].CharacterSet(character[index]);
+			index = (index+1)%member;
+		}
+	}
+	
+	public void 보안관Set(String nick) {
+		for(int i=0; i<users.length; i++) if(users[i].getNick().equals(nick)) users[i].보안관Set();
 	}
 	
 	//방장 게임시작버튼
@@ -144,25 +173,21 @@ public class GameFrame extends JFrame{
 		button.setContentAreaFilled(false);//버튼 내용 채우기 없음
 		button.setBorderPainted(false);//버튼 배경선 없음
 		button.setBounds(controller.getWidth()/2-buttonImage.getIconWidth()/2, controller.getHeight()/2-buttonImage.getIconHeight()/2, buttonImage.getIconWidth(), buttonImage.getIconHeight());//버튼 이미지 크기만큼 650,600 위치에 셋팅
-		button.addMouseListener(new MouseListener() {
+		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				//게임시작
 				//애니메이션 패널추가하고
 				//서버로 자기방 시작한다고 보냄
 				controller.remove(button);
-				ani = new Ani.AniPanel(screen);
+				ani = new Ani.AniPanel();
 				container.add(ani,new Integer(5));
-				SocketReceiver.writer.println("게임시작:"+SocketReceiver.myRoomId);
+//				SocketReceiver.writer.println("게임:시작:"+SocketReceiver.myRoomId);
+				userLifeSet(4, 3, 3,4,1,2);
+				userCharacterSet(4,3,"주르도네","캘러미티자넷","키트칼슨","페드로라미네즈");
+				보안관Set("시발");
 			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
+			
 			@Override
 			public void mousePressed(MouseEvent e) {
 				ImageIcon buttonImage = new ImageIcon(getClass().getClassLoader().getResource("image/button2.png"));//이미지를 다른이미지로불러와서
@@ -176,7 +201,7 @@ public class GameFrame extends JFrame{
 				button.setBounds(controller.getWidth()/2-buttonImage.getIconWidth()/2, controller.getHeight()/2-buttonImage.getIconHeight()/2, buttonImage.getIconWidth(), buttonImage.getIconHeight());//버튼 이미지 크기만큼 650,600 위치에 셋팅
 			}
 		});
-		
+				
 		controller.add(button);
 		controller.repaint();
 		this.revalidate();

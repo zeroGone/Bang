@@ -1,7 +1,7 @@
 package User;
 
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,14 +43,14 @@ public class SocketReceiver implements Runnable{
 			String title = (String)JOptionPane.showInputDialog(main,null,"방제목 입력",JOptionPane.PLAIN_MESSAGE,null,null,null);
 			if(title!=null) {
 				if(title.length()==0) title="이름없는방";
-				writer.println("방생성:"+title+","+nick);
+				writer.println("방:생성:"+title+","+nick);
 			}
 		}
 		else JOptionPane.showMessageDialog(null, "하나의 방만 접속 허용", "Warning!", JOptionPane.WARNING_MESSAGE);
 	}
 
 	public void roomEnter(int id) {
-		if(myRoomId==-1) writer.println("방입장:"+id+","+nick);
+		if(myRoomId==-1) writer.println("방:입장:"+id+","+nick);
 		else JOptionPane.showMessageDialog(null, "하나의 방만 접속 허용", "Warning!", JOptionPane.WARNING_MESSAGE);
 	}
 
@@ -86,48 +86,12 @@ public class SocketReceiver implements Runnable{
 						int id = Integer.parseInt(data[1]);
 						myRoomId = id;
 						gameFrame = new Game.GameFrame();
-						gameFrame.addWindowListener(new WindowListener() {
-
-							@Override
-							public void windowActivated(WindowEvent arg0) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void windowClosed(WindowEvent arg0) {
-							}
-
+						gameFrame.addWindowListener(new WindowAdapter() {
 							@Override
 							public void windowClosing(WindowEvent e) {
-								writer.println("방나감:"+myRoomId);
+								writer.println("게임:나감:"+myRoomId);
 								myRoomId = -1;
 							}
-
-							@Override
-							public void windowDeactivated(WindowEvent e) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void windowDeiconified(WindowEvent e) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void windowIconified(WindowEvent e) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void windowOpened(WindowEvent e) {
-								// TODO Auto-generated method stub
-
-							}
-
 						});
 						break;
 					case "풀방":
@@ -138,13 +102,25 @@ public class SocketReceiver implements Runnable{
 						break;
 					case "게임":
 						switch(data[1]) {
+						case "채팅":
+							GameFrame.chatOutput.append(data[2]+":"+data[3]+"\n");
+							break;
 						case "방장준비":
-							System.out.println("준비");
 							gameFrame.gameReady();
 							break;
 						case "유저":
 							data = data[2].split("/");
 							gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2]);
+							break;
+						case "케릭설정":
+							break;
+						case "보안관설정":
+							break;
+						case "직업설정":
+							break;
+						case "생명설정":
+							break;
+						case "카드설정":
 							break;
 						}
 						break;
@@ -161,5 +137,4 @@ public class SocketReceiver implements Runnable{
 			}
 		}
 	}
-
 }

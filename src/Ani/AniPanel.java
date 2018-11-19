@@ -12,9 +12,10 @@ import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+import Game.GameFrame;
+
 public class AniPanel extends JPanel implements Runnable{
 	public Thread 화가;
-	private Dimension screen;
 	public final Point[] 유저자리좌표 = {
 			new Point(760,750),
 			new Point(40,360),
@@ -62,10 +63,9 @@ public class AniPanel extends JPanel implements Runnable{
 	}
 
 	//생성자  화면 크기 받고, 이미지를 셋팅해줌
-	public AniPanel(Dimension screen) {
+	public AniPanel() {
 		setOpaque(false);
-		this.screen = screen;
-		this.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
+		this.setBounds(0, 0, (int)GameFrame.screen.getWidth(), (int)GameFrame.screen.getHeight());
 
 		action = "";
 		덱 = new ImageIcon(getClass().getClassLoader().getResource("image/Ani/deck.jpg"));
@@ -134,7 +134,7 @@ public class AniPanel extends JPanel implements Runnable{
 		//카드 개수가 제일 많은 수를 저장
 		for(int i=0; i<cards.length; i++) {
 			if(max<cards[i]) max = cards[i];
-			카드현재좌표[i] = new Point((int)screen.getWidth()/2-카드뒷면.getIconWidth()/2,(int)screen.getHeight()/2-카드뒷면.getIconHeight()/2);
+			카드현재좌표[i] = new Point((int)GameFrame.screen.getWidth()/2-카드뒷면.getIconWidth()/2,(int)GameFrame.screen.getHeight()/2-카드뒷면.getIconHeight()/2);
 		}
 		
 		//소리 세팅하고 loop로 돌린다
@@ -167,7 +167,7 @@ public class AniPanel extends JPanel implements Runnable{
 		
 		if(카드현재좌표[0].getY()==790) {
 			for(int i=0; i<카드현재좌표.length; i++) 
-				카드현재좌표[i].setLocation((int)screen.getWidth()/2-카드뒷면.getIconWidth()/2,(int)screen.getHeight()/2-카드뒷면.getIconHeight()/2);
+				카드현재좌표[i].setLocation((int)GameFrame.screen.getWidth()/2-카드뒷면.getIconWidth()/2,(int)GameFrame.screen.getHeight()/2-카드뒷면.getIconHeight()/2);
 			카드돌린횟수++;
 		}
 	}
@@ -230,7 +230,7 @@ public class AniPanel extends JPanel implements Runnable{
 	public void bankAnimation() {
 		action = "bank";
 		timer = 0;
-		point = new Point((int)screen.getWidth()/2-웰스파고은행[2].getIconWidth()/2, (int)screen.getHeight()/2-웰스파고은행[2].getIconHeight()/2);
+		point = new Point((int)GameFrame.screen.getWidth()/2-웰스파고은행[2].getIconWidth()/2, (int)GameFrame.screen.getHeight()/2-웰스파고은행[2].getIconHeight()/2);
 		clipSet("웰스파고은행");
 		clip.loop(3);
 		화가 = new Thread(this);
@@ -273,7 +273,7 @@ public class AniPanel extends JPanel implements Runnable{
 		action="fight";
 		clipSet("결투");
 		clip.start();
-		point= new Point((int)screen.getWidth()/2-결투.getIconWidth()/2,100);
+		point= new Point((int)GameFrame.screen.getWidth()/2-결투.getIconWidth()/2,100);
 		timer = 0;
 		화가 = new Thread(this);
 		화가.start();
@@ -303,7 +303,7 @@ public class AniPanel extends JPanel implements Runnable{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		//덱을 언제나 가운데에 그림
-		덱.paintIcon(this, g, (int)screen.getWidth()/2-덱.getIconWidth()/2, (int)screen.getHeight()/2-덱.getIconHeight()/2);
+		덱.paintIcon(this, g, (int)GameFrame.screen.getWidth()/2-덱.getIconWidth()/2, (int)GameFrame.screen.getHeight()/2-덱.getIconHeight()/2);
 		repaint();
 		switch(action) {
 		case("start"):
