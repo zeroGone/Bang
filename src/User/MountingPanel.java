@@ -1,41 +1,41 @@
 package User;
 
-import java.awt.Image;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.border.EtchedBorder;
 
+import Game.MOCCard;
+
 public class MountingPanel extends JLayeredPane{
-	private ArrayList<String> mount;
-	
-	public ArrayList<String> getMount(){ return mount; }
-	
+	private ArrayList<MOCCard> mount;
+	public ArrayList<MOCCard> getMount(){ return mount; }
+
 	public MountingPanel() {
 		setBorder(new EtchedBorder(EtchedBorder.RAISED));
-		mount = new ArrayList<String>();
+		mount = new ArrayList<MOCCard>();
 	}
 	
-	public void addMounting(String value) {
+	public void addMounting(MOCCard value) {
 		mount.add(value);
 		this.paintMounting();
 	}
 	
 	public void removeMounting(String value) {
-		mount.remove(mount.indexOf(value));
+		for(int i=0; i<mount.size(); i++) 
+			if(mount.get(i).getName().equals(value)) {
+				mount.remove(i);
+				break;
+			}
 		this.paintMounting();
 	}
 	
 	private void paintMounting() {
 		this.removeAll();
 		for(int i=0; i<mount.size(); i++) {
-			ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/mount/"+mount.get(i)+".png"));
-			image = new ImageIcon(image.getImage().getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH));
-			JLabel label = new JLabel(image);
-			label.setBounds(20*i, 0, this.getWidth(), this.getHeight());
-			add(label, new Integer(i));
+			MOCCard card = mount.get(i);
+			card.setLocation(20*i, 0);
+			add(card, new Integer(i));
 		}
 		this.repaint();
 	}

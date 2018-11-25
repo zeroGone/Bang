@@ -1,33 +1,38 @@
 package Game;
 
-import java.awt.Image;
+import java.util.Objects;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-//카드
-public class Card extends JPanel{
-	private String 종류;
+//모든 카드들의 부모가 되는 카드패널
+//다형성 구현 목표
+public abstract class Card extends JPanel {
 	private String name;
-	private String sign;
-	private int num;
 	
-	public Card(String 종류, String name, String sign, int num) {
-		this.종류=종류;
-		this.name=name;
-		this.sign=sign;
-		this.num=num;
+	public String getName() {
+		return this.name;
 	}
 	
-	public void imageSet(int width, int height) {
-		this.setSize(width,height);
-		ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource(String.format("image/%s/%s.png", 종류, name)));
-		image = new ImageIcon(image.getImage().getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH));
-
+	public Card(int width, int height, String name) {
+		this.setSize(width, height);
+		this.setLayout(null);
+		this.name = name;
 	}
 	
+	//카드 이미지 세팅할 것을 요구함
+	public abstract void imageSet();
+	
+	//equals 메소드 재정의
 	@Override
-	public String toString() {
-		return String.format("%s %d%s", name, num, sign);
+	public boolean equals(Object obj) {
+		if(obj instanceof Card == false) return false;
+		Card other = (Card)obj;
+		return Objects.equals(this.name, other.name);
+	}
+	
+	//hashCode 메소드 재정의
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
 	}
 }

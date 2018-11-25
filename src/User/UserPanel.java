@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -16,19 +17,24 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import Game.Card;
+import Game.CharacterCard;
 import Game.GameFrame;
+import Game.MOCCard;
 
 public class UserPanel extends JPanel{
 	public static final int MAX_LIFE_NUM = 5;
 	private String nick;
-	private String character;
 	private String job;
-	private JPanel characterPanel;
+	//캐릭터 카드
+	private Card character;
+	//장착 카드 패널
+	private MountingPanel mountingPanel;
+
 	private int life;
 	private ImageIcon lifeImage;
 	private JLabel[] lifeLabel;
 	private JPanel lifePanel;
-	private MountingPanel mountingPanel;
 	
 	//다이얼로그 중복으로 띄우는 것을 방지하기 위한 변수
 	private static boolean check = true;
@@ -66,16 +72,6 @@ public class UserPanel extends JPanel{
 			}
 		});
 		add(consumePanel);
-
-		characterPanel = new JPanel();
-		characterPanel.setBounds(this.getWidth()/3*1, 70, this.getWidth()/3, 200);
-		characterPanel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(check&&character!=null) new CardDialog(character).characterShow();
-			}
-		});
-		add(characterPanel);
 		
 		//장착카드패널
 		mountingPanel = new MountingPanel();
@@ -86,6 +82,13 @@ public class UserPanel extends JPanel{
 				if(check) new CardDialog("장착카드").mountShow();
 			}
 		});
+		MOCCard moc = new MOCCard(this.getWidth()/3, 200, "mount", "다이너마이트", "다이아", 9);
+		moc.imageSet();
+		MOCCard moc2 =  new MOCCard(this.getWidth()/3, 200, "mount", "감옥", "스페이드", 10);
+		moc2.imageSet();
+		mountingPanel.addMounting(moc);
+		mountingPanel.addMounting(moc2);
+		
 		add(mountingPanel);
 	}
 	
@@ -93,13 +96,18 @@ public class UserPanel extends JPanel{
 		return this.nick;
 	}
 	
+	//캐릭터 세팅
 	public void CharacterSet(String value) {
-		this.character=value;
-		ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/character/"+value+".jpg"));
-		image = new ImageIcon(image.getImage().getScaledInstance(this.getWidth()/3, 200, Image.SCALE_SMOOTH));
-		JLabel label = new JLabel(image);
-		characterPanel.add(label);
-		characterPanel.repaint();
+		this.character = new CharacterCard(this.getWidth()/3, 200, value);
+		this.character.setLocation(this.getWidth()/3*1, 70);
+		this.character.imageSet();
+		this.character.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(check) new CardDialog(character.getName()).characterShow();
+			}
+		});
+		this.add(character);
 	}
 	
 	//생명 셋팅
@@ -148,30 +156,31 @@ public class UserPanel extends JPanel{
 		
 		public void characterShow() {
 			this.setLayout(new FlowLayout());
-			ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/character/"+this.getTitle()+".jpg"));
-			image = new ImageIcon(image.getImage().getScaledInstance(500, 800, Image.SCALE_SMOOTH));
-			add(new JLabel(image));
-			setSize(500,800);
-			setVisible(true);
+			this.setSize(500,800);
+			Card character = new CharacterCard(500, 800, this.getTitle());
+			character.imageSet();
+			this.add(character);
+			this.setVisible(true);
 		}
 		
 		public void mountShow() {
 			this.setLayout(null);
-			ArrayList<String> list = mountingPanel.getMount();
-			ImageIcon image = null;
+			ArrayList<MOCCard> list = mountingPanel.getMount();
 			if(list.size()==0) {
-				image = new ImageIcon(getClass().getClassLoader().getResource("image/x.png"));
-				setSize(image.getIconWidth(), image.getIconHeight());
-				add(new JLabel(image));
+				ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/x.png"));
+				JLabel label = new JLabel(image);
+				label.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
+				add(label);
+				this.setSize(label.getWidth(), label.getHeight()+40);
 			}else {
 				for(int i=0; i<list.size(); i++) {
-					image = new ImageIcon(getClass().getClassLoader().getResource("image/mount/"+list.get(i)+".png"));
-					image = new ImageIcon(image.getImage().getScaledInstance(300, 450, Image.SCALE_SMOOTH));
-					JLabel label = new JLabel(image);
-					label.setBounds(i*300, 0, image.getIconWidth(),image.getIconHeight());
-					add(label);
-					this.setSize((i+1)*300, image.getIconHeight()+50);
+					Map data = list.get(i).getCard();
+					MOCCard card = new MOCCard(300, 450, (String)data.get("종류"), (String)data.get("name"), (String)data.get("sign"), (int)data.get("number"));
+					card.setBounds(i*300, 0, 300, 450);
+					card.imageSet();
+					add(card);
 				}
+				this.setSize(list.size()*300, 490);
 			}
 			setLocation((int)GameFrame.screen.getWidth()/2-this.getWidth()/2,(int)GameFrame.screen.getHeight()/2-this.getHeight()/2);
 			setVisible(true);
