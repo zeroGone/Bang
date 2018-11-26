@@ -45,7 +45,9 @@ public class MOCCard extends Card {
 		label.setBounds(this.getWidth()/10, this.getHeight()/10*9, this.getWidth()/10, (int)this.getHeight()/10);
 		add(label);
 		//카드이미지
-		image = new ImageIcon(getClass().getClassLoader().getResource(String.format("image/%s/%s.png", 종류, this.getName())));
+		System.out.println(종류+","+this.getName());
+		if(종류.equals("mount")) 	image = new ImageIcon(getClass().getClassLoader().getResource(String.format("image/%s/%s.png", 종류, this.getName())));
+		else image = new ImageIcon(getClass().getClassLoader().getResource(String.format("image/%s/%s.jpg", 종류, this.getName())));
 		image = new ImageIcon(image.getImage().getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH));
 		label = new JLabel(image);
 		label.setBounds(0, 0, this.getWidth(), this.getHeight());

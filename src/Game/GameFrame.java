@@ -188,7 +188,6 @@ public class GameFrame extends JFrame{
 	}
 	
 	public void userCardShow(String[] cards) {
-		System.out.println(Arrays.toString(cards));
 		users[0].myConsumeShow(cards);
 	}
 	

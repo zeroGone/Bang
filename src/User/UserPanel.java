@@ -246,7 +246,6 @@ public class UserPanel extends JPanel{
 		}
 		
 		public void consumeShow(ArrayList<MOCCard> list) {
-			System.out.println("로그:"+list.toString());
 			if(list.size()==0) {
 				ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/x.png"));
 				JLabel label = new JLabel(image);
@@ -256,12 +255,12 @@ public class UserPanel extends JPanel{
 			}else {
 				for(int i=0; i<list.size(); i++) {
 					Map data = list.get(i).getCard();
-					MOCCard card = new MOCCard(300, 450, (String)data.get("종류"), (String)data.get("name"), (String)data.get("sign"), (int)data.get("number"));
-					card.setBounds(i*300, 0, 300, 450);
+					MOCCard card = new MOCCard(200, 350, (String)data.get("종류"), (String)data.get("name"), (String)data.get("sign"), (int)data.get("number"));
+					card.setBounds(i*200, 0, 200, 350);
 					card.imageSet();
 					add(card);
 				}
-				this.setSize(list.size()*300, 490);
+				this.setSize(list.size()*200, 390);
 			}
 			setLocation((int)GameFrame.screen.getWidth()/2-this.getWidth()/2,(int)GameFrame.screen.getHeight()/2-this.getHeight()/2);
 			setVisible(true);
