@@ -8,6 +8,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,7 +31,7 @@ public class GameFrame extends JFrame{
 	public static Dimension screen;
 	private JLayeredPane container;
 	
-	private AniPanel ani;
+	public AniPanel ani;
 	
 	private JPanel userPanel;
 	public UserPanel[] users;//각 유저들의 패널
@@ -38,6 +39,7 @@ public class GameFrame extends JFrame{
 	private JPanel controller;//유저의 선택을 다룰 패널
 	
 	public static JTextArea chatOutput;//게임 채팅패널
+	public static JTextArea logOutput;//게임 로그패널
 
 	public GameFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -94,7 +96,7 @@ public class GameFrame extends JFrame{
 		log.setLayout(new BorderLayout());
 		log.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 		
-		JTextArea logOutput = new JTextArea();//텍스트에이리어 객체생성
+		logOutput = new JTextArea();//텍스트에이리어 객체생성
 		logOutput.setEditable(false);//텍스트에이리어에 입력못하게함
 		JScrollPane logScroll = new JScrollPane(logOutput);//텍스트에이리어 스크롤 되기위한 JScrollPane 클래스
 		
@@ -110,15 +112,21 @@ public class GameFrame extends JFrame{
 		controller = new JPanel();
 		controller.setBackground(Color.white);
 		controller.setBounds(520, 360, 880, 300);
+		controller.setOpaque(false);
 		controller.setLayout(null);
-		container.add(controller, new Integer(2));
+		container.add(controller, new Integer(5));
 		
 		userPanel = new JPanel();
 		userPanel.setLayout(null);
 		userPanel.setOpaque(false);
 		userPanel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 		container.add(userPanel, new Integer(1));
+		
+		ani = new Ani.AniPanel();
+		container.add(ani,new Integer(2));
+		
 		add(container);
+		
 		setVisible(true);//프레임이 보일수있게
 	}
 	
@@ -157,13 +165,31 @@ public class GameFrame extends JFrame{
 	public void userCharacterSet(int member, int startIndex, String... character) {
 		int index = startIndex;
 		for(int i=0; i<character.length; i++) {
-			users[i].CharacterSet(character[index]);
+			users[i].characterSet(character[index]);
 			index = (index+1)%member;
 		}
 	}
 	
-	public void 보안관Set(String nick) {
-		for(int i=0; i<users.length; i++) if(users[i].getNick().equals(nick)) users[i].보안관Set();
+	public void userCardNumSet(int member, int startIndex, int... cards) {
+		int index = startIndex;
+		for(int i=0; i<cards.length; i++) {
+			users[i].consumeSet(cards[index]);
+			index = (index+1)%member;
+		}
+		users[0].myConsumeSet();
+	}
+	
+	public void 보안관Set(int 거리) {
+		users[거리].보안관Set();
+	}
+	
+	public void myJobSet(String job) {
+		users[0].jobSet(job);
+	}
+	
+	public void userCardShow(String[] cards) {
+		System.out.println(Arrays.toString(cards));
+		users[0].myConsumeShow(cards);
 	}
 	
 	//방장 게임시작버튼
@@ -180,12 +206,11 @@ public class GameFrame extends JFrame{
 				//애니메이션 패널추가하고
 				//서버로 자기방 시작한다고 보냄
 				controller.remove(button);
-				ani = new Ani.AniPanel();
-				container.add(ani,new Integer(5));
-//				SocketReceiver.writer.println("게임:시작:"+SocketReceiver.myRoomId);
-				userLifeSet(4, 3, 3,4,1,2);
-				userCharacterSet(4,3,"주르도네","캘러미티자넷","키트칼슨","페드로라미네즈");
-				보안관Set("시발");
+				SocketReceiver.writer.println("게임:시작:"+SocketReceiver.myRoomId);
+//				userCharacterSet(4,0,"바트캐시디","슬랩더킬러","로즈둘란","럭키듀크");
+//				보안관Set(1);
+//				myJobSet("무법자");
+//				userCardNumSet(4,0,4,4,4,5);
 			}
 			
 			@Override

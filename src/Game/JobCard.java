@@ -18,7 +18,6 @@ public class JobCard extends Card {
 		JLabel label = new JLabel(image);
 		label.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
 		add(label);
-		this.setVisible(true);
 	}
 	
 }

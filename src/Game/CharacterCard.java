@@ -19,6 +19,4 @@ public class CharacterCard extends Card {
 		label.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
 		add(label);
 	}
-	
-
 }

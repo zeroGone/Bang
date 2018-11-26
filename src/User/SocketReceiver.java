@@ -113,16 +113,36 @@ public class SocketReceiver implements Runnable{
 							gameFrame.userSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2]);
 							break;
 						case "케릭설정":
+							data = data[2].split("/");
+							gameFrame.userCharacterSet(Integer.parseInt(data[0]), Integer.parseInt(data[1]), data[2].split(","));
 							break;
 						case "보안관설정":
+							gameFrame.보안관Set(Integer.parseInt(data[2]));
 							break;
 						case "직업설정":
+							gameFrame.myJobSet(data[2]);
 							break;
 						case "생명설정":
+							String[] lifeValue = data[4].split(",");
+							int[] life = new int[lifeValue.length];
+							for(int i=0; i<lifeValue.length; i++) life[i]=Integer.parseInt(lifeValue[i]);
+							gameFrame.userLifeSet(Integer.parseInt(data[2]), Integer.parseInt(data[3]), life);
 							break;
 						case "카드설정":
+							String[] card = data[4].split(",");
+							int[] cards = new int[card.length];
+							for(int i=0; i<card.length; i++) cards[i]=Integer.parseInt(card[i]);
+							gameFrame.userCardNumSet(Integer.parseInt(data[2]), Integer.parseInt(data[3]), cards);
+							gameFrame.ani.startAnimation(cards);
+							break;
+						case "내카드":
+							card = data[2].split(",");
+							gameFrame.users[0].myConsumeShow(card);
 							break;
 						}
+						break;
+					case "로그":
+						GameFrame.logOutput.append("서버:"+data[1]+"\n");
 						break;
 					case "서버":
 						if(data[1].equals("close")) {

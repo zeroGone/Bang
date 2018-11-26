@@ -92,10 +92,10 @@ public class Main extends JFrame implements MouseListener{
 	
 	//시작
 	public static void main(String[] args) {
-//		new Main();
-		Game.GameFrame gameFrame = new Game.GameFrame();
-		gameFrame.userSet(4, 0, "시발, 1,2,3");
-		gameFrame.gameReady();
+		new Main();
+//		Game.GameFrame gameFrame = new Game.GameFrame();
+//		gameFrame.userSet(4, 0, "시발, 1,2,3");
+//		gameFrame.gameReady();
 	}
 
 	//대기방에서 유저리스트에 유저를 추가하는 메소드
