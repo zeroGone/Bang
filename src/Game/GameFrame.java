@@ -8,7 +8,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,7 +22,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import Ani.AniPanel;
 import User.SocketReceiver;
 import User.UserPanel;
 
@@ -122,7 +120,7 @@ public class GameFrame extends JFrame{
 		userPanel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 		container.add(userPanel, new Integer(1));
 		
-		ani = new Ani.AniPanel();
+		ani = new Game.AniPanel();
 		container.add(ani,new Integer(2));
 		
 		add(container);
@@ -205,7 +203,7 @@ public class GameFrame extends JFrame{
 				//애니메이션 패널추가하고
 				//서버로 자기방 시작한다고 보냄
 				controller.remove(button);
-				SocketReceiver.writer.println("게임:시작:"+SocketReceiver.myRoomId);
+//				SocketReceiver.writer.println("게임:시작:"+SocketReceiver.myRoomId);
 //				userCharacterSet(4,0,"바트캐시디","슬랩더킬러","로즈둘란","럭키듀크");
 //				보안관Set(1);
 //				myJobSet("무법자");

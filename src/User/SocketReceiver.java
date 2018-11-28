@@ -133,7 +133,7 @@ public class SocketReceiver implements Runnable{
 							int[] cards = new int[card.length];
 							for(int i=0; i<card.length; i++) cards[i]=Integer.parseInt(card[i]);
 							gameFrame.userCardNumSet(Integer.parseInt(data[2]), Integer.parseInt(data[3]), cards);
-							gameFrame.ani.startAnimation(cards);
+//							gameFrame.ani.startAnimation(Integer.parseInt(data[2]), Integer.parseInt(data[3]), cards);
 							break;
 						case "³»Ä«µå":
 							card = data[2].split(",");
