@@ -95,14 +95,15 @@ public class Main extends JFrame implements MouseListener{
 //		new Main();
 		Game.GameFrame gameFrame = new Game.GameFrame();
 		gameFrame.userSet(7, 0, "1,2,3,4,5,6,7");
-		gameFrame.ani.cardDrawAnimation(1, 2);
-		gameFrame.ani.cardDrawAnimation(2, 2);
-		gameFrame.ani.cardDrawAnimation(3, 2);
-		gameFrame.ani.cardDrawAnimation(4, 2);
-		gameFrame.ani.cardDrawAnimation(5, 2);
-		gameFrame.ani.cardDrawAnimation(6, 2);
-		gameFrame.ani.cardDrawAnimation(0, 2);
-
+		gameFrame.ani.bangAnimation(2, 1, false);
+//		gameFrame.ani.cardDrawAnimation(1, 2);
+//		gameFrame.ani.cardDrawAnimation(2, 2);
+//		gameFrame.ani.cardDrawAnimation(3, 2);
+//		gameFrame.ani.cardDrawAnimation(4, 2);
+//		gameFrame.ani.cardDrawAnimation(5, 2);
+//		gameFrame.ani.cardDrawAnimation(6, 2);
+//		gameFrame.ani.cardDrawAnimation(0, 2);
+//		gameFrame.ani.startAnimation(5,4,4,4,3,2,1);
 //		gameFrame.gameReady();
 	}
 
