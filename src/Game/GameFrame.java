@@ -120,7 +120,7 @@ public class GameFrame extends JFrame{
 		userPanel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
 		container.add(userPanel, new Integer(1));
 		
-		ani = new Game.AniPanel();
+		ani = new AniPanel();
 		container.add(ani,new Integer(2));
 		
 		add(container);

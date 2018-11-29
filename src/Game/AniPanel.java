@@ -30,11 +30,13 @@ public class AniPanel extends JPanel implements Runnable{
 	private String action;//어떤 애니메이션인지 구분
 	private Clip clip;//음악
 	private int caster;//시전자 인덱스
+	private int goal;//목표자 인덱스
 	private int cardDrawNum;
 	private int cardDrawCount;//드로우 몇장가는지
 	private int[] cards;
 	private int startAniCardMaxIndex;//카드를 제일 많이 가지고 있는 개수
-
+	private boolean check;
+	private boolean evasion;
 
 	//생성자  
 	//화면 크기에 맞게 설정, 이미지들 넣어줌
@@ -74,15 +76,8 @@ public class AniPanel extends JPanel implements Runnable{
 		images.put("해골", new ImageIcon(getClass().getClassLoader().getResource("image/Ani/해골.jpg")));
 		center = new Point((int)GameFrame.screen.getWidth()/2-images.get("카드뒷면").getIconWidth()/2,
 								(int)GameFrame.screen.getHeight()/2-images.get("카드뒷면").getIconHeight()/2);
-		cardLocation  = new Point[]{
-				new Point(center.x, center.y),
-				new Point(center.x, center.y),
-				new Point(center.x, center.y),
-				new Point(center.x, center.y),
-				new Point(center.x, center.y),
-				new Point(center.x, center.y),
-				new Point(center.x, center.y)
-		};
+		this.cardLocation  = new Point[7];
+		for(int i=0; i<7; i++) cardLocation[i] = new Point(center.x, center.y);
 		distance = new Point[7];
 	}
 	
@@ -124,11 +119,6 @@ public class AniPanel extends JPanel implements Runnable{
 		this.drawer.start();
 	}
 	
-	private boolean check;
-	
-	private int goal;
-	private boolean evasion;
-	
 	//뱅 애니메이션 : 시전자, 목표, 회피여부
 	public void bangAnimation(int caster, int goal, boolean evasion) {
 		this.action="bang";
@@ -163,36 +153,39 @@ public class AniPanel extends JPanel implements Runnable{
 	public void beerAnimation(int caster) {//맥주 애니메이션
 		action="beer";
 		this.caster=caster;
-		setClip("캔따기");
+		this.cardLocation[caster] = new Point(this.USER_SEAT_LOCATION[caster].x, this.USER_SEAT_LOCATION[caster].y);
+		setClip("can");
 		clip.start();
-		timer = 0;
 		drawer = new Thread(this);
 		drawer.start();
 	}
 
 	public void takeAnimation(int caster, int goal) {//강탈 애니메이션
-		action="take";
+		this.action="take";
 		this.caster=caster;
 		this.goal=goal;
-		timer = 0;
-		drawer = new Thread(this);
-		drawer.start();
+		this.cardDrawCount=0;
+		this.cardLocation[caster] = new Point(this.USER_SEAT_LOCATION[caster].x, this.USER_SEAT_LOCATION[caster].y);
+		this.cardLocation[goal] = new Point(this.USER_SEAT_LOCATION[goal].x, this.USER_SEAT_LOCATION[goal].y);
+		this.setClip("take1");
+		this.clip.start();
+		this.drawer = new Thread(this);
+		this.drawer.start();
 	}
 
 	public void machineGunAnimation() {
-		action = "machineGun";
-		timer = 0;
-		setClip("기관총");
-		clip.start();
-		drawer = new Thread(this);
-		drawer.start();
+		this.action = "machineGun";
+		this.cardDrawCount=0;
+		this.setClip("machineGun");
+		this.clip.start();
+		this.drawer = new Thread(this);
+		this.drawer.start();
 	}
 	
 	public void stageCoachAnimation() {
-		action = "stageCoach";
-		timer = 0;
-		point = new Point(USER_SEAT_LOCATION[1].x, USER_SEAT_LOCATION[1].y);
-		setClip("역마차");
+		this.action = "stageCoach";
+		this.cardLocation[0] = new Point(this.center.x-images.get("역마차").getIconWidth()/2, -300);
+		setClip("stageCoach");
 		clip.start();
 		drawer = new Thread(this);
 		drawer.start();
@@ -200,19 +193,17 @@ public class AniPanel extends JPanel implements Runnable{
 	
 	public void bankAnimation() {
 		action = "bank";
-		timer = 0;
-		point = new Point((int)GameFrame.screen.getWidth()/2-웰스파고은행[2].getIconWidth()/2, (int)GameFrame.screen.getHeight()/2-웰스파고은행[2].getIconHeight()/2);
-		setClip("웰스파고은행");
-		clip.loop(3);
+		this.cardDrawCount=0;
+		setClip("bank");
+		clip.loop(2);
 		drawer = new Thread(this);
 		drawer.start();
 	}
 
 	public void indianAnimation() {
 		action = "indian";
-		timer = 0;
-		point = new Point(USER_SEAT_LOCATION[1].x, USER_SEAT_LOCATION[1].y);
-		setClip("인디언");
+		this.cardLocation[0] = new Point(-1500, this.center.y-images.get("인디언").getIconHeight()/2);
+		setClip("indian");
 		clip.start();
 		drawer = new Thread(this);
 		drawer.start();
@@ -222,10 +213,9 @@ public class AniPanel extends JPanel implements Runnable{
 		action="dynamite";
 		this.caster=caster;
 		this.check=check;
-		point = new Point(0,0);
-		setClip("퓨즈");
+		setClip("fuse");
 		clip.start();
-		timer = 0;
+		this.cardDrawCount=0;
 		drawer = new Thread(this);
 		drawer.start();
 	}
@@ -233,19 +223,19 @@ public class AniPanel extends JPanel implements Runnable{
 	public void prisonAnimation(int goal) {
 		action="prison";
 		this.goal=goal;
-		setClip("감옥");
+		setClip("prison");
 		clip.start();
-		timer = 0;
+		this.cardDrawCount=0;
 		drawer = new Thread(this);
 		drawer.start();
 	}
 	
 	public void fightAnimation() {
 		action="fight";
-		setClip("결투");
+		setClip("fight");
 		clip.start();
-		point= new Point((int)GameFrame.screen.getWidth()/2-결투.getIconWidth()/2,100);
-		timer = 0;
+		this.cardLocation[0] = new Point(this.center.x-images.get("결투").getIconWidth()/2, -800);
+		this.cardDrawCount=0;
 		drawer = new Thread(this);
 		drawer.start();
 	}
@@ -253,14 +243,24 @@ public class AniPanel extends JPanel implements Runnable{
 	public void dieAnimation(int caster) {
 		action="die";
 		this.caster=caster;
-		timer = 0;
-		setClip("죽음");
+		this.cardDrawCount=0;
+		setClip("die");
 		clip.start();
 		drawer = new Thread(this);
 		drawer.start();
 	}
 	
-	private int timer;//시간을 재기 위한 변수
+	public void cattleRow(int goal) {
+		this.action="cattleRow";
+		this.goal=goal;
+		this.cardLocation[goal] = new Point(USER_SEAT_LOCATION[goal].x, USER_SEAT_LOCATION[goal].y);
+		this.distance[goal]= new Point((USER_SEAT_LOCATION[goal].x-center.x)/100, (USER_SEAT_LOCATION[goal].y-center.y)/100);
+		this.cardDrawCount=0;
+		this.setClip("start");
+		this.clip.start();
+		this.drawer = new Thread(this);
+		this.drawer.start();
+	}
 
 	@Override
 	public void run() {
@@ -269,10 +269,7 @@ public class AniPanel extends JPanel implements Runnable{
 			while(true) {
 				switch(action) {
 				case "start":
-					if(cards[startAniCardMaxIndex]==cardDrawCount) {
-						for(int i=0; i<cards.length; i++) cardLocation[i] = new Point(center.x, center.y);
-						break thread; 
-					}
+					if(cards[startAniCardMaxIndex]==cardDrawCount) break thread; 
 					if(cardLocation[startAniCardMaxIndex].distance(USER_SEAT_LOCATION[startAniCardMaxIndex])<50) { 
 						for(int i=0; i<cards.length; i++) {
 							cardLocation[i].x=this.center.x; 
@@ -286,7 +283,7 @@ public class AniPanel extends JPanel implements Runnable{
 					}
 					break;
 				case "draw":
-					if(this.cardDrawCount==this.cardDrawNum) { cardLocation[caster] = new Point(center.x, center.y); break thread; }
+					if(this.cardDrawCount==this.cardDrawNum)  break thread; 
 					if(cardLocation[caster].distance(USER_SEAT_LOCATION[caster])<50) { 
 						cardLocation[caster].x=this.center.x; 
 						cardLocation[caster].y=this.center.y; 
@@ -297,7 +294,6 @@ public class AniPanel extends JPanel implements Runnable{
 					break;
 				case "bang":
 					if(cardDrawCount==30) { 
-						cardLocation[caster] = new Point(center.x, center.y);
 						this.EOHAnimation();
 						break thread; 
 					};
@@ -306,13 +302,77 @@ public class AniPanel extends JPanel implements Runnable{
 					else cardLocation[caster].y-=5;
 					break;
 				case "evasion":
-					if(cardDrawCount==800) { cardLocation[goal] = new Point(center.x, center.y); break thread; } 
+					if(cardDrawCount==800)  break thread;
 					if(cardDrawCount%100==0) check=!check;
 					this.cardDrawCount++; 
 					break;
 				case "hit":
-					if(cardDrawCount==200) { cardLocation[goal] = new Point(center.x, center.y); break thread; } 
+					if(cardDrawCount==200)  break thread; 
 					this.cardDrawCount++; 
+					break;
+				case "beer":
+					if(cardDrawCount==1200) break thread;
+					if(cardDrawCount==350) { this.setClip("drinking"); this.clip.start();}
+					if(cardDrawCount==1000) { this.setClip("burp"); this.clip.start();}
+					this.cardDrawCount++; 
+					break;
+				case "take":
+					if(cardDrawCount==26) break thread;
+					if(cardDrawCount<12) {
+						if(cardLocation[caster].distance(USER_SEAT_LOCATION[caster])>30) { check = !check; this.cardDrawCount++; }
+						if(check) cardLocation[caster].y++;
+						else cardLocation[caster].y--;
+					}else if(cardDrawCount==12){
+						this.setClip("take2");
+						this.clip.start();
+						this.cardDrawCount++;
+					}
+					else {
+						if(cardLocation[goal].distance(USER_SEAT_LOCATION[goal])>30) { check = !check; this.cardDrawCount++; }
+						if(check) cardLocation[goal].y++;
+						else cardLocation[goal].y--;
+					}
+					break;
+				case "machineGun":
+					if(cardDrawCount==2000) break thread;
+					this.cardDrawCount++;
+					break;
+				case "stageCoach":
+					if(cardLocation[0].y==center.y) {this.cardLocation[0] = new Point(center.x, center.y); break thread;};
+					cardLocation[0].y++;
+					break;
+				case "bank":
+					if(cardDrawCount==3500) break thread;
+					this.cardDrawCount+=5;
+					break;
+				case "indian":
+					if(cardLocation[0].x==2799) {this.cardLocation[0] = new Point(center.x, center.y); break thread;};
+					cardLocation[0].x++;
+					break;
+				case "dynamite":
+					if((!check&&cardDrawCount==500)||cardDrawCount==3000) break thread;
+					else if(cardDrawCount==500) {
+						this.setClip("nuclear");
+						this.clip.start();
+					}
+					this.cardDrawCount++;
+					break;
+				case "prison":
+					if(cardDrawCount==500) break thread;
+					this.cardDrawCount++;
+					break;
+				case "fight":
+					if(cardLocation[0].y==center.y) {this.cardLocation[0] = new Point(center.x, center.y); break thread;};
+					cardLocation[0].y++;
+					break;
+				case "die":
+					if(cardDrawCount==300) break thread;
+					this.cardDrawCount++;
+					break;
+				case "cattleRow":
+					if(cardLocation[goal].distance(center)<50) { this.cardDrawCount++;  break thread; };
+					cardLocation[goal].x-=distance[goal].x;
+					cardLocation[goal].y-=distance[goal].y;					
 					break;
 				}
 				Thread.sleep(2);
@@ -348,57 +408,53 @@ public class AniPanel extends JPanel implements Runnable{
 		case "hit":
 			if(cardDrawCount<200) images.get("폭발").paintIcon(this, g, cardLocation[goal].x, cardLocation[goal].y);
 			break;
-//		case("bang"):
-//			if(timer<2000) 	뱅.paintIcon(this, g, 유저자리좌표[caster].x+뱅.getIconWidth()/3, 유저자리좌표[caster].y+뱅.getIconHeight()/3);
-//			else if(evasion) {
-//				if(timer<2007){
-//					if(check) {
-//						회피[0].paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y+20);
-//						check=false;
-//					}else {
-//						회피[1].paintIcon(this, g, 유저자리좌표[goal].x+회피[0].getIconWidth()/2, 유저자리좌표[goal].y+20);
-//						check=true;
-//					}
-//				}
-//			}else if(timer<3000){
-//				폭발.paintIcon(this, g, 유저자리좌표[goal].x+폭발.getIconWidth()/3, 유저자리좌표[goal].y+폭발.getIconWidth()/3);
-//			}
-//			break;
-//		case("beer"): 
-//			if(timer<12) 맥주[timer%3].paintIcon(this, g, 유저자리좌표[caster].x+맥주[0].getIconWidth()/2, 유저자리좌표[caster].y+20);
-//			break;
-//		case("take"):
-//			if(timer<50) 강탈.paintIcon(this, g, 유저자리좌표[caster].x+강탈.getIconWidth()/2, 유저자리좌표[caster].y+강탈.getIconHeight()/3);
-//			else if(timer<80) 강탈.paintIcon(this, g, 유저자리좌표[goal].x+강탈.getIconWidth()/2, 유저자리좌표[goal].y+강탈.getIconHeight()/3);
-//			break;
-//		case("machineGun"):
-//			if(timer<48) for(int i=0; i<10; i++) 폭발.paintIcon(this, g, (int)(Math.random()*1920), (int)(Math.random()*1020));
-//			break;
-//		case("stageCoach"):
-//			if(timer<1100) 역마차.paintIcon(this, g, point.x, point.y);
-//			break;
-//		case("bank"):
-//			if(timer<95) 웰스파고은행[timer%5].paintIcon(this, g, point.x, point.y);
-//			break;
-//		case("indian"):
-//			if(timer<1150) 인디언.paintIcon(this, g, point.x, point.y);
-//			break;
-//		case("dynamite"):
-//			if(timer<3) 다이너마이트.paintIcon(this, g, 유저자리좌표[caster].x+150, 유저자리좌표[caster].y);
-//			else if(check&&timer<25) 핵폭발.paintIcon(this, g, 유저자리좌표[caster].x, 유저자리좌표[caster].y);
-//			break;
-//		case("prison"):
-//			if(timer<5) 감옥.paintIcon(this, g, 유저자리좌표[goal].x, 유저자리좌표[goal].y);
-//			break;
-//		case("fight"):
-//			if(timer<250) 결투.paintIcon(this, g, point.x, point.y);
-//			break;
-//		case("hit"):
-//			if(timer<1000) 폭발.paintIcon(this, g, 유저자리좌표[caster].x+폭발.getIconWidth()/3, 유저자리좌표[caster].y+폭발.getIconWidth()/3);
-//			break;
-//		case("die"):
-//			if(timer<4) 해골.paintIcon(this, g, 유저자리좌표[caster].x+해골.getIconWidth()/3, 유저자리좌표[caster].y+20);
-//			break;
+		case "beer":
+			if(cardDrawCount<1200) {
+				if(cardDrawCount/100%3==0) images.get("beer1").paintIcon(this, g, cardLocation[caster].x, cardLocation[caster].y);
+				else if(cardDrawCount/100%3==1) images.get("beer2").paintIcon(this, g, cardLocation[caster].x, cardLocation[caster].y);
+				else images.get("beer3").paintIcon(this, g, cardLocation[caster].x, cardLocation[caster].y);
+			}
+			break;
+		case "take":
+			if(cardDrawCount<26){
+				if(cardDrawCount<12) images.get("강탈").paintIcon(this, g, cardLocation[caster].x, cardLocation[caster].y);
+				else images.get("강탈").paintIcon(this, g, cardLocation[goal].x, cardLocation[goal].y);
+			}
+			break;
+		case "machineGun":
+			if(cardDrawCount<2000) for(int i=0; i<10; i++) images.get("폭발").paintIcon(this, g, (int)(Math.random()*1920), (int)(Math.random()*1020));
+			break;
+		case "stageCoach":
+			if(cardLocation[0].y!=center.y) images.get("역마차").paintIcon(this, g, cardLocation[0].x, cardLocation[0].y);
+			break;
+		case "bank":
+			if(cardDrawCount<3500) {
+				if(cardDrawCount/100%5==0) images.get("웰스파고은행1").paintIcon(this, g, this.center.x-50, this.center.y);
+				else if(cardDrawCount/100%5==1) images.get("웰스파고은행2").paintIcon(this, g, this.center.x-50, this.center.y);
+				else if(cardDrawCount/100%5==2) images.get("웰스파고은행3").paintIcon(this, g, this.center.x-50, this.center.y);
+				else if(cardDrawCount/100%5==3) images.get("웰스파고은행4").paintIcon(this, g, this.center.x-50, this.center.y);
+				else images.get("웰스파고은행5").paintIcon(this, g, this.center.x-50, this.center.y);
+			}
+			break;
+		case "indian":
+			if(cardLocation[0].x!=center.x) images.get("인디언").paintIcon(this, g, cardLocation[0].x, cardLocation[0].y);
+			break;
+		case "dynamite":
+			if(cardDrawCount<500) images.get("다이너마이트").paintIcon(this, g, this.USER_SEAT_LOCATION[caster].x, this.USER_SEAT_LOCATION[caster].y);
+			else if(check&&cardDrawCount<3000) images.get("핵폭발").paintIcon(this, g, this.USER_SEAT_LOCATION[caster].x, this.USER_SEAT_LOCATION[caster].y);
+			break;
+		case "prison":
+			if(this.cardDrawCount<500) images.get("감옥").paintIcon(this, g, this.USER_SEAT_LOCATION[goal].x, this.USER_SEAT_LOCATION[goal].y);
+			break;
+		case "fight":
+			if(cardLocation[0].y!=center.y) images.get("결투").paintIcon(this, g, cardLocation[0].x, cardLocation[0].y);
+			break;
+		case "die":
+			if(cardDrawCount<300) images.get("해골").paintIcon(this, g, this.USER_SEAT_LOCATION[caster].x, this.USER_SEAT_LOCATION[caster].y);
+			break;
+		case "cattleRow":
+			if(cardDrawCount==0) images.get("카드뒷면").paintIcon(this, g, cardLocation[goal].x, cardLocation[goal].y);
+			break;
 		}
 		repaint();
 	}
