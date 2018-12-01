@@ -3,6 +3,7 @@ package Game;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -12,6 +13,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,6 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -32,9 +36,10 @@ public class GameFrame extends JFrame{
 	public AniPanel ani;
 	
 	private JPanel userPanel;
-	public UserPanel[] users;//각 유저들의 패널
+	public static UserPanel[] users;//각 유저들의 패널
 	
 	private JPanel controller;//유저의 선택을 다룰 패널
+	private JPanel tomb;//무덤
 	
 	public static JTextArea chatOutput;//게임 채팅패널
 	public static JTextArea logOutput;//게임 로그패널
@@ -123,6 +128,12 @@ public class GameFrame extends JFrame{
 		ani = new AniPanel();
 		container.add(ani,new Integer(2));
 		
+		tomb = new JPanel();
+		tomb.setBackground(Color.WHITE);
+		tomb.setBorder(new TitledBorder("무덤"));
+		tomb.setBounds((int)screen.getWidth()/2-250, (int)screen.getHeight()/2-100, 150, 200);
+		container.add(tomb,new Integer(1));
+
 		add(container);
 		
 		setVisible(true);//프레임이 보일수있게
@@ -171,10 +182,9 @@ public class GameFrame extends JFrame{
 	public void userCardNumSet(int member, int startIndex, int... cards) {
 		int index = startIndex;
 		for(int i=0; i<cards.length; i++) {
-			users[i].consumeSet(cards[index]);
+			users[i].cardNumSet(cards[index]);
 			index = (index+1)%member;
 		}
-		users[0].myConsumeSet();
 	}
 	
 	public void 보안관Set(int 거리) {
@@ -185,8 +195,19 @@ public class GameFrame extends JFrame{
 		users[0].jobSet(job);
 	}
 	
-	public void userCardShow(String[] cards) {
-		users[0].myConsumeShow(cards);
+	public void myTurnSet(boolean check) {
+		if(check) {
+			JLabel label = new JLabel("나의 턴!");
+			label.setBackground(Color.BLACK);
+			label.setFont(new Font(null, Font.ITALIC, 30));
+			label.setBounds(controller.getWidth()/2-50, 0, 110, 100);
+			controller.add(label);
+			users[0].myTurnSet(true);
+		}else {
+			controller.removeAll();
+			users[0].myTurnSet(false);
+		}
+		controller.validate();
 	}
 	
 	//방장 게임시작버튼
@@ -229,88 +250,3 @@ public class GameFrame extends JFrame{
 		this.revalidate();
 	}
 }
-
-/*
- * 
- * JPanel panel = new JPanel();
-		panel.setBounds(0, 0, (int)screen.getWidth(), (int)screen.getHeight());
-		panel.setOpaque(false);
-JButton button1 = new JButton("시작");
-button1.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		ani.startAnimation(5,3,0,4,4,0,4);
-	}
-});
-
-//람다식 
-button1.addActionListener(e -> ani.startAnimation(5,3,0,4,4,0,4));
-
-JButton button2 = new JButton("뱅");
-button2.addActionListener(new ActionListener(){
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		ani.bangAnimation(1, 2, true);
-	}
-});
-
-JButton button3 = new JButton("맥주");
-button3.addActionListener(new ActionListener(){
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		ani.beerAnimation(1);
-	}
-});
-
-JButton button4 = new JButton("강탈");
-button4.addActionListener(new ActionListener(){
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		ani.takeAnimation(1, 2);
-	}
-});
-
-JButton button5 = new JButton("기관총");
-button5.addActionListener(e->ani.machineGunAnimation());
-
-JButton button6 = new JButton("역마차");
-button6.addActionListener(e->ani.stageCoachAnimation());
-
-JButton button7 = new JButton("웰스파고은행");
-button7.addActionListener(e->ani.bankAnimation());
-
-JButton button8 = new JButton("인디언");
-button8.addActionListener(e->ani.indianAnimation());
-
-JButton button9 = new JButton("다이너마이트");
-button9.addActionListener(e->ani.dynamiteAnimation(0,true));
-
-JButton button10 = new JButton("감옥");
-button10.addActionListener(e->ani.prisonAnimation(0));
-
-JButton button11 = new JButton("결투");
-button11.addActionListener(e->ani.fightAnimation());
-
-JButton button12 = new JButton("히트");
-button12.addActionListener(e->ani.hitAnimation(0));
-
-JButton button13 = new JButton("죽음");
-button13.addActionListener(e->ani.dieAnimation(0));
-
-panel.add(button1);
-panel.add(button2);
-panel.add(button3);
-panel.add(button4);
-panel.add(button5);
-panel.add(button6);
-panel.add(button7);
-panel.add(button8);
-panel.add(button9);
-panel.add(button10);
-panel.add(button11);
-panel.add(button12);
-panel.add(button13);
-		container.add(panel, new Integer(2));
-
-*/
-	

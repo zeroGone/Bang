@@ -137,7 +137,7 @@ public class SocketReceiver implements Runnable{
 							break;
 						case "³»Ä«µå":
 							card = data[2].split(",");
-							gameFrame.users[0].myConsumeShow(card);
+//							gameFrame.users[0].myConsumeShow(card);
 							break;
 						}
 						break;

@@ -8,9 +8,8 @@ import java.util.Objects;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
 
-public class MOCCard extends Card {
+public class MOCCard extends Card{
 	private int number;//숫자
 	private String sign;//기호
 	private String 종류;//종류
@@ -37,20 +36,19 @@ public class MOCCard extends Card {
 		ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/sign/"+this.sign+".png"));
 		image = new ImageIcon(image.getImage().getScaledInstance(this.getWidth()/10, this.getHeight()/10, Image.SCALE_SMOOTH));
 		JLabel label = new JLabel(image);
-		label.setBounds(0, this.getHeight()/10*9, image.getIconWidth(), image.getIconHeight());
+		label.setBounds(2, this.getHeight()/10*9, image.getIconWidth(), image.getIconHeight()-2);
 		add(label);
 		//숫자
 		label = new JLabel(Integer.toString(number));
-		label.setFont(new Font(null, Font.BOLD, this.getHeight()/17));
-		label.setBounds(this.getWidth()/10, this.getHeight()/10*9, this.getWidth()/10, (int)this.getHeight()/10);
+		label.setFont(new Font(null, Font.BOLD, this.getHeight()/20));
+		label.setBounds(this.getWidth()/10+2, this.getHeight()/10*9, this.getWidth()/10, (int)this.getHeight()/10-2);
 		add(label);
 		//카드이미지
-		System.out.println(종류+","+this.getName());
 		if(종류.equals("mount")) 	image = new ImageIcon(getClass().getClassLoader().getResource(String.format("image/%s/%s.png", 종류, this.getName())));
 		else image = new ImageIcon(getClass().getClassLoader().getResource(String.format("image/%s/%s.jpg", 종류, this.getName())));
-		image = new ImageIcon(image.getImage().getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH));
+		image = new ImageIcon(image.getImage().getScaledInstance(this.getWidth()-4, this.getHeight()-4, Image.SCALE_SMOOTH));
 		label = new JLabel(image);
-		label.setBounds(0, 0, this.getWidth(), this.getHeight());
+		label.setBounds(2, 2, image.getIconWidth(), image.getIconHeight());
 		add(label);
 	}
 	
