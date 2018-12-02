@@ -35,15 +35,13 @@ public class UserPanel extends JPanel{
 	//장착 카드 패널
 	private MountingPanel mountingPanel;
 	//소비 카드 패널
-	private JPanel consumePanel;
+	protected JPanel consumePanel;
 	private JPanel lifePanel;
 	private int life;
 	private ImageIcon lifeImage;
 	private JLabel[] lifeLabel;
-	private ArrayList<MOCCard> myCards;
 	//다이얼로그 중복으로 띄우는 것을 방지하기 위한 변수
-	private boolean check = true;
-	public static boolean myTurnCheck = false; 
+	public static boolean check = true;
 	
 	public UserPanel(Dimension screen, String name) {
 		setSize(400,300);
@@ -86,7 +84,6 @@ public class UserPanel extends JPanel{
 		
 		add(mountingPanel);
 		
-		myCards = new ArrayList<MOCCard>();
 	}
 	
 	public String getNick() {
@@ -110,28 +107,6 @@ public class UserPanel extends JPanel{
 			consumePanel.add(label);
 		}else consumePanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 		consumePanel.repaint();
-	}
-	
-	public void myCardsSet(String... cards) {
-		for(String card:cards) {
-			String[] data = card.split("/");
-			MOCCard MOCCard = new MOCCard(200,300,data[0],data[1],data[2],Integer.parseInt(data[3]));
-			MOCCard.imageSet();
-			this.myCards.add(MOCCard);
-		}
-		
-		this.consumePanel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(check) new CardDialog("내 카드").myCardShow();
-			}
-		});
-	}
-	
-	//턴 셋
-	public void myTurnSet(boolean check) {
-		if(check) for(MOCCard myCard:myCards) myCard.addMouseListener(new CardUseAdapter(myCard));
-		else for(MOCCard myCard:myCards) myCard.removeMouseListener(myCard.getMouseListeners()[0]);
 	}
 	
 	//캐릭터 세팅
@@ -195,7 +170,7 @@ public class UserPanel extends JPanel{
 		});
 	}
 	
-	private class CardDialog extends JDialog{
+	protected class CardDialog extends JDialog{
 		public CardDialog(String name) {
 			check = false;
 			setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/ani/back.jpg")).getImage());
@@ -251,84 +226,8 @@ public class UserPanel extends JPanel{
 			setVisible(true);
 		}
 		
-		public void myCardShow() {
-			if(myCards.size()==0) {
-				ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/x.png"));
-				JLabel label = new JLabel(image);
-				label.setBounds(0, 0, image.getIconWidth(), image.getIconHeight());
-				add(label);
-				this.setSize(label.getWidth(), label.getHeight()+40);
-			}else {
-				for(int i=0; i<myCards.size(); i++) {
-					MOCCard card = myCards.get(i);
-					card.setLocation(i*200, 0);
-					add(card);
-				}
-				this.setSize(myCards.size()*200, 330);
-			}
-			setLocation((int)GameFrame.screen.getWidth()/2-this.getWidth()/2,(int)GameFrame.screen.getHeight()/2-this.getHeight()/2);
-			setVisible(true);
-		}
+		
 	}
 
-	private class CardUseAdapter extends MouseAdapter{
-		public MOCCard card;
-		public JButton use;
-		public JButton throwing;
-		public CardUseAdapter(MOCCard card) {
-			this.card = card;
-			use = new JButton("사용");
-			use.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					String value = card.getName();
-					if(value.equals("뱅")||value.equals("강탈")||value.equals("캣벌로우")||
-							value.equals("결투")||value.equals("감옥")) {
-						JDialog userChoice = new JDialog();
-						userChoice.setTitle("목표 선택");
-						userChoice.setResizable(false);
-						userChoice.setAlwaysOnTop(true);
-						userChoice.setLayout(null);
-						for(int i=0; i<GameFrame.users.length-1; i++) {
-							JButton button = new JButton(GameFrame.users[i+1].getNick());
-							button.setBounds(i*200, 0, 200, 100);
-							userChoice.add(button);
-						}
-						
-						userChoice.setSize((GameFrame.users.length-1)*200, 130);
-						userChoice.setLocation((int)GameFrame.screen.getWidth()/2-userChoice.getWidth()/2, 
-								(int)GameFrame.screen.getHeight()/2-userChoice.getHeight()/2);
-						userChoice.setVisible(true);
-					}else {
-						System.out.println(value+"사용");
-					}
-				}
-			});
-			
-			throwing = new JButton("버리기");
-			throwing.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					System.out.println(card.getName()+"버림");
-				}
-			});
-			
-			use.setBounds(card.getWidth()/2-50, card.getHeight()/2-50, 100, 50);
-			throwing.setBounds(card.getWidth()/2-50, card.getHeight()/2+25, 100, 50);
-		}
-		
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if(e.getClickCount()%2==0) {
-				card.setBorder(new LineBorder(Color.BLACK, 2));
-				card.add(use,2);
-				card.add(throwing,2);
-			}else {
-				card.setBorder(null);
-				card.remove(use);
-				card.remove(throwing);
-			}
-			card.revalidate();
-		}
-	}
+	
 }

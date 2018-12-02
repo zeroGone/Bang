@@ -152,7 +152,10 @@ public class GameFrame extends JFrame{
 	private void userPanelSet(int member, int count, int index, String[] nick) {
 		if(count>=member) return;
 		User.UserPanel panel = new User.UserPanel(screen, nick[index]);
-		if(count==0) panel.setLocation(760, 750);
+		if(count==0) {
+			panel = new User.UserMyPanel(screen, nick[index]);
+			panel.setLocation(760, 750);
+		}
 		else if(member<=5) panel.setLocation((int)screen.getWidth()/4*(count-1)+40, 20);
 		else if(count==1) panel.setLocation(40, 360);
 		else if(count==6) panel.setLocation((int)screen.getWidth()/4*3+40 ,360);
@@ -202,10 +205,10 @@ public class GameFrame extends JFrame{
 			label.setFont(new Font(null, Font.ITALIC, 30));
 			label.setBounds(controller.getWidth()/2-50, 0, 110, 100);
 			controller.add(label);
-			users[0].myTurnSet(true);
+			((User.UserMyPanel)users[0]).myTurnSet(true);
 		}else {
 			controller.removeAll();
-			users[0].myTurnSet(false);
+			((User.UserMyPanel)users[0]).myTurnSet(false);
 		}
 		controller.validate();
 	}

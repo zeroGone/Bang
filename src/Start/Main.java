@@ -99,11 +99,11 @@ public class Main extends JFrame implements MouseListener{
 		gameFrame.userCharacterSet(7, 0, "폴레그렛", "바트캐시디", "럭키듀크", "로즈둘란", "블랙잭", "벌쳐샘", "슬랩더킬러");
 		gameFrame.userCardNumSet(7, 0, 4,4,4,4,3,4,5);
 		gameFrame.보안관Set(3);
-		gameFrame.users[0].myCardsSet("consume/뱅/다이아/9","consume/강탈/스페이드/1","mount/감옥/하트/3","consume/인디언/클로버/12",
-				"consume/뱅/다이아/9","consume/강탈/스페이드/1","mount/감옥/하트/3","consume/인디언/클로버/12");
-		gameFrame.myTurnSet(true);
+		((User.UserMyPanel)gameFrame.users[0]).myCardsSet("consume/빗나감/다이아/9","consume/강탈/스페이드/1","mount/감옥/하트/3","consume/인디언/클로버/12",
+				"consume/빗나감/다이아/9","consume/빗나감/스페이드/1","mount/감옥/하트/3","consume/인디언/클로버/12");
+//		gameFrame.myTurnSet(true);
 //		gameFrame.myTurnSet(false);
-
+		((User.UserMyPanel)gameFrame.users[0]).attackedSet("뱅");
 //		gameFrame.ani.cattleRow(6);
 //		gameFrame.ani.dieAnimation(2);
 //		gameFrame.ani.fightAnimation();
