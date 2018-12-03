@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,6 +24,7 @@ public class UserMyPanel extends UserPanel {
 
 	public static boolean myTurnCheck = false; 
 	private boolean myCardUseCheck;
+	private MyCardDialog dialog;
 	
 	private ArrayList<MOCCard> myCards;
 
@@ -57,7 +59,8 @@ public class UserMyPanel extends UserPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(UserPanel.check) {
-					new MyCardDialog("내 카드").myCardShow();
+					dialog = new MyCardDialog("내 카드");
+					dialog.myCardShow();
 				}
 			}
 		});
@@ -130,6 +133,7 @@ public class UserMyPanel extends UserPanel {
 		public JButton throwing;
 		public CardUseAdapter(MOCCard card) {
 			this.card = card;
+			Map<String, Object> cardInfo = card.getCard();
 			use = new JButton("사용");
 			use.addMouseListener(new MouseAdapter() {
 				@Override
@@ -147,7 +151,7 @@ public class UserMyPanel extends UserPanel {
 							if(value.equals("뱅")||value.equals("강탈")) {
 								//거리계산필요
 								ArrayList<MOCCard> mounts = GameFrame.users[0].mountingPanel.getMount();
-								int distance = 3;
+								int distance = 1;
 								if(mounts.size()>0) {
 									
 								}
@@ -156,6 +160,7 @@ public class UserMyPanel extends UserPanel {
 									if(GameFrame.users[i].getLife()==0||GameFrame.users[i].distance>distance) continue;
 									JButton button = new JButton(GameFrame.users[i].getNick());
 									button.setBounds(index*200, 0, 200, 100);
+									button.addMouseListener(new CardChoiceAdapter(button));
 									userChoice.add(button);
 									index++;
 								}
@@ -164,6 +169,7 @@ public class UserMyPanel extends UserPanel {
 								for(int i=0; i<GameFrame.users.length-1; i++) {
 									JButton button = new JButton(GameFrame.users[i+1].getNick());
 									button.setBounds(i*200, 0, 200, 100);
+									button.addMouseListener(new CardChoiceAdapter(button));
 									userChoice.add(button);
 								}
 								userChoice.setSize((GameFrame.users.length-1)*200, 130);
@@ -178,19 +184,23 @@ public class UserMyPanel extends UserPanel {
 							});
 							userChoice.setVisible(true);
 						}else {
-							System.out.println(value+"사용");
+							SocketReceiver.writer.println(String.format(
+									"게임:카드사용:%d:%s/%s/%s/%d", 
+									SocketReceiver.myRoomId,
+									cardInfo.get("종류").toString(), 
+									value, 
+									cardInfo.get("sign").toString(), 
+									(int)cardInfo.get("number")));
+							myCards.remove(card);
+							dialog.dispose();
+							dialog.myCardShow();
 						}
 					}
 				}
 			});
 			
 			throwing = new JButton("버리기");
-			throwing.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					System.out.println(card.getName()+"버림");
-				}
-			});
+			throwing.addMouseListener(new CardChoiceAdapter(throwing));
 			
 			use.setBounds(card.getWidth()/2-50, card.getHeight()/2-50, 100, 50);
 			throwing.setBounds(card.getWidth()/2-50, card.getHeight()/2+25, 100, 50);
@@ -208,6 +218,40 @@ public class UserMyPanel extends UserPanel {
 				card.remove(throwing);
 			}
 			card.revalidate();
+		}
+		
+		private class CardChoiceAdapter extends MouseAdapter{
+			JButton button;
+			Map<String, Object> cardInfo;
+			public CardChoiceAdapter(JButton button) {
+				this.button = button;
+				this.cardInfo = card.getCard();
+			}	
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(button.getText().equals("버리기")){
+					SocketReceiver.writer.println(String.format(
+							"게임:카드버림:%d:%s/%s/%s/%d", 
+							SocketReceiver.myRoomId,
+							cardInfo.get("종류").toString(), 
+							cardInfo.get("name").toString(), 
+							cardInfo.get("sign").toString(), 
+							(int)cardInfo.get("number")));
+				}else {
+					SocketReceiver.writer.println(String.format(
+							"게임:카드사용:%d:%s/%s/%s/%s:%s", 
+							SocketReceiver.myRoomId,
+							cardInfo.get("종류").toString(), 
+							cardInfo.get("name").toString(), 
+							cardInfo.get("sign").toString(), 
+							(int)cardInfo.get("number"),
+							button.getText()));
+				}
+				myCards.remove(card);
+				dialog.dispose();
+				dialog.myCardShow();
+			}
 		}
 	}
 }

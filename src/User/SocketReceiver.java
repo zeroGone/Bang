@@ -97,6 +97,9 @@ public class SocketReceiver implements Runnable{
 					case "풀방":
 						JOptionPane.showMessageDialog(null, "풀방인거임~", "Warning!", JOptionPane.WARNING_MESSAGE);
 						break;
+					case "게임진행중":
+						JOptionPane.showMessageDialog(null, "게임진행중인거임~!", "Warning!", JOptionPane.WARNING_MESSAGE);
+						break;
 					case "마이룸":
 						myRoomId=Integer.parseInt(data[1]);
 						break;
@@ -133,11 +136,18 @@ public class SocketReceiver implements Runnable{
 							int[] cards = new int[card.length];
 							for(int i=0; i<card.length; i++) cards[i]=Integer.parseInt(card[i]);
 							gameFrame.userCardNumSet(Integer.parseInt(data[2]), Integer.parseInt(data[3]), cards);
-//							gameFrame.ani.startAnimation(Integer.parseInt(data[2]), Integer.parseInt(data[3]), cards);
+							int[] startAniCards = startAniCardsSet(Integer.parseInt(data[2]), Integer.parseInt(data[3]), cards);
+							gameFrame.ani.startAnimation(startAniCards);
 							break;
 						case "내카드":
 							card = data[2].split(",");
-//							gameFrame.users[0].myConsumeShow(card);
+							((User.UserMyPanel)gameFrame.users[0]).myCardsSet(card);
+							break;
+						case "턴":
+							gameFrame.ani.cardDrawAnimation(Integer.parseInt(data[2]), 2);
+							break;
+						case "내턴":
+							gameFrame.myTurnSet(true);
 							break;
 						}
 						break;
@@ -156,5 +166,18 @@ public class SocketReceiver implements Runnable{
 				System.exit(0);
 			}
 		}
+	}
+	
+	private int[] startAniCardsSet(int member, int startIndex, int[] cards) {
+		int[] aniCards = new int[7];
+		int index = startIndex;
+		aniCards[0]=cards[index];
+		index = (index+1)%member;
+		for(int i=1; i<cards.length; i++) {
+			if(member<6) aniCards[i+1]=cards[index];
+			else aniCards[i]=cards[index];
+			index = (index+1)%member;
+		}
+		return aniCards;
 	}
 }

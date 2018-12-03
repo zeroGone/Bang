@@ -128,12 +128,6 @@ public class GameFrame extends JFrame{
 		ani = new AniPanel();
 		container.add(ani,new Integer(2));
 		
-		tomb = new JPanel();
-		tomb.setBackground(Color.WHITE);
-		tomb.setBorder(new TitledBorder("무덤"));
-		tomb.setBounds((int)screen.getWidth()/2-250, (int)screen.getHeight()/2-100, 150, 200);
-		container.add(tomb,new Integer(1));
-
 		add(container);
 		
 		setVisible(true);//프레임이 보일수있게
@@ -144,10 +138,6 @@ public class GameFrame extends JFrame{
 		userPanel.removeAll();
 		users = new UserPanel[member];
 		userPanelSet(member, 0, startIndex, nicks.split(","));
-		users[0].distance=0;
-		users[1].distance=1; users[6].distance=1;
-		users[2].distance=2; users[5].distance=2;
-		users[3].distance=3; users[4].distance=3;
 		userPanel.repaint();
 		this.revalidate();
 	}
@@ -178,12 +168,33 @@ public class GameFrame extends JFrame{
 		}
 	}
 	
+	private void userDistanceSet(int member) {
+		users[0].distance=0;
+		users[1].distance=1;
+		users[2].distance=2;
+		if(member==4) users[3].distance=1;
+		else if(member==5) {
+			users[3].distance=2;
+			users[4].distance=1;
+		}else if(member==6) {
+			users[3].distance=3;
+			users[4].distance=2;
+			users[5].distance=1;
+		}else {
+			users[3].distance=3;
+			users[4].distance=3;
+			users[5].distance=2;
+			users[6].distance=1;
+		}
+	}
+	
 	public void userCharacterSet(int member, int startIndex, String... character) {
 		int index = startIndex;
 		for(int i=0; i<character.length; i++) {
 			users[i].characterSet(character[index]);
 			index = (index+1)%member;
 		}
+		userDistanceSet(member);
 	}
 	
 	public void userCardNumSet(int member, int startIndex, int... cards) {
@@ -192,6 +203,13 @@ public class GameFrame extends JFrame{
 			users[i].cardNumSet(cards[index]);
 			index = (index+1)%member;
 		}
+		
+		tomb = new JPanel();
+		tomb.setBackground(Color.WHITE);
+		tomb.setBorder(new TitledBorder("무덤"));
+		tomb.setBounds((int)screen.getWidth()/2-250, (int)screen.getHeight()/2-100, 150, 200);
+		container.add(tomb,new Integer(1));
+		container.revalidate();
 	}
 	
 	public void userDieSet(int index, String job) {
@@ -225,6 +243,9 @@ public class GameFrame extends JFrame{
 				public void mouseClicked(MouseEvent e) {
 					if(((User.UserMyPanel)users[0]).getMyCardsSize()<=users[0].getLife()) {
 						//턴종료
+						controller.removeAll();
+						controller.repaint();
+						SocketReceiver.writer.println("게임:턴종료:"+Integer.toString(SocketReceiver.myRoomId));
 					}else {
 						controller.remove(label);
 						JLabel label = new JLabel("생명 수보다 카드수가 적어야합니다");
@@ -275,7 +296,7 @@ public class GameFrame extends JFrame{
 				//애니메이션 패널추가하고
 				//서버로 자기방 시작한다고 보냄
 				controller.remove(button);
-//				SocketReceiver.writer.println("게임:시작:"+SocketReceiver.myRoomId);
+				SocketReceiver.writer.println("게임:시작:"+SocketReceiver.myRoomId);
 //				userCharacterSet(4,0,"바트캐시디","슬랩더킬러","로즈둘란","럭키듀크");
 //				보안관Set(1);
 //				myJobSet("무법자");
