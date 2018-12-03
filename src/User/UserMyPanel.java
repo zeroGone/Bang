@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,7 +29,10 @@ public class UserMyPanel extends UserPanel {
 	public UserMyPanel(Dimension screen, String name) {
 		super(screen, name);
 		myCards = new ArrayList<MOCCard>();
-
+	}
+	
+	public int getMyCardsSize() {
+		return myCards.size();
 	}
 
 	public void attackedSet(String value) {
@@ -74,9 +80,7 @@ public class UserMyPanel extends UserPanel {
 				for(int i=0; i<myCards.size(); i++) {
 					MOCCard card = myCards.get(i);
 					card.setLocation(i*200, 0);
-					card.addMouseListener(new MouseAdapter() {
-						
-					});
+					card.addMouseListener(new CardUseAdapter(card));
 					add(card);
 				}
 				this.setSize(myCards.size()*200, 330);
@@ -106,6 +110,12 @@ public class UserMyPanel extends UserPanel {
 				}
 				JButton button = new JButton("³ª´Â »ó³²ÀÚ´Ï±î ±×³É ¸Â°Ú´Ù");
 				button.setBounds(0,300,ºø³ª°¨.size()*200,30);
+				button.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						dispose();
+					}
+				});
 				this.add(button);
 				this.setSize(ºø³ª°¨.size()*200, 360);
 				setLocation((int)GameFrame.screen.getWidth()/2-this.getWidth()/2,(int)GameFrame.screen.getHeight()/2-this.getHeight()/2);
@@ -124,26 +134,52 @@ public class UserMyPanel extends UserPanel {
 			use.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					String value = card.getName();
-					if(value.equals("¹ð")||value.equals("°­Å»")||value.equals("Ä¹¹ú·Î¿ì")||
-							value.equals("°áÅõ")||value.equals("°¨¿Á")) {
-						JDialog userChoice = new JDialog();
-						userChoice.setTitle("¸ñÇ¥ ¼±ÅÃ");
-						userChoice.setResizable(false);
-						userChoice.setAlwaysOnTop(true);
-						userChoice.setLayout(null);
-						for(int i=0; i<GameFrame.users.length-1; i++) {
-							JButton button = new JButton(GameFrame.users[i+1].getNick());
-							button.setBounds(i*200, 0, 200, 100);
-							userChoice.add(button);
+					if(!myCardUseCheck) {
+						myCardUseCheck = true;
+						String value = card.getName();
+						if(value.equals("¹ð")||value.equals("°­Å»")||value.equals("Ä¹¹ú·Î¿ì")||
+								value.equals("°áÅõ")||value.equals("°¨¿Á")) {
+							JDialog userChoice = new JDialog();
+							userChoice.setTitle("¸ñÇ¥ ¼±ÅÃ");
+							userChoice.setResizable(false);
+							userChoice.setAlwaysOnTop(true);
+							userChoice.setLayout(null);
+							if(value.equals("¹ð")||value.equals("°­Å»")) {
+								//°Å¸®°è»êÇÊ¿ä
+								ArrayList<MOCCard> mounts = GameFrame.users[0].mountingPanel.getMount();
+								int distance = 3;
+								if(mounts.size()>0) {
+									
+								}
+								int index = 0;
+								for(int i=1; i<GameFrame.users.length; i++) {
+									if(GameFrame.users[i].getLife()==0||GameFrame.users[i].distance>distance) continue;
+									JButton button = new JButton(GameFrame.users[i].getNick());
+									button.setBounds(index*200, 0, 200, 100);
+									userChoice.add(button);
+									index++;
+								}
+								userChoice.setSize(index*200, 130);
+							}else {
+								for(int i=0; i<GameFrame.users.length-1; i++) {
+									JButton button = new JButton(GameFrame.users[i+1].getNick());
+									button.setBounds(i*200, 0, 200, 100);
+									userChoice.add(button);
+								}
+								userChoice.setSize((GameFrame.users.length-1)*200, 130);
+							}
+							userChoice.setLocation((int)GameFrame.screen.getWidth()/2-userChoice.getWidth()/2, 
+									(int)GameFrame.screen.getHeight()/2+150);
+							userChoice.addWindowListener(new WindowAdapter() {
+								@Override
+								public void windowClosing(WindowEvent e) {
+									myCardUseCheck=false;
+								}
+							});
+							userChoice.setVisible(true);
+						}else {
+							System.out.println(value+"»ç¿ë");
 						}
-						
-						userChoice.setSize((GameFrame.users.length-1)*200, 130);
-						userChoice.setLocation((int)GameFrame.screen.getWidth()/2-userChoice.getWidth()/2, 
-								(int)GameFrame.screen.getHeight()/2-userChoice.getHeight()/2);
-						userChoice.setVisible(true);
-					}else {
-						System.out.println(value+"»ç¿ë");
 					}
 				}
 			});

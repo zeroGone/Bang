@@ -101,9 +101,19 @@ public class Main extends JFrame implements MouseListener{
 		gameFrame.보안관Set(3);
 		((User.UserMyPanel)gameFrame.users[0]).myCardsSet("consume/빗나감/다이아/9","consume/강탈/스페이드/1","mount/감옥/하트/3","consume/인디언/클로버/12",
 				"consume/빗나감/다이아/9","consume/빗나감/스페이드/1","mount/감옥/하트/3","consume/인디언/클로버/12");
+		gameFrame.myJobSet("무법자");
+		gameFrame.userDieSet(2, "배신자");
+		gameFrame.ani.cardOpenAnimation("consume","빗나감","다이아","9");
+//		gameFrame.users[1].aliveCheck=false;
+//		gameFrame.users[6].aliveCheck=false;
+//		gameFrame.users[4].aliveCheck=false;
+//		gameFrame.users[2].aliveCheck=false;
+//		gameFrame.users[5].aliveCheck=false;
+
 //		gameFrame.myTurnSet(true);
+//		gameFrame.gameEnd("보안관");
 //		gameFrame.myTurnSet(false);
-		((User.UserMyPanel)gameFrame.users[0]).attackedSet("뱅");
+//		((User.UserMyPanel)gameFrame.users[0]).attackedSet("뱅");
 //		gameFrame.ani.cattleRow(6);
 //		gameFrame.ani.dieAnimation(2);
 //		gameFrame.ani.fightAnimation();

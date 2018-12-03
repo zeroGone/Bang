@@ -1,5 +1,6 @@
 package Game;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -11,6 +12,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class AniPanel extends JPanel implements Runnable{
@@ -91,6 +93,19 @@ public class AniPanel extends JPanel implements Runnable{
 		} catch (Exception e) {
 			System.out.println("오디어파일없음");
 		}
+	}
+	
+	private MOCCard openCard;
+	public void cardOpenAnimation(String... info) {
+		this.action="open";
+		this.setClip("start");
+		this.drawer = new Thread(this);
+		this.drawer.start();
+		this.cardDrawCount=0;
+
+		openCard = new MOCCard(400,600, info[0], info[1], info[2], Integer.parseInt(info[3]));
+		openCard.imageSet();
+		openCard.setLocation(this.getWidth()/2-openCard.getWidth()/2, this.getHeight()/2-openCard.getHeight()/2);
 	}
 
 	public void cardDrawAnimation(int caster, int cardNum) {
@@ -292,6 +307,11 @@ public class AniPanel extends JPanel implements Runnable{
 					cardLocation[caster].x+=distance[caster].x;
 					cardLocation[caster].y+=distance[caster].y;					
 					break;
+				case "open":
+					if(this.cardDrawCount>1500) { this.remove(openCard); break thread; }
+					if(this.cardDrawCount==500) { this.add(openCard); this.clip.start(); }
+					this.cardDrawCount++;
+					break;
 				case "bang":
 					if(cardDrawCount==30) { 
 						this.EOHAnimation();
@@ -395,6 +415,9 @@ public class AniPanel extends JPanel implements Runnable{
 			break;
 		case "draw":
 			if(this.cardDrawCount<this.cardDrawNum) images.get("카드뒷면").paintIcon(this, g, cardLocation[caster].x, cardLocation[caster].y);
+			break;
+		case "open":
+			if(this.cardDrawCount<500) images.get("카드뒷면").paintIcon(this, g, cardLocation[caster].x, cardLocation[caster].y);
 			break;
 		case "bang":
 			if(cardDrawCount<30) images.get("뱅").paintIcon(this, g, cardLocation[caster].x, cardLocation[caster].y);

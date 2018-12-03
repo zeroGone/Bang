@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -21,7 +22,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -144,6 +144,10 @@ public class GameFrame extends JFrame{
 		userPanel.removeAll();
 		users = new UserPanel[member];
 		userPanelSet(member, 0, startIndex, nicks.split(","));
+		users[0].distance=0;
+		users[1].distance=1; users[6].distance=1;
+		users[2].distance=2; users[5].distance=2;
+		users[3].distance=3; users[4].distance=3;
 		userPanel.repaint();
 		this.revalidate();
 	}
@@ -190,6 +194,11 @@ public class GameFrame extends JFrame{
 		}
 	}
 	
+	public void userDieSet(int index, String job) {
+		users[index].jobSet(job);
+		users[index].dieSet();
+	}
+	
 	public void 보안관Set(int 거리) {
 		users[거리].보안관Set();
 	}
@@ -201,10 +210,48 @@ public class GameFrame extends JFrame{
 	public void myTurnSet(boolean check) {
 		if(check) {
 			JLabel label = new JLabel("나의 턴!");
-			label.setBackground(Color.BLACK);
 			label.setFont(new Font(null, Font.ITALIC, 30));
 			label.setBounds(controller.getWidth()/2-50, 0, 110, 100);
 			controller.add(label);
+
+			ImageIcon endImage = new ImageIcon(getClass().getClassLoader().getResource("image/end.jpg"));
+			endImage = new ImageIcon(endImage.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+			JButton endButton = new JButton(endImage);
+			endButton.setContentAreaFilled(false);
+			endButton.setBorderPainted(false);
+			endButton.setBounds(controller.getWidth()/2+150, controller.getHeight()/2-50, endImage.getIconWidth(), endImage.getIconHeight());
+			endButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(((User.UserMyPanel)users[0]).getMyCardsSize()<=users[0].getLife()) {
+						//턴종료
+					}else {
+						controller.remove(label);
+						JLabel label = new JLabel("생명 수보다 카드수가 적어야합니다");
+						label.setFont(new Font(null, Font.ITALIC, 30));
+						label.setBounds(200, 0, 500, 100);
+						controller.add(label);
+						controller.revalidate();
+					}
+				}
+				@Override
+				public void mousePressed(MouseEvent e) {//마우스가 버튼을 눌렀을때
+					ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/end.jpg"));
+					image = new ImageIcon(image.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
+					endButton.setIcon(image);//이미지 설정
+					endButton.setBounds(controller.getWidth()/2+175, controller.getHeight()/2-25, image.getIconWidth(), image.getIconHeight());
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {//마우스가 버튼을 땠을때
+					ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/end.jpg"));
+					image = new ImageIcon(image.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+					endButton.setIcon(image);//이미지 설정
+					endButton.setBounds(controller.getWidth()/2+150, controller.getHeight()/2-50, image.getIconWidth(), image.getIconHeight());
+				}
+			});
+			
+			controller.add(endButton);
 			((User.UserMyPanel)users[0]).myTurnSet(true);
 		}else {
 			controller.removeAll();
@@ -212,6 +259,7 @@ public class GameFrame extends JFrame{
 		}
 		controller.validate();
 	}
+	
 	
 	//방장 게임시작버튼
 	public void gameReady() {
@@ -251,5 +299,16 @@ public class GameFrame extends JFrame{
 		controller.add(button);
 		controller.repaint();
 		this.revalidate();
+	}
+	
+	public void gameEnd(String job) {
+		container.remove(tomb);
+		controller.setOpaque(true);
+		JLabel label = new JLabel(job+"의 승리! 방을 다시 파주세요~");
+		label.setFont(new Font(null, Font.BOLD, 50));
+		label.setBounds(0, 0, controller.getWidth(), controller.getHeight());
+		controller.add(label);	
+		controller.revalidate();
+		container.revalidate();
 	}
 }

@@ -33,11 +33,12 @@ public class UserPanel extends JPanel{
 	//캐릭터 카드
 	private Card character;
 	//장착 카드 패널
-	private MountingPanel mountingPanel;
+	public static MountingPanel mountingPanel;
 	//소비 카드 패널
 	protected JPanel consumePanel;
 	private JPanel lifePanel;
 	private int life;
+	public int distance;
 	private ImageIcon lifeImage;
 	private JLabel[] lifeLabel;
 	//다이얼로그 중복으로 띄우는 것을 방지하기 위한 변수
@@ -90,6 +91,19 @@ public class UserPanel extends JPanel{
 		return this.nick;
 	}
 	
+	public int getLife() {
+		return this.life;
+	}
+	
+	public void dieSet() {
+		this.removeAll();
+		Card jobCard = new JobCard(this.getWidth()/2, this.getHeight(), job);
+		jobCard.imageSet();
+		jobCard.setLocation(this.getWidth()/2-this.getWidth()/4, 0);
+		this.add(jobCard);
+		this.revalidate();
+	}
+	
 	//소비카드 세팅
 	public void cardNumSet(int num) {
 		consumePanel.removeAll();
@@ -135,6 +149,7 @@ public class UserPanel extends JPanel{
 	
 	//생명 깍이거나 추가
 	public void lifeAddOrRemove(int value) {
+		this.life+=value;
 		lifePanel.removeAll();
 		for(int i=0; i<this.life+value; i++) {
 			lifeLabel[i]=new JLabel(lifeImage);
@@ -165,7 +180,7 @@ public class UserPanel extends JPanel{
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(check) new CardDialog("내 직업").jobShow();
+				if(check) new CardDialog("직업").jobShow();
 			}
 		});
 	}
@@ -225,9 +240,5 @@ public class UserPanel extends JPanel{
 			setLocation((int)GameFrame.screen.getWidth()/2-this.getWidth()/2,(int)GameFrame.screen.getHeight()/2-this.getHeight()/2);
 			setVisible(true);
 		}
-		
-		
 	}
-
-	
 }
