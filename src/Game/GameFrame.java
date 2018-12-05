@@ -169,22 +169,22 @@ public class GameFrame extends JFrame{
 	}
 	
 	private void userDistanceSet(int member) {
-		users[0].distance=0;
-		users[1].distance=1;
-		users[2].distance=2;
-		if(member==4) users[3].distance=1;
+		users[0].setDistance(0);
+		users[1].setDistance(1);
+		users[2].setDistance(2);
+		if(member==4) users[3].setDistance(1);
 		else if(member==5) {
-			users[3].distance=2;
-			users[4].distance=1;
+			users[3].setDistance(2);
+			users[4].setDistance(1);
 		}else if(member==6) {
-			users[3].distance=3;
-			users[4].distance=2;
-			users[5].distance=1;
+			users[3].setDistance(3);
+			users[4].setDistance(2);
+			users[5].setDistance(1);
 		}else {
-			users[3].distance=3;
-			users[4].distance=3;
-			users[5].distance=2;
-			users[6].distance=1;
+			users[3].setDistance(3);
+			users[4].setDistance(3);
+			users[5].setDistance(2);
+			users[6].setDistance(1);
 		}
 	}
 	

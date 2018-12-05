@@ -12,12 +12,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import Game.Card;
@@ -38,7 +36,8 @@ public class UserPanel extends JPanel{
 	protected JPanel consumePanel;
 	private JPanel lifePanel;
 	private int life;
-	public int distance;
+	private int distance;
+	private int cardNum;
 	private ImageIcon lifeImage;
 	private JLabel[] lifeLabel;
 	//다이얼로그 중복으로 띄우는 것을 방지하기 위한 변수
@@ -85,6 +84,7 @@ public class UserPanel extends JPanel{
 		
 		add(mountingPanel);
 		
+		this.cardNum = 0;
 	}
 	
 	public String getNick() {
@@ -93,6 +93,18 @@ public class UserPanel extends JPanel{
 	
 	public int getLife() {
 		return this.life;
+	}
+	
+	public int getCardNum() {
+		return this.cardNum;
+	}
+	
+	public int getDistance() {
+		return this.distance;
+	}
+	
+	public void setDistance(int distance) {
+		this.distance=distance;
 	}
 	
 	public void dieSet() {
@@ -106,13 +118,12 @@ public class UserPanel extends JPanel{
 	
 	//소비카드 세팅
 	public void cardNumSet(int num) {
+		this.cardNum=num;
 		consumePanel.removeAll();
 		if(num>0) {
-			JLabel label = new JLabel(Integer.toString(num)+"장");
+			JLabel label = new JLabel(Integer.toString(this.cardNum)+"장");
 			label.setFont(new Font(null, Font.BOLD, 20));
-			label.setBounds(
-					0, 0, 
-					40, 40);
+			label.setBounds(0, 0, 40, 40);
 			consumePanel.add(label);
 			ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/Ani/back.jpg"));
 			image = new ImageIcon(image.getImage().getScaledInstance(consumePanel.getWidth(), consumePanel.getHeight(), Image.SCALE_SMOOTH));

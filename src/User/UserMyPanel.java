@@ -126,11 +126,12 @@ public class UserMyPanel extends UserPanel {
 			}
 		}
 	}
-	
+
 	private class CardUseAdapter extends MouseAdapter{
 		public MOCCard card;
 		public JButton use;
 		public JButton throwing;
+		public JDialog userChoice;
 		public CardUseAdapter(MOCCard card) {
 			this.card = card;
 			Map<String, Object> cardInfo = card.getCard();
@@ -143,7 +144,7 @@ public class UserMyPanel extends UserPanel {
 						String value = card.getName();
 						if(value.equals("뱅")||value.equals("강탈")||value.equals("캣벌로우")||
 								value.equals("결투")||value.equals("감옥")) {
-							JDialog userChoice = new JDialog();
+							userChoice = new JDialog();
 							userChoice.setTitle("목표 선택");
 							userChoice.setResizable(false);
 							userChoice.setAlwaysOnTop(true);
@@ -153,14 +154,14 @@ public class UserMyPanel extends UserPanel {
 								ArrayList<MOCCard> mounts = GameFrame.users[0].mountingPanel.getMount();
 								int distance = 1;
 								if(mounts.size()>0) {
-									
+
 								}
 								int index = 0;
 								for(int i=1; i<GameFrame.users.length; i++) {
-									if(GameFrame.users[i].getLife()==0||GameFrame.users[i].distance>distance) continue;
+									if(GameFrame.users[i].getLife()==0||GameFrame.users[i].getDistance()>distance) continue;
 									JButton button = new JButton(GameFrame.users[i].getNick());
 									button.setBounds(index*200, 0, 200, 100);
-									button.addMouseListener(new CardChoiceAdapter(button));
+									button.addMouseListener(new CardChoiceAdapter(button, i));
 									userChoice.add(button);
 									index++;
 								}
@@ -169,7 +170,7 @@ public class UserMyPanel extends UserPanel {
 								for(int i=0; i<GameFrame.users.length-1; i++) {
 									JButton button = new JButton(GameFrame.users[i+1].getNick());
 									button.setBounds(i*200, 0, 200, 100);
-									button.addMouseListener(new CardChoiceAdapter(button));
+									button.addMouseListener(new CardChoiceAdapter(button, i));
 									userChoice.add(button);
 								}
 								userChoice.setSize((GameFrame.users.length-1)*200, 130);
@@ -185,72 +186,85 @@ public class UserMyPanel extends UserPanel {
 							userChoice.setVisible(true);
 						}else {
 							SocketReceiver.writer.println(String.format(
-									"게임:카드사용:%d:%s/%s/%s/%d", 
+									"게임:카드:%d:사용:%s/%s/%s/%d", 
 									SocketReceiver.myRoomId,
 									cardInfo.get("종류").toString(), 
 									value, 
 									cardInfo.get("sign").toString(), 
 									(int)cardInfo.get("number")));
-							myCards.remove(card);
+							myCards.remove(myCards.indexOf(card));
 							dialog.dispose();
-							dialog.myCardShow();
+							myCardUseCheck=false;
+							UserPanel.check=true;
+							if(userChoice != null) userChoice.dispose();
 						}
 					}
 				}
 			});
-			
+
 			throwing = new JButton("버리기");
-			throwing.addMouseListener(new CardChoiceAdapter(throwing));
-			
-			use.setBounds(card.getWidth()/2-50, card.getHeight()/2-50, 100, 50);
-			throwing.setBounds(card.getWidth()/2-50, card.getHeight()/2+25, 100, 50);
-		}
-		
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if(e.getClickCount()%2==0) {
-				card.setBorder(new LineBorder(Color.BLACK, 2));
-				card.add(use,2);
-				card.add(throwing,2);
-			}else {
-				card.setBorder(null);
-				card.remove(use);
-				card.remove(throwing);
-			}
-			card.revalidate();
-		}
-		
-		private class CardChoiceAdapter extends MouseAdapter{
-			JButton button;
-			Map<String, Object> cardInfo;
-			public CardChoiceAdapter(JButton button) {
-				this.button = button;
-				this.cardInfo = card.getCard();
-			}	
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(button.getText().equals("버리기")){
+			throwing.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
 					SocketReceiver.writer.println(String.format(
-							"게임:카드버림:%d:%s/%s/%s/%d", 
+							"게임:카드:%d:버림:%s/%s/%s/%d", 
 							SocketReceiver.myRoomId,
 							cardInfo.get("종류").toString(), 
 							cardInfo.get("name").toString(), 
 							cardInfo.get("sign").toString(), 
 							(int)cardInfo.get("number")));
-				}else {
-					SocketReceiver.writer.println(String.format(
-							"게임:카드사용:%d:%s/%s/%s/%s:%s", 
-							SocketReceiver.myRoomId,
-							cardInfo.get("종류").toString(), 
-							cardInfo.get("name").toString(), 
-							cardInfo.get("sign").toString(), 
-							(int)cardInfo.get("number"),
-							button.getText()));
+					myCards.remove(myCards.indexOf(card));
+					if(userChoice != null) userChoice.dispose();
+					dialog.dispose();
+					UserPanel.check=true;
 				}
-				myCards.remove(card);
+			});
+
+			use.setBounds(card.getWidth()/2-50, card.getHeight()/2-50, 100, 50);
+			throwing.setBounds(card.getWidth()/2-50, card.getHeight()/2+25, 100, 50);
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()%2==0) {
+					card.setBorder(new LineBorder(Color.BLACK, 2));
+					card.add(use,2);
+					card.add(throwing,2);
+				}else {
+					card.setBorder(null);
+					card.remove(use);
+					card.remove(throwing);
+					
+				}
+				card.revalidate();
+
+		}
+
+		private class CardChoiceAdapter extends MouseAdapter{
+			JButton button;
+			int goal;
+			Map<String, Object> cardInfo;
+			public CardChoiceAdapter(JButton button, int goal) {
+				this.button = button;
+				this.goal=goal;
+				this.cardInfo = card.getCard();
+			}	
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				SocketReceiver.writer.println(String.format(
+						"게임:카드:%d:사용:%s/%s/%s/%s:%d", 
+						SocketReceiver.myRoomId,
+						cardInfo.get("종류").toString(), 
+						cardInfo.get("name").toString(), 
+						cardInfo.get("sign").toString(), 
+						(int)cardInfo.get("number"),
+						this.goal));
+				myCards.remove(myCards.indexOf(card));
+				if(userChoice!=null) userChoice.dispose();
 				dialog.dispose();
-				dialog.myCardShow();
+				UserPanel.check=true;
+				myCardUseCheck=false;
 			}
 		}
 	}

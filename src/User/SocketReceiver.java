@@ -143,12 +143,20 @@ public class SocketReceiver implements Runnable{
 							card = data[2].split(",");
 							((User.UserMyPanel)gameFrame.users[0]).myCardsSet(card);
 							break;
-						case "턴":
-							gameFrame.ani.cardDrawAnimation(Integer.parseInt(data[2]), 2);
+						case "드로우":
+							int distance = Integer.parseInt(data[2]);
+							if(GameFrame.users.length<=5) gameFrame.ani.cardDrawAnimation(distance+1, Integer.parseInt(data[3]));
+							else gameFrame.ani.cardDrawAnimation(distance, Integer.parseInt(data[3]));
+							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()+Integer.parseInt(data[3]));
 							break;
 						case "내턴":
 							gameFrame.myTurnSet(true);
 							break;
+						case "카드냄":
+							distance = Integer.parseInt(data[2]);
+							if(distance!=0&&GameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
+							else gameFrame.ani.cattleRow(distance);
+							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()-1);
 						}
 						break;
 					case "로그":
