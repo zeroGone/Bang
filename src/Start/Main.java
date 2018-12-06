@@ -99,6 +99,19 @@ public class Main extends JFrame implements MouseListener{
 //		gameFrame.userCharacterSet(7, 0, "폴레그렛", "바트캐시디", "럭키듀크", "로즈둘란", "블랙잭", "벌쳐샘", "슬랩더킬러");
 //		gameFrame.userCardNumSet(7, 0, 4,4,4,4,3,4,5);
 //		gameFrame.보안관Set(3);
+//		gameFrame.tombSet("consume","빗나감","다이아","9");
+//		Game.MOCCard card = new Game.MOCCard(130, 200, "consume","빗나감","다이아",9);
+//		card.imageSet();
+//		gameFrame.users[0].mountingPanel.addMounting(card);
+//		
+//		card = new Game.MOCCard(130, 200, "mount","감옥","하트",3);
+//		card.imageSet();
+//		gameFrame.users[2].mountingPanel.addMounting(card);
+//
+//		card = new Game.MOCCard(130, 200, "mount","볼캐닉","하트",3);
+//		card.imageSet();
+//		gameFrame.users[2].mountingPanel.addMounting(card);
+
 //		((User.UserMyPanel)gameFrame.users[0]).myCardsSet("consume/빗나감/다이아/9","consume/강탈/스페이드/1","mount/감옥/하트/3","consume/인디언/클로버/12");
 //		gameFrame.myJobSet("무법자");
 //		gameFrame.userDieSet(2, "배신자");

@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -195,6 +196,13 @@ public class GameFrame extends JFrame{
 			index = (index+1)%member;
 		}
 		userDistanceSet(member);
+		
+		tomb = new JPanel();
+		tomb.setBackground(Color.WHITE);
+		tomb.setBorder(new TitledBorder("무덤"));
+		tomb.setBounds((int)screen.getWidth()/2-250, (int)screen.getHeight()/2-100, 150, 200);
+		container.add(tomb,new Integer(1));
+		container.revalidate();
 	}
 	
 	public void userCardNumSet(int member, int startIndex, int... cards) {
@@ -203,13 +211,14 @@ public class GameFrame extends JFrame{
 			users[i].cardNumSet(cards[index]);
 			index = (index+1)%member;
 		}
-		
-		tomb = new JPanel();
-		tomb.setBackground(Color.WHITE);
-		tomb.setBorder(new TitledBorder("무덤"));
-		tomb.setBounds((int)screen.getWidth()/2-250, (int)screen.getHeight()/2-100, 150, 200);
-		container.add(tomb,new Integer(1));
-		container.revalidate();
+	}
+	
+	public void tombSet(String... data) {
+		tomb.removeAll();
+		MOCCard card = new MOCCard(130, 180, data[0], data[1], data[2], Integer.parseInt(data[3])); 
+		card.imageSet();
+		card.setLocation(10, 15);
+		tomb.add(card);
 	}
 	
 	public void userDieSet(int index, String job) {
@@ -244,7 +253,6 @@ public class GameFrame extends JFrame{
 					if(((User.UserMyPanel)users[0]).getMyCardsSize()<=users[0].getLife()) {
 						//턴종료
 						controller.removeAll();
-						controller.repaint();
 						SocketReceiver.writer.println("게임:턴종료:"+Integer.toString(SocketReceiver.myRoomId));
 					}else {
 						controller.remove(label);
@@ -252,15 +260,13 @@ public class GameFrame extends JFrame{
 						label.setFont(new Font(null, Font.ITALIC, 30));
 						label.setBounds(200, 0, 500, 100);
 						controller.add(label);
-						controller.revalidate();
 					}
 				}
 				@Override
 				public void mousePressed(MouseEvent e) {//마우스가 버튼을 눌렀을때
 					ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/end.jpg"));
-					image = new ImageIcon(image.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-					endButton.setIcon(image);//이미지 설정
-					endButton.setBounds(controller.getWidth()/2+175, controller.getHeight()/2-25, image.getIconWidth(), image.getIconHeight());
+					image = new ImageIcon(image.getImage().getScaledInstance(140, 140, Image.SCALE_SMOOTH));
+					endButton.setBounds(controller.getWidth()/2+160, controller.getHeight()/2-40, image.getIconWidth()-5, image.getIconHeight()-5);
 				}
 
 				@Override
@@ -278,7 +284,6 @@ public class GameFrame extends JFrame{
 			controller.removeAll();
 			((User.UserMyPanel)users[0]).myTurnSet(false);
 		}
-		controller.validate();
 	}
 	
 	

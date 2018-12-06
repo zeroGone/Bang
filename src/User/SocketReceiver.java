@@ -11,6 +11,7 @@ import java.net.Socket;
 import javax.swing.JOptionPane;
 
 import Game.GameFrame;
+import Game.MOCCard;
 import Start.Main;
 
 public class SocketReceiver implements Runnable{
@@ -139,13 +140,23 @@ public class SocketReceiver implements Runnable{
 							int[] startAniCards = startAniCardsSet(Integer.parseInt(data[2]), Integer.parseInt(data[3]), cards);
 							gameFrame.ani.startAnimation(startAniCards);
 							break;
+						case "무덤설정":
+							card = data[2].split("/");
+							gameFrame.tombSet(card);
+							break;
+						case "장착설정":
+							card = data[3].split("/");
+							MOCCard mocCard = new MOCCard(130, 200, card[0], card[1], card[2], Integer.parseInt(card[3]));
+							mocCard.imageSet();
+							gameFrame.users[Integer.parseInt(data[2])].mountingPanel.addMounting(mocCard);
+							break;
 						case "내카드":
 							card = data[2].split(",");
 							((User.UserMyPanel)gameFrame.users[0]).myCardsSet(card);
 							break;
 						case "드로우":
 							int distance = Integer.parseInt(data[2]);
-							if(GameFrame.users.length<=5) gameFrame.ani.cardDrawAnimation(distance+1, Integer.parseInt(data[3]));
+							if(gameFrame.users.length<=5) gameFrame.ani.cardDrawAnimation(distance+1, Integer.parseInt(data[3]));
 							else gameFrame.ani.cardDrawAnimation(distance, Integer.parseInt(data[3]));
 							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()+Integer.parseInt(data[3]));
 							break;
@@ -154,9 +165,10 @@ public class SocketReceiver implements Runnable{
 							break;
 						case "카드냄":
 							distance = Integer.parseInt(data[2]);
-							if(distance!=0&&GameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
+							if(distance!=0&&gameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
 							else gameFrame.ani.cattleRow(distance);
 							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()-1);
+							break;
 						}
 						break;
 					case "로그":

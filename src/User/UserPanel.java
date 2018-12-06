@@ -31,7 +31,7 @@ public class UserPanel extends JPanel{
 	//캐릭터 카드
 	private Card character;
 	//장착 카드 패널
-	public static MountingPanel mountingPanel;
+	public MountingPanel mountingPanel;
 	//소비 카드 패널
 	protected JPanel consumePanel;
 	private JPanel lifePanel;
