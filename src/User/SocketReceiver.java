@@ -169,6 +169,27 @@ public class SocketReceiver implements Runnable{
 							else gameFrame.ani.cattleRow(distance);
 							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()-1);
 							break;
+						case "캣벌로우":
+							SocketReceiver.writer.println(String.format(
+									"게임:카드정보:%d:%s:%s:%s", myRoomId, data[3], data[4], ((User.UserMyPanel)gameFrame.users[0]).getMyAllCards()));
+							break;
+						case "카드정보":
+							gameFrame.goalCardsShow(Integer.parseInt(data[3]), Integer.parseInt(data[4]), data[5]);
+							break;
+						case "카드삭제":
+							((UserMyPanel)gameFrame.users[0]).removeMyCard(data[2]);
+							break;
+						case "카드개수설정":
+							distance = Integer.parseInt(data[2]);
+							int num = Integer.parseInt(data[3]);
+							if(num<0) {
+								for(int i=0; i<-num; i++) {
+									if(distance!=0&&gameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
+									else gameFrame.ani.cattleRow(distance);				
+								}
+							}
+							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()+num);
+							break;
 						}
 						break;
 					case "로그":

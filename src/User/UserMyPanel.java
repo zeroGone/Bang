@@ -33,6 +33,25 @@ public class UserMyPanel extends UserPanel {
 		myCards = new ArrayList<MOCCard>();
 	}
 	
+	public void removeMyCard(String card) {
+		if(card.length()==1) myCards.remove(Integer.parseInt(card));
+		else this.mountingPanel.removeMounting(card.split("/")[1]);
+	}
+	public String getMyAllCards() {
+		ArrayList<MOCCard> mountCards = super.mountingPanel.getMount();
+		StringBuilder builder = new StringBuilder();
+		for(MOCCard card : mountCards) {
+			Map data = card.getCard();
+			builder.append(data.get("종류")+"/");
+			builder.append(data.get("name")+"/");
+			builder.append(data.get("sign")+"/");
+			builder.append(data.get("number")+",");
+		}
+		
+		//%d: 자기 패의 카드 숫자, %s:장착카드들 
+		return Integer.toString(myCards.size())+","+(builder.length()==0?"":builder.toString().substring(0, builder.length()-1));
+	}
+	
 	public int getMyCardsSize() {
 		return myCards.size();
 	}
@@ -149,6 +168,7 @@ public class UserMyPanel extends UserPanel {
 							userChoice.setResizable(false);
 							userChoice.setAlwaysOnTop(true);
 							userChoice.setLayout(null);
+							
 							if(value.equals("뱅")||value.equals("강탈")) {
 								//거리계산필요
 								ArrayList<MOCCard> mounts = GameFrame.users[0].mountingPanel.getMount();
@@ -166,10 +186,12 @@ public class UserMyPanel extends UserPanel {
 									index++;
 								}
 								userChoice.setSize(index*200, 130);
-							}else {
-								for(int i=0; i<GameFrame.users.length-1; i++) {
-									JButton button = new JButton(GameFrame.users[i+1].getNick());
-									button.setBounds(i*200, 0, 200, 100);
+							}
+							
+							else {
+								for(int i=1; i<GameFrame.users.length; i++) {
+									JButton button = new JButton(GameFrame.users[i].getNick());
+									button.setBounds((i-1)*200, 0, 200, 100);
 									button.addMouseListener(new CardChoiceAdapter(button, i));
 									userChoice.add(button);
 								}

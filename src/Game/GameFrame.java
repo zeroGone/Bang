@@ -10,6 +10,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -232,6 +235,67 @@ public class GameFrame extends JFrame{
 	
 	public void myJobSet(String job) {
 		users[0].jobSet(job);
+	}
+	
+	public void goalCardsShow(int caster, int goal, String data) {
+		System.out.println(data);
+		String[] cards = data.split(",");
+		JDialog dialog = new JDialog();
+		dialog.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/ani/back.jpg")).getImage());
+		dialog.setTitle("°í¸£½Ã¿À");
+		dialog.setLayout(null);
+		dialog.setResizable(false);
+		dialog.setAlwaysOnTop(true);
+		int count = Integer.parseInt(cards[0]);
+		for(int i=0; i<count; i++) {
+			final int index = i;
+			ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/Ani/back.jpg"));
+			image = new ImageIcon(image.getImage().getScaledInstance(133, 200, Image.SCALE_SMOOTH));
+			JLabel label = new JLabel(image);
+			label.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					SocketReceiver.writer.println(String.format(
+							"°ÔÀÓ:Ä¹¹ú·Î¿ì:%d:%d:%d:%d", SocketReceiver.myRoomId, caster, goal, index));
+					dialog.dispose();
+				}
+			});
+			label.setBounds(i*133, 0, 133, 200);
+			dialog.add(label);
+		}
+		for(int i=1; i<cards.length; i++) {
+			String[] card = cards[i].split("/");
+			MOCCard moc = new MOCCard(133, 200, card[0], card[1], card[2], Integer.parseInt(card[3]));
+			moc.imageSet();
+			moc.setLocation(count*133, 0);
+			moc.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					StringBuilder builder = new StringBuilder();
+					Map card = moc.getCard();
+					builder.append(card.get("Á¾·ù")+"/");
+					builder.append(card.get("name")+"/");
+					builder.append(card.get("sign")+"/");
+					builder.append(card.get("number"));
+					SocketReceiver.writer.println(String.format(
+							"°ÔÀÓ:Ä¹¹ú·Î¿ì:%d:%d:%d:%s", SocketReceiver.myRoomId, caster, goal, builder.toString()));
+					dialog.dispose();
+				}
+			});
+			dialog.add(moc);
+			count++;
+		}
+		
+		dialog.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				SocketReceiver.writer.println(String.format(
+						"°ÔÀÓ:Ä¹¹ú·Î¿ì:%d:%d:%d:%s", SocketReceiver.myRoomId, caster, goal, ""));
+			}
+		});
+		dialog.setSize(count*133, 230);
+		dialog.setLocation((int)screen.getWidth()/2 - dialog.getWidth()/2, (int)screen.getHeight()/2 - dialog.getHeight()/2);
+		dialog.setVisible(true);
 	}
 	
 	public void myTurnSet(boolean check) {
