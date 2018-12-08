@@ -264,9 +264,6 @@ public class UserMyPanel extends UserPanel {
 							if(value.equals("조준경")) {
 								for(int i=1; i<GameFrame.users.length; i++) 
 									GameFrame.users[i].setDistance(GameFrame.users[i].getDistance()-1);
-							}else if(value.equals("야생마")) {
-								for(int i=1; i<GameFrame.users.length; i++) 
-									GameFrame.users[i].setDistance(GameFrame.users[i].getDistance()+1);
 							}else if(value.equals("다이너마이트")) {
 							}else if(value.equals("술통")){
 							}

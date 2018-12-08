@@ -26,7 +26,7 @@ public class AniPanel extends JPanel implements Runnable{
 			new Point(1000,170),
 			new Point(1480,170),
 			new Point(1560,440)};
-	private Point center;
+	private final Point center;
 	private Point[] cardLocation;
 	private Point[] distance;//카드 거리계산
 	private String action;//어떤 애니메이션인지 구분
@@ -400,6 +400,8 @@ public class AniPanel extends JPanel implements Runnable{
 		}catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		action = "";
+		System.out.println("애니쓰레드종료");
 	}
 	
 	@Override

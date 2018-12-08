@@ -208,6 +208,10 @@ public class SocketReceiver implements Runnable{
 								gameFrame.ani.bangAnimation(caster, goal, Boolean.valueOf(data[5]));
 							}
 							break;
+						case "야생마설정":
+							distance = Integer.parseInt(data[2]);
+							gameFrame.users[distance].setDistance(gameFrame.users[distance].getDistance()+1);
+							break;
 						}
 						break;
 					case "로그":
