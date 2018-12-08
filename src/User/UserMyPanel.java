@@ -34,9 +34,9 @@ public class UserMyPanel extends UserPanel {
 	}
 	
 	public void removeMyCard(String card) {
-		if(card.length()==1) myCards.remove(Integer.parseInt(card));
-		else this.mountingPanel.removeMounting(card.split("/")[1]);
+		myCards.remove(Integer.parseInt(card));
 	}
+	
 	public String getMyAllCards() {
 		ArrayList<MOCCard> mountCards = super.mountingPanel.getMount();
 		StringBuilder builder = new StringBuilder();

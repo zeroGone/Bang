@@ -145,10 +145,12 @@ public class SocketReceiver implements Runnable{
 							gameFrame.tombSet(card);
 							break;
 						case "장착설정":
-							card = data[3].split("/");
-							MOCCard mocCard = new MOCCard(130, 200, card[0], card[1], card[2], Integer.parseInt(card[3]));
-							mocCard.imageSet();
-							gameFrame.users[Integer.parseInt(data[2])].mountingPanel.addMounting(mocCard);
+							if(data[2].equals("추가")) {
+								card = data[4].split("/");
+								MOCCard mocCard = new MOCCard(130, 200, card[0], card[1], card[2], Integer.parseInt(card[3]));
+								mocCard.imageSet();
+								gameFrame.users[Integer.parseInt(data[3])].mountingPanel.addMounting(mocCard);
+							}else gameFrame.users[Integer.parseInt(data[3])].mountingPanel.removeMounting(data[4]);
 							break;
 						case "내카드":
 							card = data[2].split(",");
@@ -189,6 +191,10 @@ public class SocketReceiver implements Runnable{
 								}
 							}
 							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()+num);
+							break;
+						case "애니":
+							if(data[2].equals("웰스파고은행")) gameFrame.ani.bankAnimation();
+							else if(data[2].equals("역마차")) gameFrame.ani.stageCoachAnimation();
 							break;
 						}
 						break;
