@@ -135,7 +135,7 @@ public class AniPanel extends JPanel implements Runnable{
 	}
 	
 	//뱅 애니메이션 : 시전자, 목표, 회피여부
-	public void bangAnimation(int caster, int goal, boolean evasion) {
+	public void bangAnimation(int caster, int goal, Boolean evasion) {
 		this.action="bang";
 		this.cardDrawCount = 0;
 		this.caster=caster;
@@ -481,4 +481,5 @@ public class AniPanel extends JPanel implements Runnable{
 		}
 		repaint();
 	}
+
 }

@@ -171,6 +171,9 @@ public class SocketReceiver implements Runnable{
 							else gameFrame.ani.cattleRow(distance);
 							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()-1);
 							break;
+						case "¹ð":
+							((UserMyPanel)gameFrame.users[0]).attackedSet(data[3],data[4],"¹ð");
+							break;
 						case "Ä¹¹ú·Î¿ì":
 							SocketReceiver.writer.println(String.format(
 									"°ÔÀÓ:Ä«µåÁ¤º¸:%d:%s:%s:%s", myRoomId, data[3], data[4], ((User.UserMyPanel)gameFrame.users[0]).getMyAllCards()));
@@ -184,17 +187,26 @@ public class SocketReceiver implements Runnable{
 						case "Ä«µå°³¼ö¼³Á¤":
 							distance = Integer.parseInt(data[2]);
 							int num = Integer.parseInt(data[3]);
-							if(num<0) {
-								for(int i=0; i<-num; i++) {
-									if(distance!=0&&gameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
-									else gameFrame.ani.cattleRow(distance);				
-								}
-							}
+//							if(num<0) {
+//								for(int i=0; i<-num; i++) {
+//									if(distance!=0&&gameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
+//									else gameFrame.ani.cattleRow(distance);				
+//								}
+//							}
 							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()+num);
 							break;
 						case "¾Ö´Ï":
 							if(data[2].equals("À£½ºÆÄ°íÀºÇà")) gameFrame.ani.bankAnimation();
 							else if(data[2].equals("¿ª¸¶Â÷")) gameFrame.ani.stageCoachAnimation();
+							else if(data[2].equals("¹ð")) {
+								int caster = Integer.parseInt(data[3]);
+								int goal =  Integer.parseInt(data[4]);
+								if(gameFrame.users.length<=5) {
+									if(caster!=0) caster += 1;
+									if(goal!=0) goal += 1;
+								}
+								gameFrame.ani.bangAnimation(caster, goal, Boolean.valueOf(data[5]));
+							}
 							break;
 						}
 						break;

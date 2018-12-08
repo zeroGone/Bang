@@ -22,7 +22,6 @@ public class MountingPanel extends JLayeredPane{
 	}
 	
 	public void removeMounting(String value) {
-		System.out.println("¿©±â:"+value);
 		for(int i=0; i<mount.size(); i++) 
 			if(mount.get(i).getName().equals(value)) {
 				mount.remove(i);
