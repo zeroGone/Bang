@@ -25,7 +25,6 @@ import Game.JobCard;
 import Game.MOCCard;
 
 public class UserPanel extends JPanel{
-	public static final int MAX_LIFE_NUM = 5;
 	private String nick;
 	private String job;
 	//캐릭터 카드
@@ -35,11 +34,11 @@ public class UserPanel extends JPanel{
 	//소비 카드 패널
 	protected JPanel consumePanel;
 	private JPanel lifePanel;
-	private int life;
+	protected int life;
 	private int distance;
 	private int cardNum;
 	private ImageIcon lifeImage;
-	private JLabel[] lifeLabel;
+	protected JLabel[] lifeLabel;
 	//다이얼로그 중복으로 띄우는 것을 방지하기 위한 변수
 	public static boolean check = true;
 	
@@ -58,7 +57,6 @@ public class UserPanel extends JPanel{
 		lifePanel.setBounds(10, 20, 380, 40);
 		lifePanel.setOpaque(false);
 		
-		lifeLabel=new JLabel[MAX_LIFE_NUM];//생명숫자
 		lifeImage = new ImageIcon(getClass().getClassLoader().getResource("image/life.png"));
 		lifeImage= new ImageIcon(lifeImage.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 		add(lifePanel,"North");//생명패널 추가
@@ -150,6 +148,7 @@ public class UserPanel extends JPanel{
 	
 	//생명 셋팅
 	public void lifeSet(int life) {
+		lifeLabel=new JLabel[life];//생명숫자
 		this.life = life;
 		for(int i=0; i<life; i++) {//생명숫자 셋팅
 			lifeLabel[i]=new JLabel(lifeImage);
@@ -162,7 +161,7 @@ public class UserPanel extends JPanel{
 	public void lifeAddOrRemove(int value) {
 		this.life+=value;
 		lifePanel.removeAll();
-		for(int i=0; i<this.life; i++) {
+		for(int i=0; i<this.life&&i<lifeLabel.length; i++) {
 			lifeLabel[i]=new JLabel(lifeImage);
 			lifePanel.add(lifeLabel[i]);
 		}

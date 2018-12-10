@@ -39,6 +39,7 @@ public class AniPanel extends JPanel implements Runnable{
 	private int startAniCardMaxIndex;//카드를 제일 많이 가지고 있는 개수
 	private boolean check;
 	private boolean evasion;
+	private static boolean state = false;
 
 	//생성자  
 	//화면 크기에 맞게 설정, 이미지들 넣어줌
@@ -96,7 +97,9 @@ public class AniPanel extends JPanel implements Runnable{
 	}
 	
 	private MOCCard openCard;
-	public void cardOpenAnimation(String... info) {
+	public void cardOpenAnimation(String... info) throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+
 		this.action="open";
 		this.setClip("start");
 		this.drawer = new Thread(this);
@@ -108,7 +111,9 @@ public class AniPanel extends JPanel implements Runnable{
 		openCard.setLocation(this.getWidth()/2-openCard.getWidth()/2, this.getHeight()/2-openCard.getHeight()/2);
 	}
 
-	public void cardDrawAnimation(int caster, int cardNum) {
+	public void cardDrawAnimation(int caster, int cardNum) throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		this.caster = caster;
 		this.action="draw";
 		this.distance[caster]= new Point((USER_SEAT_LOCATION[caster].x-cardLocation[caster].x)/100, (USER_SEAT_LOCATION[caster].y-cardLocation[caster].y)/100);
@@ -121,6 +126,7 @@ public class AniPanel extends JPanel implements Runnable{
 	}
 	
 	public void startAnimation(int... cards){
+		AniPanel.state = true;
 		this.action="start";
 		this.cards = cards;
 		this.cardDrawCount = 0;
@@ -135,7 +141,9 @@ public class AniPanel extends JPanel implements Runnable{
 	}
 	
 	//뱅 애니메이션 : 시전자, 목표, 회피여부
-	public void bangAnimation(int caster, int goal, Boolean evasion) {
+	public void bangAnimation(int caster, int goal, Boolean evasion) throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		this.action="bang";
 		this.cardDrawCount = 0;
 		this.caster=caster;
@@ -165,7 +173,9 @@ public class AniPanel extends JPanel implements Runnable{
 		this.drawer.start();
 	}
 	
-	public void beerAnimation(int caster) {//맥주 애니메이션
+	public void beerAnimation(int caster) throws InterruptedException {//맥주 애니메이션
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		action="beer";
 		this.caster=caster;
 		this.cardLocation[caster] = new Point(this.USER_SEAT_LOCATION[caster].x, this.USER_SEAT_LOCATION[caster].y);
@@ -175,7 +185,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 
-	public void takeAnimation(int caster, int goal) {//강탈 애니메이션
+	public void takeAnimation(int caster, int goal) throws InterruptedException {//강탈 애니메이션
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		this.action="take";
 		this.caster=caster;
 		this.goal=goal;
@@ -188,7 +200,9 @@ public class AniPanel extends JPanel implements Runnable{
 		this.drawer.start();
 	}
 
-	public void machineGunAnimation() {
+	public void machineGunAnimation() throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		this.action = "machineGun";
 		this.cardDrawCount=0;
 		this.setClip("machineGun");
@@ -197,7 +211,9 @@ public class AniPanel extends JPanel implements Runnable{
 		this.drawer.start();
 	}
 	
-	public void stageCoachAnimation() {
+	public void stageCoachAnimation() throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		this.action = "stageCoach";
 		this.cardLocation[0] = new Point(this.center.x-images.get("역마차").getIconWidth()/2, -300);
 		setClip("stageCoach");
@@ -206,7 +222,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 	
-	public void bankAnimation() {
+	public void bankAnimation() throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		action = "bank";
 		this.cardDrawCount=0;
 		setClip("bank");
@@ -215,7 +233,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 
-	public void indianAnimation() {
+	public void indianAnimation() throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		action = "indian";
 		this.cardLocation[0] = new Point(-1500, this.center.y-images.get("인디언").getIconHeight()/2);
 		setClip("indian");
@@ -224,7 +244,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 	
-	public void dynamiteAnimation(int caster, boolean check) {
+	public void dynamiteAnimation(int caster, boolean check) throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		action="dynamite";
 		this.caster=caster;
 		this.check=check;
@@ -235,7 +257,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 	
-	public void prisonAnimation(int goal) {
+	public void prisonAnimation(int goal) throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		action="prison";
 		this.goal=goal;
 		setClip("prison");
@@ -245,7 +269,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 	
-	public void fightAnimation() {
+	public void fightAnimation() throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		action="fight";
 		setClip("fight");
 		clip.start();
@@ -255,7 +281,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 	
-	public void dieAnimation(int caster) {
+	public void dieAnimation(int caster) throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		action="die";
 		this.caster=caster;
 		this.cardDrawCount=0;
@@ -265,7 +293,9 @@ public class AniPanel extends JPanel implements Runnable{
 		drawer.start();
 	}
 	
-	public void cattleRow(int goal) {
+	public void cattleRow(int goal) throws InterruptedException {
+		while(AniPanel.state) Thread.sleep(1);
+		AniPanel.state = true;
 		this.action="cattleRow";
 		this.goal=goal;
 		this.cardLocation[goal] = new Point(USER_SEAT_LOCATION[goal].x, USER_SEAT_LOCATION[goal].y);
@@ -401,6 +431,7 @@ public class AniPanel extends JPanel implements Runnable{
 			e.printStackTrace();
 		}
 		action = "";
+		AniPanel.state=false;
 		System.out.println("애니쓰레드종료");
 	}
 	

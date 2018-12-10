@@ -127,14 +127,21 @@ public class Main extends JFrame implements MouseListener{
 //		gameFrame.myTurnSet(false);
 //		((User.UserMyPanel)gameFrame.users[0]).attackedSet("¹ð");
 //		gameFrame.ani.cattleRow(6);
-//		gameFrame.ani.dieAnimation(2);
-//		gameFrame.ani.fightAnimation();
-//		gameFrame.ani.prisonAnimation(0);
-//		gameFrame.ani.dynamiteAnimation(0, true);
-//		gameFrame.ani.indianAnimation();
-//		gameFrame.ani.bankAnimation();
-//		gameFrame.ani.machineGunAnimation();
-//		gameFrame.ani.stageCoachAnimation();
+//		try {
+//			gameFrame.ani.dieAnimation(2);
+//			gameFrame.ani.fightAnimation();
+//			gameFrame.ani.prisonAnimation(0);
+//			gameFrame.ani.dynamiteAnimation(0, true);
+//			gameFrame.ani.indianAnimation();
+//			gameFrame.ani.bankAnimation();
+//			gameFrame.ani.machineGunAnimation();
+//			gameFrame.ani.stageCoachAnimation();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	
+
 //		gameFrame.ani.takeAnimation(0, 2);
 //		gameFrame.ani.beerAnimation(2);
 //		gameFrame.ani.bangAnimation(2, 1, false);

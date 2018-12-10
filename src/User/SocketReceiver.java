@@ -169,31 +169,39 @@ public class SocketReceiver implements Runnable{
 							distance = Integer.parseInt(data[2]);
 							if(distance!=0&&gameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
 							else gameFrame.ani.cattleRow(distance);
-							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()-1);
+							if(distance==0) ((User.UserMyPanel)gameFrame.users[distance]).cardNumSet(gameFrame.users[distance].getCardNum()-1);
+							else gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()-1);
 							break;
 						case "뱅":
 							((UserMyPanel)gameFrame.users[0]).attackedSet(data[3],data[4],"뱅");
 							break;
 						case "캣벌로우":
 							SocketReceiver.writer.println(String.format(
-									"게임:카드정보:%d:%s:%s:%s", myRoomId, data[3], data[4], ((User.UserMyPanel)gameFrame.users[0]).getMyAllCards()));
+									"게임:카드정보:%d:%s:%s:%s:%s", myRoomId, data[2], data[3], "캣벌로우", ((User.UserMyPanel)gameFrame.users[0]).getMyAllCards()));
+							break;
+						case "강탈":
+							SocketReceiver.writer.println(String.format(
+									"게임:카드정보:%d:%s:%s:%s:%s", myRoomId, data[2], data[3], "강탈", ((User.UserMyPanel)gameFrame.users[0]).getMyAllCards()));
 							break;
 						case "카드정보":
-							gameFrame.goalCardsShow(Integer.parseInt(data[3]), Integer.parseInt(data[4]), data[5]);
+							gameFrame.goalCardsShow(Integer.parseInt(data[2]), Integer.parseInt(data[3]), data[4], data[5]);
 							break;
 						case "카드삭제":
-							((UserMyPanel)gameFrame.users[0]).removeMyCard(data[2]);
+							card = data[2].split("/");
+							if(card.length==1) 	((UserMyPanel)gameFrame.users[0]).removeMyCard(card[0]);
+							else ((UserMyPanel)gameFrame.users[0]).removeMyCard(card);
 							break;
 						case "카드개수설정":
 							distance = Integer.parseInt(data[2]);
 							int num = Integer.parseInt(data[3]);
-//							if(num<0) {
-//								for(int i=0; i<-num; i++) {
-//									if(distance!=0&&gameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
-//									else gameFrame.ani.cattleRow(distance);				
-//								}
-//							}
-							gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()+num);
+							if(num<0) {
+								for(int i=0; i<-num; i++) {
+									if(distance!=0&&gameFrame.users.length<=5) gameFrame.ani.cattleRow(distance+1);
+									else gameFrame.ani.cattleRow(distance);				
+								}
+							}
+							if(distance==0) ((User.UserMyPanel)gameFrame.users[distance]).cardNumSet(gameFrame.users[distance].getCardNum()+num);
+							else gameFrame.users[distance].cardNumSet(gameFrame.users[distance].getCardNum()+num);
 							break;
 						case "애니":
 							if(data[2].equals("웰스파고은행")) gameFrame.ani.bankAnimation();
@@ -206,16 +214,19 @@ public class SocketReceiver implements Runnable{
 									if(goal!=0) goal += 1;
 								}
 								gameFrame.ani.bangAnimation(caster, goal, Boolean.valueOf(data[5]));
-							}
+							}else if(data[2].equals("감옥")) gameFrame.ani.prisonAnimation(Integer.parseInt(data[3]));
 							break;
 						case "야생마설정":
 							distance = Integer.parseInt(data[2]);
-							gameFrame.users[distance].setDistance(gameFrame.users[distance].getDistance()+1);
+							gameFrame.users[distance].setDistance(gameFrame.users[distance].getDistance()+Integer.parseInt(data[3]));
 							break;
 						case "생명수설정":
 							distance = Integer.parseInt(data[2]);
 							gameFrame.users[distance].lifeAddOrRemove(Integer.parseInt(data[3]));
 							break;
+						case "거리설정":
+							for(int i=1; i<GameFrame.users.length; i++) 
+								GameFrame.users[i].setDistance(GameFrame.users[i].getDistance()+Integer.parseInt(data[2]));
 						}
 						break;
 					case "로그":
@@ -231,6 +242,9 @@ public class SocketReceiver implements Runnable{
 			} catch (IOException e) {
 				System.out.println("서버 강종함");
 				System.exit(0);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 	}

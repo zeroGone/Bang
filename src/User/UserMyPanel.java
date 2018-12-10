@@ -21,12 +21,10 @@ import Game.GameFrame;
 import Game.MOCCard;
 
 public class UserMyPanel extends UserPanel {
-
 	public static boolean myTurnCheck = false; 
 	private boolean myCardUseCheck;
 	private boolean bangCheck;
 	private MyCardDialog dialog;
-	
 	private ArrayList<MOCCard> myCards;
 
 	public UserMyPanel(Dimension screen, String name) {
@@ -38,9 +36,22 @@ public class UserMyPanel extends UserPanel {
 		myCards.remove(Integer.parseInt(card));
 	}
 	
+	public void removeMyCard(String[] data) {
+		MOCCard MOCCard = new MOCCard(200,300,data[0],data[1],data[2],Integer.parseInt(data[3]));
+		myCards.remove(MOCCard);
+	}
+	
 	public String getMyAllCards() {
 		ArrayList<MOCCard> mountCards = super.mountingPanel.getMount();
 		StringBuilder builder = new StringBuilder();
+		for(MOCCard card : myCards) {
+			Map data = card.getCard();
+			builder.append(data.get("종류")+"/");
+			builder.append(data.get("name")+"/");
+			builder.append(data.get("sign")+"/");
+			builder.append(data.get("number")+",");
+		}
+		builder.append(";");
 		for(MOCCard card : mountCards) {
 			Map data = card.getCard();
 			builder.append(data.get("종류")+"/");
@@ -49,8 +60,7 @@ public class UserMyPanel extends UserPanel {
 			builder.append(data.get("number")+",");
 		}
 		
-		//%d: 자기 패의 카드 숫자, %s:장착카드들 
-		return Integer.toString(myCards.size())+","+(builder.length()==0?"":builder.toString().substring(0, builder.length()-1));
+		return mountCards.size()==0?builder.toString():builder.toString().substring(0, builder.length()-1);
 	}
 	
 	public int getMyCardsSize() {
@@ -63,8 +73,14 @@ public class UserMyPanel extends UserPanel {
 	
 	//턴 셋
 	public void myTurnSet(boolean check) {
-		if(check) for(MOCCard myCard:myCards) myCard.addMouseListener(new CardUseAdapter(myCard));
-		else for(MOCCard myCard:myCards) myCard.removeMouseListener(myCard.getMouseListeners()[0]);
+		if(check) for(MOCCard myCard:myCards) {
+			myTurnCheck = true;
+			myCard.addMouseListener(new CardUseAdapter(myCard));
+		}
+		else for(MOCCard myCard:myCards) {
+			myTurnCheck = false;
+			myCard.removeMouseListener(myCard.getMouseListeners()[0]);
+		}
 	}
 
 	public void myCardsSet(String... cards) {
@@ -75,7 +91,21 @@ public class UserMyPanel extends UserPanel {
 			this.myCards.add(MOCCard);
 		}
 		
-		super.consumePanel.addMouseListener(new MouseAdapter() {
+		this.consumePanel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(UserPanel.check) {
+					dialog = new MyCardDialog("내 카드");
+					dialog.myCardShow();
+				}
+			}
+		});
+	}
+	
+	@Override
+	public void cardNumSet(int num) {
+		super.cardNumSet(num);
+		this.consumePanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(UserPanel.check) {
@@ -103,7 +133,7 @@ public class UserMyPanel extends UserPanel {
 				for(int i=0; i<myCards.size(); i++) {
 					MOCCard card = myCards.get(i);
 					card.setLocation(i*200, 0);
-					card.addMouseListener(new CardUseAdapter(card));
+					if(myTurnCheck) card.addMouseListener(new CardUseAdapter(card));
 					add(card);
 				}
 				this.setSize(myCards.size()*200, 330);
@@ -116,6 +146,7 @@ public class UserMyPanel extends UserPanel {
 			ArrayList<MOCCard> 빗나감 = new ArrayList<MOCCard>();
 			for(MOCCard card:myCards) if(card.getName().equals("빗나감")) 빗나감.add(card);
 			if(빗나감.size()==0) {
+				UserPanel.check = true;
 				JOptionPane.showMessageDialog(this, "빗나감이 없으므로 생명이 하나 줄어듭니다.", "앙대!", JOptionPane.WARNING_MESSAGE);
 				SocketReceiver.writer.println(String.format(
 						"게임:뱅:%d:%s:%s:%s", SocketReceiver.myRoomId, caster, goal, "false"));
@@ -128,6 +159,8 @@ public class UserMyPanel extends UserPanel {
 						@Override
 						public void mouseClicked(MouseEvent e) {
 							if(e.getClickCount()%2==0) {
+								myCards.remove(card);
+								UserPanel.check = true;
 								SocketReceiver.writer.println(String.format(
 										"게임:뱅:%d:%s:%s:%s", SocketReceiver.myRoomId, caster, goal, "true"));
 								dispose();
@@ -141,6 +174,7 @@ public class UserMyPanel extends UserPanel {
 				button.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
+						UserPanel.check = true;
 						SocketReceiver.writer.println(String.format(
 								"게임:뱅:%d:%s:%s:%s", SocketReceiver.myRoomId, caster, goal, "false"));
 						dispose();
@@ -166,7 +200,7 @@ public class UserMyPanel extends UserPanel {
 			use.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if(!myCardUseCheck) {
+					if(!myCardUseCheck&&myTurnCheck) {
 						myCardUseCheck = true;
 						String value = card.getName();
 						if(value.equals("뱅")||value.equals("강탈")||value.equals("캣벌로우")||
@@ -226,8 +260,7 @@ public class UserMyPanel extends UserPanel {
 									userChoice.setSize(label.getWidth(), label.getHeight()+40);
 								}else userChoice.setSize(index*200, 130);
 							}
-							
-							//감옥이랑 캣벌로우
+							//감옥
 							else {
 								for(int i=1; i<GameFrame.users.length; i++) {
 									JButton button = new JButton(GameFrame.users[i].getNick());
@@ -247,74 +280,77 @@ public class UserMyPanel extends UserPanel {
 							});
 							userChoice.setVisible(true);
 						}else {
-							
-							SocketReceiver.writer.println(String.format(
-									"게임:카드:%d:사용:%s/%s/%s/%d", 
-									SocketReceiver.myRoomId,
-									cardInfo.get("종류").toString(), 
-									value, 
-									cardInfo.get("sign").toString(), 
-									(int)cardInfo.get("number")));
-							myCards.remove(myCards.indexOf(card));
-							dialog.dispose();
 							myCardUseCheck=false;
 							UserPanel.check=true;
-							if(userChoice != null) userChoice.dispose();
-							
-							if(value.equals("조준경")) {
-								for(int i=1; i<GameFrame.users.length; i++) 
-									GameFrame.users[i].setDistance(GameFrame.users[i].getDistance()-1);
-							}else if(value.equals("다이너마이트")) {
-							}else if(value.equals("술통")){
-							}
-							
-							ArrayList<MOCCard> mounts = mountingPanel.getMount();
-							String[] guns = new String[] {"볼캐닉","스코필드","레밍턴","카빈","윈체스터"};
-							
-							boolean check = false;
-							for(String temp:guns) if(value.equals(temp)) check = true;
-							
-							
-							mountCheck:
-							for(int i=0; i<mounts.size(); i++) {
-								if(value.equals(mounts.get(i).getName())) {
-									Map map = mounts.get(i).getCard();
-									SocketReceiver.writer.println(String.format(
-											"게임:무덤설정:%d:%s/%s/%s/%d", 
-											SocketReceiver.myRoomId, 
-											map.get("종류").toString(), 
-											map.get("name").toString(),
-											map.get("sign").toString(),
-											(int)map.get("number")));
-									SocketReceiver.writer.println(String.format(
-											"게임:장착삭제:%d:%s/%s/%s/%d", 
-											SocketReceiver.myRoomId, 
-											map.get("종류").toString(), 
-											map.get("name").toString(),
-											map.get("sign").toString(),
-											(int)map.get("number")));
-									break;
+							if(value.equals("맥주")&&life==lifeLabel.length) 
+								JOptionPane.showMessageDialog(card, "풀피이므로 맥주를 쓸수 없습니다.", "놉", JOptionPane.WARNING_MESSAGE);
+							else if(value.equals("빗나감"))
+								JOptionPane.showMessageDialog(card, "빗나감은 뱅맞을때만 사용가능합니다.", "놉", JOptionPane.WARNING_MESSAGE);
+							else {
+								SocketReceiver.writer.println(String.format(
+										"게임:카드:%d:사용:%s/%s/%s/%d", 
+										SocketReceiver.myRoomId,
+										cardInfo.get("종류").toString(), 
+										value, 
+										cardInfo.get("sign").toString(), 
+										(int)cardInfo.get("number")));
+								myCards.remove(myCards.indexOf(card));
+								dialog.dispose();
+								if(userChoice != null) userChoice.dispose();
+								if(value.equals("조준경")) {
+									for(int i=1; i<GameFrame.users.length; i++) 
+										GameFrame.users[i].setDistance(GameFrame.users[i].getDistance()-1);
+								}else if(value.equals("다이너마이트")) {
+								}else if(value.equals("술통")){
 								}
-								else {
-									for(String temp:guns) {
-										if(mounts.get(i).getName().equals(temp)&&check) {
-											Map map = mounts.get(i).getCard();
-											SocketReceiver.writer.println(String.format(
-													"게임:무덤설정:%d:%s/%s/%s/%d", 
-													SocketReceiver.myRoomId, 
-													map.get("종류").toString(), 
-													map.get("name").toString(),
-													map.get("sign").toString(),
-													(int)map.get("number")));
-											SocketReceiver.writer.println(String.format(
-													"게임:장착삭제:%d:%s/%s/%s/%d", 
-													SocketReceiver.myRoomId, 
-													map.get("종류").toString(), 
-													map.get("name").toString(),
-													map.get("sign").toString(),
-													(int)map.get("number")));
-											break mountCheck;
-										};
+								
+								ArrayList<MOCCard> mounts = mountingPanel.getMount();
+								String[] guns = new String[] {"볼캐닉","스코필드","레밍턴","카빈","윈체스터"};
+								
+								boolean check = false;
+								for(String temp:guns) if(value.equals(temp)) check = true;
+								
+								mountCheck:
+								for(int i=0; i<mounts.size(); i++) {
+									if(value.equals(mounts.get(i).getName())) {
+										Map map = mounts.get(i).getCard();
+										SocketReceiver.writer.println(String.format(
+												"게임:무덤설정:%d:%s/%s/%s/%d", 
+												SocketReceiver.myRoomId, 
+												map.get("종류").toString(), 
+												map.get("name").toString(),
+												map.get("sign").toString(),
+												(int)map.get("number")));
+										SocketReceiver.writer.println(String.format(
+												"게임:장착삭제:%d:%s/%s/%s/%d", 
+												SocketReceiver.myRoomId, 
+												map.get("종류").toString(), 
+												map.get("name").toString(),
+												map.get("sign").toString(),
+												(int)map.get("number")));
+										break;
+									}
+									else {
+										for(String temp:guns) {
+											if(mounts.get(i).getName().equals(temp)&&check) {
+												Map map = mounts.get(i).getCard();
+												SocketReceiver.writer.println(String.format(
+														"게임:무덤설정:%d:%s/%s/%s/%d", 
+														SocketReceiver.myRoomId, 
+														map.get("종류").toString(), 
+														map.get("name").toString(),
+														map.get("sign").toString(),
+														(int)map.get("number")));
+												SocketReceiver.writer.println(String.format(
+														"게임:장착삭제:%d:%s/%s/%s/%d", 
+														SocketReceiver.myRoomId, 
+														map.get("종류").toString(), 
+														map.get("name").toString(),
+														map.get("sign").toString(),
+														(int)map.get("number")));
+												break mountCheck;
+											};
+										}
 									}
 								}
 							}
@@ -322,25 +358,25 @@ public class UserMyPanel extends UserPanel {
 					}
 				}
 			});
-
 			throwing = new JButton("버리기");
 			throwing.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					SocketReceiver.writer.println(String.format(
-							"게임:카드:%d:버림:%s/%s/%s/%d", 
-							SocketReceiver.myRoomId,
-							cardInfo.get("종류").toString(), 
-							cardInfo.get("name").toString(), 
-							cardInfo.get("sign").toString(), 
-							(int)cardInfo.get("number")));
-					myCards.remove(myCards.indexOf(card));
-					if(userChoice != null) userChoice.dispose();
-					dialog.dispose();
-					UserPanel.check=true;
+					if(myTurnCheck) {
+						SocketReceiver.writer.println(String.format(
+								"게임:카드:%d:버림:%s/%s/%s/%d", 
+								SocketReceiver.myRoomId,
+								cardInfo.get("종류").toString(), 
+								cardInfo.get("name").toString(), 
+								cardInfo.get("sign").toString(), 
+								(int)cardInfo.get("number")));
+						myCards.remove(myCards.indexOf(card));
+						if(userChoice != null) userChoice.dispose();
+						dialog.dispose();
+						UserPanel.check=true;
+					}
 				}
 			});
-
 			use.setBounds(card.getWidth()/2-50, card.getHeight()/2-50, 100, 50);
 			throwing.setBounds(card.getWidth()/2-50, card.getHeight()/2+25, 100, 50);
 		}
