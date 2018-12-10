@@ -212,6 +212,10 @@ public class SocketReceiver implements Runnable{
 							distance = Integer.parseInt(data[2]);
 							gameFrame.users[distance].setDistance(gameFrame.users[distance].getDistance()+1);
 							break;
+						case "생명수설정":
+							distance = Integer.parseInt(data[2]);
+							gameFrame.users[distance].lifeAddOrRemove(Integer.parseInt(data[3]));
+							break;
 						}
 						break;
 					case "로그":

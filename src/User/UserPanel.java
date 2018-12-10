@@ -162,7 +162,7 @@ public class UserPanel extends JPanel{
 	public void lifeAddOrRemove(int value) {
 		this.life+=value;
 		lifePanel.removeAll();
-		for(int i=0; i<this.life+value; i++) {
+		for(int i=0; i<this.life; i++) {
 			lifeLabel[i]=new JLabel(lifeImage);
 			lifePanel.add(lifeLabel[i]);
 		}
