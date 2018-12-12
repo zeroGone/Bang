@@ -214,7 +214,10 @@ public class SocketReceiver implements Runnable{
 									if(goal!=0) goal += 1;
 								}
 								gameFrame.ani.bangAnimation(caster, goal, Boolean.valueOf(data[5]));
-							}else if(data[2].equals("감옥")) gameFrame.ani.prisonAnimation(Integer.parseInt(data[3]));
+							}else if(data[2].equals("감옥")) {
+								if(Integer.parseInt(data[3])!=0&&gameFrame.users.length<=5) gameFrame.ani.prisonAnimation(Integer.parseInt(data[3])+1);
+								else gameFrame.ani.prisonAnimation(Integer.parseInt(data[3]));				
+							}
 							break;
 						case "야생마설정":
 							distance = Integer.parseInt(data[2]);
@@ -242,6 +245,7 @@ public class SocketReceiver implements Runnable{
 			} catch (IOException e) {
 				System.out.println("서버 강종함");
 				System.exit(0);
+				e.printStackTrace();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

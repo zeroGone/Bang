@@ -257,8 +257,9 @@ public class GameFrame extends JFrame{
 			label.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					System.out.println(consume[index]);
 					SocketReceiver.writer.println(String.format(
-							"게임:%s:%d:%d:%d:%s:%s", 분류, SocketReceiver.myRoomId, caster, goal, consume[index]));
+							"게임:%s:%d:%d:%d:%s", 분류, SocketReceiver.myRoomId, caster, goal, consume[index]));
 					dialog.dispose();
 				}
 			});
@@ -291,7 +292,7 @@ public class GameFrame extends JFrame{
 			@Override
 			public void windowClosing(WindowEvent e) {
 				SocketReceiver.writer.println(String.format(
-						"게임:%s:%d:%d:%d:%s", 분류, SocketReceiver.myRoomId, caster, goal, ""));
+						"게임:%s:%d:%d:%d:%s", 분류, SocketReceiver.myRoomId, caster, goal, " "));
 			}
 		});
 		dialog.setSize(count*133, 230);

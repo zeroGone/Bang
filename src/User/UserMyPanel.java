@@ -245,7 +245,7 @@ public class UserMyPanel extends UserPanel {
 							//°­Å»
 							}else if(value.equals("°­Å»")) {
 								for(int i=1; i<GameFrame.users.length; i++) {
-									if(GameFrame.users[i].getLife()==0||GameFrame.users[i].getDistance()>2) continue;
+									if(GameFrame.users[i].getLife()==0||GameFrame.users[i].getDistance()>=2) continue;
 									JButton button = new JButton(GameFrame.users[i].getNick());
 									button.setBounds(index*200, 0, 200, 100);
 									button.addMouseListener(new CardChoiceAdapter(button, i));
@@ -263,12 +263,14 @@ public class UserMyPanel extends UserPanel {
 							//°¨¿Á
 							else {
 								for(int i=1; i<GameFrame.users.length; i++) {
-									JButton button = new JButton(GameFrame.users[i].getNick());
-									button.setBounds((i-1)*200, 0, 200, 100);
-									button.addMouseListener(new CardChoiceAdapter(button, i));
-									userChoice.add(button);
+									if(!GameFrame.users[i].º¸¾È°üCheck()) {
+										JButton button = new JButton(GameFrame.users[i].getNick());
+										button.setBounds((i-1)*200, 0, 200, 100);
+										button.addMouseListener(new CardChoiceAdapter(button, i));
+										userChoice.add(button);
+									}
 								}
-								userChoice.setSize((GameFrame.users.length-1)*200, 130);
+								userChoice.setSize((GameFrame.users.length-2)*200, 130);
 							}
 							userChoice.setLocation((int)GameFrame.screen.getWidth()/2-userChoice.getWidth()/2, 
 									(int)GameFrame.screen.getHeight()/2+150);

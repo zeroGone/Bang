@@ -168,6 +168,11 @@ public class UserPanel extends JPanel{
 		this.revalidate();
 	}
 	
+	public boolean 보안관Check() {
+		if(this.job==null) return false;
+		return this.job.equals("보안관")?true:false;
+	}
+	
 	public void 보안관Set() {
 		this.job="보안관";
 		ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("image/job/보안관배지.jpg"));

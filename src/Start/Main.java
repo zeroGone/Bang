@@ -126,8 +126,19 @@ public class Main extends JFrame implements MouseListener{
 //		gameFrame.gameEnd("º¸¾È°ü");
 //		gameFrame.myTurnSet(false);
 //		((User.UserMyPanel)gameFrame.users[0]).attackedSet("¹ð");
-//		gameFrame.ani.cattleRow(6);
 //		try {
+//			gameFrame.ani.takeAnimation(0, 2);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
+//			gameFrame.ani.cattleRow(5);
 //			gameFrame.ani.dieAnimation(2);
 //			gameFrame.ani.fightAnimation();
 //			gameFrame.ani.prisonAnimation(0);
@@ -135,16 +146,17 @@ public class Main extends JFrame implements MouseListener{
 //			gameFrame.ani.indianAnimation();
 //			gameFrame.ani.bankAnimation();
 //			gameFrame.ani.machineGunAnimation();
+//			gameFrame.ani.bangAnimation(2, 1, true);
+//			gameFrame.ani.cattleRow(5);
 //			gameFrame.ani.stageCoachAnimation();
+//
 //		} catch (InterruptedException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 	
 
-//		gameFrame.ani.takeAnimation(0, 2);
 //		gameFrame.ani.beerAnimation(2);
-//		gameFrame.ani.bangAnimation(2, 1, false);
 //		gameFrame.ani.cardDrawAnimation(1, 2);
 //		gameFrame.ani.cardDrawAnimation(2, 2);
 //		gameFrame.ani.cardDrawAnimation(3, 2);

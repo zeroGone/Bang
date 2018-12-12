@@ -116,6 +116,7 @@ public class AniPanel extends JPanel implements Runnable{
 		AniPanel.state = true;
 		this.caster = caster;
 		this.action="draw";
+		this.cardLocation[caster] = new Point(center.x, center.y);
 		this.distance[caster]= new Point((USER_SEAT_LOCATION[caster].x-cardLocation[caster].x)/100, (USER_SEAT_LOCATION[caster].y-cardLocation[caster].y)/100);
 		this.cardDrawNum=cardNum;
 		this.cardDrawCount=0;
@@ -153,22 +154,6 @@ public class AniPanel extends JPanel implements Runnable{
 		this.evasion=evasion;
 		this.setClip("bangCaster");
 		this.clip.start();
-		this.drawer = new Thread(this);
-		this.drawer.start();
-	}
-	
-	public void EOHAnimation() {
-		if(this.evasion) {
-			this.action="evasion";
-			this.setClip("evasion");
-			this.clip.loop(3);
-		}else {
-			this.action="hit";
-			this.setClip("bang");
-			this.clip.start();
-
-		}
-		this.cardDrawCount = 0;
 		this.drawer = new Thread(this);
 		this.drawer.start();
 	}
@@ -231,6 +216,7 @@ public class AniPanel extends JPanel implements Runnable{
 		clip.loop(2);
 		drawer = new Thread(this);
 		drawer.start();
+		System.out.println("웰스파고은행시작");
 	}
 
 	public void indianAnimation() throws InterruptedException {
@@ -258,7 +244,6 @@ public class AniPanel extends JPanel implements Runnable{
 	}
 	
 	public void prisonAnimation(int goal) throws InterruptedException {
-		while(AniPanel.state) Thread.sleep(1);
 		AniPanel.state = true;
 		action="prison";
 		this.goal=goal;
@@ -272,6 +257,7 @@ public class AniPanel extends JPanel implements Runnable{
 	public void fightAnimation() throws InterruptedException {
 		while(AniPanel.state) Thread.sleep(1);
 		AniPanel.state = true;
+		System.out.println("시작");
 		action="fight";
 		setClip("fight");
 		clip.start();
@@ -344,8 +330,16 @@ public class AniPanel extends JPanel implements Runnable{
 					break;
 				case "bang":
 					if(cardDrawCount==30) { 
-						this.EOHAnimation();
-						break thread; 
+						if(this.evasion) {
+							this.action="evasion";
+							this.setClip("evasion");
+							this.clip.loop(3);
+						}else {
+							this.action="hit";
+							this.setClip("bang");
+							this.clip.start();
+						}
+						this.cardDrawCount = 0;
 					};
 					if(cardLocation[caster].distance(USER_SEAT_LOCATION[caster])>150) { check = !check; this.cardDrawCount++; }
 					if(check) cardLocation[caster].y+=5;
@@ -420,7 +414,7 @@ public class AniPanel extends JPanel implements Runnable{
 					this.cardDrawCount++;
 					break;
 				case "cattleRow":
-					if(cardLocation[goal].distance(center)<50) { this.cardDrawCount++;  break thread; };
+					if(cardLocation[goal].distance(center)<60) { this.cardDrawCount++;  break thread; };
 					cardLocation[goal].x-=distance[goal].x;
 					cardLocation[goal].y-=distance[goal].y;					
 					break;
@@ -430,7 +424,6 @@ public class AniPanel extends JPanel implements Runnable{
 		}catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		action = "";
 		AniPanel.state=false;
 		System.out.println("애니쓰레드종료");
 	}
